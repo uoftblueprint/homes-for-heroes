@@ -14,21 +14,16 @@ import ListItemText from "@mui/material/ListItemText";
 import DeviceHubIcon from "@mui/icons-material/DeviceHub";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 
-export default class AdminHeader extends React.Component {
-  constructor(props) {
-    super(props);
+export default function AdminHeader() {
 
-    this.state = {
-      auth: true,
-      drawer: false,
-    };
-  }
+  const [auth, setAuth] = React.useState(true);
+  const [drawer, setDrawer] = React.useState(false);
 
-  toggleAuth = () => {
-    this.setState({ auth: !this.state.auth });
+  const toggleAuth = () => {
+    setAuth(!auth);
   };
 
-  toggleDrawer = (open) => (event) => {
+  const toggleDrawer = (open) => (event) => {
     if (
       event &&
       event.type === "keydown" &&
@@ -36,79 +31,78 @@ export default class AdminHeader extends React.Component {
     ) {
       return;
     }
-    this.setState({ drawer: open });
-  };
+    setDrawer(open);
+  }; 
 
-  render() {
-    return (
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-              onClick={this.toggleDrawer(true)}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Admin
-            </Typography>
-            {this.state.auth ? (
-              <div>
-                <Button
-                  size="large"
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={this.toggleAuth}
-                  color="inherit"
-                >
-                  Logout
-                </Button>
-              </div>
-            ) : (
-              <div>
-                <Button
-                  size="large"
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={this.toggleAuth}
-                  color="inherit"
-                >
-                  Login
-                </Button>
-              </div>
-            )}
-          </Toolbar>
-          <SwipeableDrawer
-            anchor="left"
-            open={this.state.drawer}
-            onClose={this.toggleDrawer(false)}
-            onOpen={this.toggleDrawer(true)}
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            onClick={toggleDrawer(true)}
           >
-            <List>
-              {["Case Management", "CRM"].map((text, index) => (
-                <ListItem
-                  button
-                  component="a"
-                  href={text.replace(/\s+/g, "-").toLowerCase()}
-                  key={text}
-                >
-                  <ListItemIcon>
-                    {index === 0 ? <BusinessCenterIcon /> : <DeviceHubIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItem>
-              ))}
-            </List>
-          </SwipeableDrawer>
-        </AppBar>
-      </Box>
-    );
-  }
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Admin
+          </Typography>
+          {auth ? (
+            <div>
+              <Button
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={toggleAuth}
+                color="inherit"
+              >
+                Logout
+              </Button>
+            </div>
+          ) : (
+            <div>
+              <Button
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={toggleAuth}
+                color="inherit"
+              >
+                Login
+              </Button>
+            </div>
+          )}
+        </Toolbar>
+        <SwipeableDrawer
+          anchor="left"
+          open={drawer}
+          onClose={toggleDrawer(false)}
+          onOpen={toggleDrawer(true)}
+        >
+          <List>
+            {["Case Management", "CRM"].map((text, index) => (
+              <ListItem
+                button
+                component="a"
+                href={text.replace(/\s+/g, "-").toLowerCase()}
+                key={text}
+              >
+                <ListItemIcon>
+                  {index === 0 ? <BusinessCenterIcon /> : <DeviceHubIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+        </SwipeableDrawer>
+      </AppBar>
+    </Box>
+  ); 
 }
+
