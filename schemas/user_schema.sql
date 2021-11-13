@@ -2,9 +2,6 @@ CREATE SCHEMA IF NOT EXISTS homes_for_heroes;
 
 USE homes_for_heroes;
 
-CREATE TABLE IF NOT EXISTS User (
-    user_id INT AUTO_INCREMENT PRIMARY KEY
-);
 
 DROP TABLE IF EXISTS UserInfo;
 CREATE TABLE UserInfo (
