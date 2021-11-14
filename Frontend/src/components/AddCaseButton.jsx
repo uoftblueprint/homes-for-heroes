@@ -7,6 +7,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 
 export default function AddCaseButton() {
+  const [dt, setDate] = React.useState(null);
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -17,10 +18,16 @@ export default function AddCaseButton() {
     setOpen(false);
   };
 
+  const handleTime = () =>{
+    let dt = new Date().toLocaleDateString();
+    setDate(dt);
+    handleClose();
+  }
+
   return (
     <div>
       <Button variant="outlined" onClick={handleClickOpen}>
-        Open Dialog
+        Open Popup
       </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add Case Note</DialogTitle>
@@ -48,7 +55,7 @@ export default function AddCaseButton() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Add Note</Button>
+          <Button onClick={handleTime}>Add Note</Button>
         </DialogActions>
       </Dialog>
     </div>
