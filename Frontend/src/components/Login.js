@@ -1,83 +1,100 @@
 import * as React from 'react';
-import TextField from '@mui/material/TextField';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useState } from 'react';
+import { Button, Checkbox, Container, CssBaseline, FormControlLabel, Typography, TextField, Box, InputAdornment, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from "@mui/icons-material"
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-// import Card from '@mui/material/Card';
-// import CardActions from '@mui/material/CardActions';
-// import CardContent from '@mui/material/CardContent';
-// import Button from '@mui/material/Button';
-// import Typography from '@mui/material/Typography';
+const theme = createTheme();
 
-// import { useState } from 'react';
-// import TextField from '@mui/material/TextField';
-// import ListItem from '@mui/material/ListItem';
-// import IconButton from '@mui/material/IconButton';
-// import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-// import CaseCard from './CaseCard';
-
+const INITIAL_USER = {
+  username: '',
+  password: ''
+};  
 
 export default function Login() {
-    const [values, setValues] = React.useState({
-        password: "",
-        showPassword: false
-    });
+  const [user, setUser] = React.useState(INITIAL_USER);
 
-    // const handleChange 
+  // function handleChange(event) {
+  //   const { name, value } = event.target;
+  //   setUser(prevState => ({ ...prevState, [name]: value }));
+  // }
 
-    return (
-        <TextField 
-            required 
-            id="filled-with-icon" 
-            label="Username" 
-        
-            InputProps={{
-                startAdornment: (
-                    <InputAdornment position="start">
-                        <AccountCircle />
-                    </InputAdornment>
-                ),
-            }}
-            variant="filled" 
-        />
-    )
+  const handleSubmit = (event) => {
+    event.preventDefault();
+  };
+
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          <Typography component="h1" variant="h5">
+            Log In
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <TextField
+              required
+              fullWidth
+              margin="normal"
+              id="username"
+              label="Username"
+              name="username"
+              autoComplete="username"
+            />
+            <TextField
+              required
+              fullWidth
+              margin="normal"
+              id="password"
+              label="Password"
+              name="password"
+              autoComplete="current-password"
+
+              type={showPassword ? "text": "password"}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />
+            <FormControlLabel
+              control={<Checkbox value="remember" />}
+              label="Remember me"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Log In
+            </Button>
+          </Box>
+        </Box>
+      </Container>
+    </ThemeProvider>
+  )
 }
-
-
-// export default function Login({ users }) {
-//   const [currentUser, setCurrentUser] = useState({});
-
-//   const showCard = id => {
-//     fetch(`/api/user/${id}`)
-//       .then(response => response.json())
-//       .then(user => setCurrentUser(user))
-//       .catch(err => {
-//         // handle the error
-//       });
-//   };
-
-//   return (
-//     <List dense sx={{ width: '100%', maxWidth: 400, bgcolor: 'gray' }}>
-//       {users.map(user => {
-//         return (
-//           <>
-//             <ListItem
-//               key={user.id}
-//               secondaryAction={
-//                 <IconButton edge="end" aria-label="show-card">
-//                   <ArrowDropDownIcon onClick={() => showCard(user.id)} />
-//                 </IconButton>
-//               }
-//             >
-//               {user.name}
-//             </ListItem>
-//             {currentUser.id === user.id ? (
-//               <CaseCard user={currentUser}></CaseCard>
-//             ) : null}
-//           </>
-//         );
-//       })}
-//     </List>
-//   );
-// }
