@@ -25,8 +25,9 @@ primary key (user_id)
 
 DROP TABLE IF EXISTS cases;
 CREATE TABLE IF NOT EXISTS cases (
-user_id int NOT NULL UNIQUE,
-admin_id int NOT NULL UNIQUE,
+user_id int NOT NULL ,
+admin_id int NOT NULL ,
+case_id int NOT NULL AUTO_INCREMENT,
 notes VARCHAR(255),
 last_update DATETIME
 );
