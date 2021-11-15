@@ -28,6 +28,6 @@ CREATE TABLE IF NOT EXISTS cases (
 user_id int NOT NULL ,
 admin_id int NOT NULL ,
 case_id int NOT NULL AUTO_INCREMENT,
-notes VARCHAR(255),
+notes LONGTEXT,
 last_update DATETIME
 );
