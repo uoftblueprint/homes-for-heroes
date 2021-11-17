@@ -29,5 +29,6 @@ user_id int NOT NULL ,
 admin_id int NOT NULL ,
 case_id int NOT NULL AUTO_INCREMENT,
 notes TEXT,
-last_update DATETIME
+last_update DATETIME,
+primary key (case_id)
 );
