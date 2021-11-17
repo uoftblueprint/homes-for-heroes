@@ -7,19 +7,15 @@ const CaseNote = function (caseNote) {
   this.notes = caseNote.notes;
 };
 
-CaseNote.create = function () {
-  return new Promise(function (resolve, reject) {
-    if (
-      this.user_id == undefined ||
-      this.admin_id == undefined ||
-      this.notes == undefined
-    ) {
+CaseNote.prototype.create = function () {
+  return new Promise((resolve, reject) => {
+    if (this.user_id == undefined || this.admin_id == undefined || this.notes == undefined) {
       reject('Incomplete case note');
       return;
     }
     sql.query(
-      'INSERT INTO cases (user_id, admin_id, notes)',
-      [this.user_id, this.admin_id, this.notes],
+      'INSERT INTO cases (user_id, admin_id, notes) VALUES (?)',
+      [[this.user_id, this.admin_id, this.notes]],
       function (err, result) {
         if (err) reject(err);
         else resolve(result.insertId); // Return the case_id
