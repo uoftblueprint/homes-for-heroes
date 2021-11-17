@@ -30,5 +30,5 @@ admin_id int NOT NULL ,
 case_id int NOT NULL AUTO_INCREMENT,
 notes TEXT,
 last_update DATETIME,
-alert_note BOOLEAN 
+primary key (case_id)
 );
