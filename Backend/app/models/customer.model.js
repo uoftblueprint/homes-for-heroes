@@ -12,7 +12,7 @@ const Customer = function(customer) {
 Customer.retrieveAll = function() {
   return new Promise(function(resolve, reject){
     sql.query('SELECT * FROM client_users', function(err, rows) {
-      if (err) throw err;
+      if (err) reject(err);
         const customers = [];
         rows.forEach((row) => {
           customers.push(new Customer(row));
