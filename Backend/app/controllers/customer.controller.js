@@ -14,6 +14,21 @@ const getAllUsers = ((req, res) => {
     });
 });
 
+const getCases = ((req, res) => {
+    const clientId = req.query.clientId;
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+    Customer.getCases(clientId, startDate, endDate)
+    .then(function(results) {
+        res.send({'cases': results});
+    })
+    .catch(function(err){
+        console.error(err);
+        res.send({'error': err});
+    });
+});
+
 module.exports = {
-    getAllUsers
+    getAllUsers,
+    getCases
 }
