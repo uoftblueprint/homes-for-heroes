@@ -29,7 +29,8 @@ Customer.getCases = function(clientId, startDate, endDate) {
       function(err, cases) {
           if (err) reject(err);
           if (cases.length == 0) {
-            console.log("No cases found for this client.");
+            // no case data found for this user/client
+            resolve([]);
           }
           if (cases.length > 0) {
             resolve(cases);
