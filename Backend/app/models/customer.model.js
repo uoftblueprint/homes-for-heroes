@@ -22,4 +22,20 @@ Customer.retrieveAll = function() {
   })
 }
 
+Customer.getCases = function(clientId, startDate, endDate) {
+  return new Promise((resolve, reject) => {
+      sql.query("SELECT * FROM cases WHERE user_id = ? AND date(last_update) between ? and ?", 
+      [clientId, startDate, endDate],
+      function(err, cases) {
+          if (err) reject(err);
+          if (cases.length == 0) {
+            console.log("No cases found for this client.");
+          }
+          if (cases.length > 0) {
+            resolve(cases);
+          }
+      });
+  });
+};
+
 module.exports = Customer;
