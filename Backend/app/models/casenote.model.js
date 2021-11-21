@@ -9,7 +9,11 @@ const CaseNote = function (caseNote) {
 
 CaseNote.prototype.create = function () {
   return new Promise((resolve, reject) => {
-    if (this.user_id == undefined || this.admin_id == undefined || this.notes == undefined) {
+    if (
+      this.user_id == undefined ||
+      this.admin_id == undefined ||
+      this.notes == undefined
+    ) {
       reject('Incomplete case note');
       return;
     }
@@ -19,6 +23,19 @@ CaseNote.prototype.create = function () {
       function (err, result) {
         if (err) reject(err);
         else resolve(result.insertId); // Return the case_id
+      }
+    );
+  });
+};
+
+CaseNote.getById = function (case_id) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'SELECT * FROM cases WHERE case_id = ?',
+      [case_id],
+      function (err, rows) {
+        if (err) reject(err);
+        resolve(new CaseNote(rows[0]));
       }
     );
   });
