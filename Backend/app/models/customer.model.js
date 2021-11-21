@@ -35,4 +35,17 @@ Customer.getAlertCaseId = function (user_id) {
   });
 };
 
+Customer.setAlertCaseId = function (user_id, case_id) {
+    return new Promise(function (resolve, reject) {
+      sql.query(
+        'UPDATE client_users SET alert_case_id = ? WHERE user_id = ?',
+        [case_id, user_id],
+        function (err, rows) {
+          if (err) reject(err);
+          resolve(rows[0]);
+        }
+      );
+    });
+  };
+
 module.exports = Customer;
