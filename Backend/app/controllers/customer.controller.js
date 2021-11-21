@@ -17,7 +17,8 @@ const customerController = {
   },
   async getAlertCase(req, res) {
     try {
-      const case_id = await Customer.getAlertCaseId(req.query.user_id);
+      const { user_id } = req.params;
+      const case_id = await Customer.getAlertCaseId(user_id);
       if (case_id !== null) {
         CaseNote.getById(case_id)
           .then(caseNote => res.json(caseNote))
@@ -41,7 +42,8 @@ const customerController = {
   },
   async setAlertCase(req, res) {
     try {
-      const { user_id, case_id } = req.query;
+      const { user_id } = req.params;
+      const { case_id } = req.query;
       await Customer.setAlertCaseId(user_id, case_id);
       res.send({ success: true });
     } catch (err) {
