@@ -22,11 +22,11 @@ Customer.retrieveAll = function () {
   });
 };
 
-Customer.getAlertCaseId = function (clientId) {
+Customer.getAlertCaseId = function (user_id) {
   return new Promise(function (resolve, reject) {
     sql.query(
       'SELECT alert_case_id FROM client_users WHERE user_id = ?',
-      [clientId],
+      [user_id],
       function (err, rows) {
         if (err) reject(err);
         resolve(rows[0]);
