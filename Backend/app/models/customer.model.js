@@ -13,11 +13,13 @@ Customer.retrieveAll = function () {
   return new Promise(function (resolve, reject) {
     sql.query('SELECT * FROM client_users', function (err, rows) {
       if (err) reject(err);
-      const customers = [];
-      rows.forEach(row => {
-        customers.push(new Customer(row));
-      });
-      resolve(customers);
+      else {
+        const customers = [];
+        rows.forEach(row => {
+          customers.push(new Customer(row));
+        });
+        resolve(customers);
+      }
     });
   });
 };
@@ -29,23 +31,24 @@ Customer.getAlertCaseId = function (user_id) {
       [user_id],
       function (err, rows) {
         if (err) reject(err);
-        resolve(rows[0]);
+        else if (rows[0] === undefined) reject('User does not exist.');
+        else resolve(rows[0].alert_case_id);
       }
     );
   });
 };
 
 Customer.setAlertCaseId = function (user_id, case_id) {
-    return new Promise(function (resolve, reject) {
-      sql.query(
-        'UPDATE client_users SET alert_case_id = ? WHERE user_id = ?',
-        [case_id, user_id],
-        function (err, rows) {
-          if (err) reject(err);
-          resolve(rows[0]);
-        }
-      );
-    });
-  };
+  return new Promise(function (resolve, reject) {
+    sql.query(
+      'UPDATE client_users SET alert_case_id = ? WHERE user_id = ?',
+      [case_id, user_id],
+      function (err, rows) {
+        if (err) reject(err);
+        else resolve(rows[0]);
+      }
+    );
+  });
+};
 
 module.exports = Customer;
