@@ -6,12 +6,12 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import CaseCard from './CaseCard';
 
 export default function CaseList({ users }) {
-  const [currentUser, setCurrentUser] = useState({});
+  const [currentCase, setCurrentCase] = useState({});
 
   const showCard = id => {
-    fetch(`/api/user/${id}`)
+    fetch(`/api/customers/${id}/alertCase`)
       .then(response => response.json())
-      .then(user => setCurrentUser(user))
+      .then(caseNote => setCurrentCase(caseNote))
       .catch(err => {
         // handle the error
       });
@@ -32,8 +32,8 @@ export default function CaseList({ users }) {
             >
               {user.name}
             </ListItem>
-            {currentUser.id === user.id ? (
-              <CaseCard user={currentUser}></CaseCard>
+            {currentCase.user_id === user.id ? (
+              <CaseCard user={user} case={currentCase}></CaseCard>
             ) : null}
           </>
         );
