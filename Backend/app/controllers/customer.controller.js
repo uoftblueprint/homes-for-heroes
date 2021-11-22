@@ -15,10 +15,10 @@ const getAllUsers = ((req, res) => {
 });
 
 const getCases = ((req, res) => {
-    const clientId = req.query.clientId;
+    const userId = req.query.userId;
     const startDate = req.query.startDate;
     const endDate = req.query.endDate;
-    Customer.getCases(clientId, startDate, endDate)
+    Customer.getCases(userId, startDate, endDate)
     .then(function(results) {
         res.send({'cases': results});
     })
