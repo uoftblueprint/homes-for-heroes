@@ -22,10 +22,10 @@ Customer.retrieveAll = function() {
   })
 }
 
-Customer.getCases = function(userId, startDate, endDate) {
+Customer.getCases = function(user_id, start_date, end_date) {
   return new Promise((resolve, reject) => {
       sql.query("SELECT * FROM cases WHERE user_id = ? AND date(last_update) between ? and ?", 
-      [userId, startDate, endDate],
+      [user_id, start_date, end_date],
       function(err, cases) {
           if (err) reject(err);
           if (cases.length == 0) {
