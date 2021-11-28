@@ -6,8 +6,10 @@ const caseNoteController = {
     try {
       if (req.body) {
         const note = new CaseNote(req.body); // TODO: Add data sanitization
-        const case_id = await note.create();
-        const alert_case_id = await Customer.getAlertCaseId(req.body.user_id);
+        const [case_id, alert_case_id] = await Promise.all([
+          note.create(),
+          Customer.getAlertCaseId(req.body.user_id)
+        ]);
         if (alert_case_id === null)
           await Customer.setAlertCaseId(req.body.user_id, case_id)
         res.json(case_id);
@@ -16,6 +18,7 @@ const caseNoteController = {
         res.send({ error: 'empty body' });
       }
     } catch (err) {
+      console.error(err);
       // TODO: Add error handling middleware
       res.status(500);
       res.send({ error: err });
