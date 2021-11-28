@@ -21,7 +21,11 @@ CREATE TABLE IF NOT EXISTS client_users (
     password VARCHAR(255) NOT NULL,
     alert_case_id INT UNIQUE,
     user_id INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (user_id)
+    PRIMARY KEY (user_id),
+    FOREIGN KEY (alert_case_id)
+    REFERENCES cases(case_id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
 );
 
 DROP TABLE IF EXISTS cases;
@@ -31,5 +35,13 @@ CREATE TABLE IF NOT EXISTS cases (
     notes TEXT,
     last_update DATETIME NOT NULL DEFAULT NOW(),
     case_id INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (case_id)
+    PRIMARY KEY (case_id),
+    FOREIGN KEY (user_id)
+    REFERENCES client_users(user_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    FOREIGN KEY (admin_id)
+    REFERENCES admin_users(admin_id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
 );
