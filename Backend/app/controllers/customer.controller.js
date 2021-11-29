@@ -18,21 +18,8 @@ const customerController = {
   async getAlertCase(req, res) {
     try {
       const { user_id } = req.params;
-      const case_id = await Customer.getAlertCaseId(user_id);
-      if (case_id !== null) {
-        CaseNote.getById(case_id)
-          .then(caseNote => res.json(caseNote))
-          .catch(err => {
-            console.error(err);
-            // TODO error handling
-            res.status(500);
-            res.send({ error: err });
-          });
-      } else {
-        console.error(err);
-        res.status(500);
-        res.send({ error: 'Case does not exist' });
-      }
+      const caseNote = await Customer.getAlertCase(user_id);
+      res.json(caseNote);
     } catch (err) {
       console.error(err);
       // TODO error handling
