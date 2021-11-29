@@ -65,4 +65,21 @@ Customer.setAlertCaseId = function (user_id, case_id) {
   });
 };
 
+Customer.getCases = function(user_id, start_date, end_date) {
+  return new Promise((resolve, reject) => {
+      sql.query("SELECT * FROM cases WHERE user_id = ? AND date(last_update) between ? and ?", 
+      [user_id, start_date, end_date],
+      function(err, cases) {
+          if (err) reject(err);
+          if (cases.length == 0) {
+            // no case data found for this user/client
+            resolve([]);
+          }
+          if (cases.length > 0) {
+            resolve(cases);
+          }
+      });
+  });
+};
+
 module.exports = Customer;
