@@ -2,6 +2,8 @@ CREATE SCHEMA IF NOT EXISTS homes_for_heroes;
 
 USE homes_for_heroes;
 
+SET FOREIGN_KEY_CHECKS=0;
+
 DROP TABLE IF EXISTS admin_users;
 CREATE TABLE IF NOT EXISTS admin_users (
     name VARCHAR(255) NOT NULL UNIQUE,
@@ -37,11 +39,12 @@ CREATE TABLE IF NOT EXISTS cases (
     case_id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (case_id),
     FOREIGN KEY (user_id)
-    REFERENCES client_users(user_id)
+	REFERENCES client_users (user_id)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     FOREIGN KEY (admin_id)
-    REFERENCES admin_users(admin_id)
+	REFERENCES admin_users (admin_id)
         ON UPDATE CASCADE
-        ON DELETE SET NULL
 );
+
+SET FOREIGN_KEY_CHECKS=1;
