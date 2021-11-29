@@ -41,7 +41,7 @@ Customer.getAlertCaseId = function (user_id) {
 Customer.getAlertCase = function (user_id) {
   return new Promise(function (resolve, reject) {
     sql.query(
-      'SELECT cases.* FROM client_users INNER JOIN cases ON client_users.alert_case_id = cases.case_id WHERE client_users.user_id = ?'
+      'SELECT cases.* FROM client_users INNER JOIN cases ON client_users.alert_case_id = cases.case_id WHERE client_users.user_id = ?',
       [user_id],
       function (err, rows) {
         if (err) reject(err);
