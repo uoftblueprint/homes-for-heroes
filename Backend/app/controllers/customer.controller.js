@@ -24,11 +24,23 @@ const getCases = ((req, res) => {
     })
     .catch(function(err){
         console.error(err);
+    });
+});
+
+const getUserData = ((req, res) => {
+    Customer.queryUserData(req.query)
+    .then(function(user_data) {
+        res.send(user_data)
+    })
+    .catch(function(err) {
+        console.log("error!");
+        console.log(err);
         res.send({'error': err});
     });
 });
 
 module.exports = {
     getAllUsers,
-    getCases
+    getCases,
+    getUserData,
 }

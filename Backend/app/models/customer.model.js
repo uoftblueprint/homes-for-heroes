@@ -1,4 +1,5 @@
 const sql = require("./db.js");
+const CustomerQueryData = require("./customer-query-data.model.js");
 
 // constructor
 const Customer = function(customer) {
@@ -38,5 +39,32 @@ Customer.getCases = function(user_id, start_date, end_date) {
       });
   });
 };
+
+Customer.queryUserData = function(query_params) {
+  return new Promise(function(resolve, reject) {
+    q = new CustomerQueryData(query_params);
+    q.validate();
+    q.constructQuery();
+    console.log(q);
+    const data_query = `
+    SELECT
+      client.name, client.email,
+      info.gender, info.applicant_phone, info.applicant_dob, info.curr_level, info.city, info.province,
+      kin.kin_name, kin.relationship, kin.kin_phone, kin.kin_email
+    FROM client_users AS client
+      LEFT JOIN userInfo AS info ON info.user_id = client.user_id
+      LEFT JOIN NextKinInfo AS kin ON kin.user_id = client.user_id
+      ${q.query}
+    ORDER BY client.name
+    LIMIT ${q.offset}, ${q.limit}
+    `
+    console.log(data_query)
+
+    sql.query(data_query, function(err, row) {
+      if (err) reject(err);
+      resolve(row);
+    })
+  })
+}
 
 module.exports = Customer;
