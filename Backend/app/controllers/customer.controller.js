@@ -40,6 +40,18 @@ const customerController = {
       res.send({ error: err });
     }
   },
+  async getCases(req, res) {
+    try {
+      const { user_id, start_date, end_date } = req.query;
+      const cases = await Customer.getCases(user_id, start_date, end_date);
+      res.send({ cases: cases });
+    } catch (err) {
+      console.error(err);
+      // TODO error handling
+      console.error(err);
+      res.send({ error: err });
+    }
+  },
 };
 
 
