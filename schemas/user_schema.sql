@@ -11,6 +11,7 @@ CREATE TABLE UserInfo (
     applicant_phone INT NOT NULL,
     applicant_dob DATE ,
     street_name CHAR(255),
+    curr_level  CHAR(255),
     city CHAR(255) NOT NULL,
     province CHAR(255) NOT NULL,
     referral CHAR(255),
