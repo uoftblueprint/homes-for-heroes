@@ -30,11 +30,11 @@ const CustomerQueryData = function(query_params) {
   
   // Client User Query
   CustomerQueryData.prototype.constructQuery = function() {
-    this.appendQueryParam((this.client_name) ? `client.name LIKE "${this.client_name}%"`: '');
+    this.appendQueryParam((this.client_name) ? `client.name = "${this.client_name}"`: '');
     this.appendQueryParam((this.client_email) ? `client.email = "${this.client_email}"`: '');
     this.appendQueryParam((this.info_phone) ? `info.applicant_phone = ${this.info_phone}`: '');
     this.appendQueryParam((this.info_street_name) ? `info.street_name = "${this.info_street_name}"`: '');
-    this.appendQueryParam((this.kin_name) ? `kin.kin_name LIKE "${this.kin_name}%"`: '');
+    this.appendQueryParam((this.kin_name) ? `kin.kin_name = "${this.kin_name}"`: '');
     this.query = (this.query) ? `WHERE ${this.query}`: this.query;
   }
 
