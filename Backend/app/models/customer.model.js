@@ -71,13 +71,30 @@ Customer.getCases = function(user_id, start_date, end_date) {
       [user_id, start_date, end_date],
       function(err, cases) {
           if (err) reject(err);
-          if (cases.length == 0) {
-            // no case data found for this user/client
-            resolve([]);
-          }
-          if (cases.length > 0) {
-            resolve(cases);
-          }
+          resolve(cases);
+      });
+  });
+};
+
+
+Customer.getUserInfoCSV = function(client_name, email, phone, street_name, kin_name) {
+  return new Promise((resolve, reject) => {
+    var conditions = [];
+    var fields = [];
+    if (client_name) { conditions.push(`c.name = ?`); fields.push(client_name); }
+    if (email) { conditions.push(`c.email = ?`); fields.push(email); }
+    if (phone) { conditions.push(`u.applicant_phone = ?`); fields.push(phone); }
+    if (street_name) { conditions.push(`u.street_name = ?`); fields.push(street_name); }
+    if (kin_name) { conditions.push(`k.kin_name = ?`); fields.push(kin_name); }
+    var sql_query = `SELECT c.name, c.email,
+      u.gender, u.applicant_phone, u.applicant_dob, u.street_name, u.curr_level, u.city, u.province,
+      k.kin_name, k.relationship, k.kin_phone, k.kin_email
+    FROM client_users AS c
+      LEFT JOIN UserInfo AS u ON u.user_id = c.user_id
+      LEFT JOIN NextKin AS k ON k.user_id = c.user_id ` + (conditions.length ? ("WHERE " + conditions.join( "AND ")) : "");
+    sql.query(sql_query, fields, function(err, info) {
+        if (err) reject(err);
+        resolve(info);
       });
   });
 };
