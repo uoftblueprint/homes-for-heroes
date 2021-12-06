@@ -87,7 +87,7 @@ Customer.getUserInfoCSV = function(client_name, email, phone, street_name, kin_n
     if (street_name) { conditions.push(`u.street_name = ?`); fields.push(street_name); }
     if (kin_name) { conditions.push(`k.kin_name = ?`); fields.push(kin_name); }
     var sql_query = `SELECT c.name, c.email,
-      u.gender, u.applicant_phone, u.applicant_dob, u.street_name, u.curr_level, u.city, u.province,
+      u.gender, u.applicant_phone, u.applicant_dob, u.curr_level, u.city, u.province,
       k.kin_name, k.relationship, k.kin_phone, k.kin_email
     FROM client_users AS c
       LEFT JOIN UserInfo AS u ON u.user_id = c.user_id
