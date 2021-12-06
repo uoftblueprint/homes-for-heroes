@@ -19,7 +19,7 @@ CREATE TABLE UserInfo (
 );
 
 DROP TABLE IF EXISTS NextKin;
-CREATE TABLE NextKinInfo (
+CREATE TABLE NextKin (
     kin_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     kin_name CHAR(255) NOT NULL,
