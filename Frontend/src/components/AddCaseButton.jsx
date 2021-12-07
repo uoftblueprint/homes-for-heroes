@@ -9,6 +9,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 export default function AddCaseButton() {
   const [dt, setDate] = React.useState(null);
   const [open, setOpen] = React.useState(false);
+  const [body, setBody] = React.useState("");
+  const [name, setName] = React.useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -18,10 +20,29 @@ export default function AddCaseButton() {
     setOpen(false);
   };
 
-  const handleTime = () =>{
+  const addNote = () => {
     let dt = new Date().toLocaleDateString();
     setDate(dt);
+    fetch('/casenote', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        user_id:name,
+        admin_id:"admin",
+        notes:body,
+      })
+    }).then(response=>response.json()).then(data=>{
+         console.log(data);
+    })
     handleClose();
+  }
+
+  const captureName = (e) => {
+    setName(e.target.value);
+  }
+
+  const captureBody = (e) => {
+    setBody(e.target.value);
   }
 
   return (
@@ -40,6 +61,7 @@ export default function AddCaseButton() {
             type="client"
             fullWidth
             variant="standard"
+            onChange={captureName}
           />
           <TextField
             autoFocus
@@ -51,11 +73,12 @@ export default function AddCaseButton() {
             type="notes"
             fullWidth
             variant="standard"
+            onChange={captureBody}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleTime}>Add Note</Button>
+          <Button onClick={addNote}>Add Note</Button>
         </DialogActions>
       </Dialog>
     </div>
