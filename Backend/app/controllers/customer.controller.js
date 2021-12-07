@@ -52,6 +52,16 @@ const customerController = {
       res.send({ error: err });
     }
   },
+
+  async getUserData(req, res) {
+    try {
+      const user_data = await Customer.queryUserData(req.query);
+      res.send(user_data)
+    } catch (err) {
+      console.error(err);
+      res.send({'error': err});
+    }
+  }
 };
 
 
