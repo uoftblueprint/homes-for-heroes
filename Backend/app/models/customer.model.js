@@ -1,5 +1,5 @@
 const sql = require('./db.js');
-const CustomerQueryData = require('./customer-query-data.model.js');
+const CustomerQueryData = require('./query-models/customer-query-data.model.js');
 
 // constructor
 const Customer = function (customer) {
@@ -85,8 +85,7 @@ Customer.getCases = function(user_id, start_date, end_date) {
 
 Customer.queryUserData = function(query_params) {
   return new Promise(function(resolve, reject) {
-    q = new CustomerQueryData(query_params);
-    q.validate();
+    let q = new CustomerQueryData(query_params);
     q.constructQuery();
     console.log(q);
     const data_query = `
