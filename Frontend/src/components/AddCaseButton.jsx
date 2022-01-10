@@ -12,7 +12,7 @@ export default function AddCaseButton() {
   const [body, setBody] = React.useState("");
   const [name, setName] = React.useState("");
 
-  const handleClickOpen = () => {
+  const handleOpen = () => {
     setOpen(true);
   };
 
@@ -38,16 +38,18 @@ export default function AddCaseButton() {
   }
 
   const captureName = (e) => {
+    e.preventDefault();
     setName(e.target.value);
   }
 
   const captureBody = (e) => {
+    e.preventDefault();
     setBody(e.target.value);
   }
 
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
+      <Button variant="outlined" onClick={handleOpen}>
         Open Popup
       </Button>
       <Dialog open={open} onClose={handleClose}>
