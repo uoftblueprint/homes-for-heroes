@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 
 import Login from './components/Login.js';
+import CRM from './components/CRM.js';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         >
           Learn React
         </a> */}
+        <CRM />
       </header>
     </div>
   );

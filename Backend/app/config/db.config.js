@@ -1,6 +1,7 @@
 module.exports = {
   HOST: "127.0.0.1",
-  USER: "root",
-  PASSWORD: "admin",
+  USER: "user",
+  PASSWORD: "newpassword",
+  PORT: "3306",
   DB: "homes_for_heroes"
 };
