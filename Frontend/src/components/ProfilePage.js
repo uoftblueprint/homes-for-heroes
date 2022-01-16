@@ -92,7 +92,7 @@ export default function ProfilePage( {user_id} ) {
    return (
       <ThemeProvider theme={theme}>
          <div>
-            <Tabs value={value} onChange={handleTabs} sx={{mb:'20px'}} centered sx={{mt: 15}}>
+            <Tabs value={value} onChange={handleTabs} sx={{mb:'20px'}} centered sx={{mt: 5}}>
                <Tab icon={<InfoIcon />} iconPosition="start" label="User Information" sx={{width: '300px'}}/>
                <Tab icon={<SettingsIcon />} iconPosition="start" label="Manage Password"/>
             </Tabs>
