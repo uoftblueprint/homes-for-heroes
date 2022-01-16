@@ -4,6 +4,7 @@ module.exports = app => {
   app.get('/customers', customers.getAllUsers);
   app.get('/getCases', customers.getCases);
   app.get('/getUserData', customers.getUserData);
+  app.get('/getCustomerInfo/:user_id', customers.getCustomerInfo);
   app.get('/customers/:user_id/alertCase', customers.getAlertCase);
   app.put('/customers/:user_id/alertCase', customers.setAlertCase);
 };
