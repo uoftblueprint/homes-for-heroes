@@ -5,12 +5,20 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 
 export default function AddCaseButton() {
   const [dt, setDate] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [body, setBody] = React.useState("");
   const [name, setName] = React.useState("");
+  const [time, setTime] = React.useState(dt);
+
+  const handleChangeTime = (newTime) => {
+    setTime(newTime);
+  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -24,16 +32,23 @@ export default function AddCaseButton() {
     let dt = new Date().toLocaleDateString();
     setDate(dt);
     fetch('/casenote', {
-      method: 'post',
-      headers: {'Content-Type': 'application/json'},
+      method: 'POST',
       body: JSON.stringify({
-        user_id:name,
+        user_id:String(name),
         admin_id:"admin",
-        notes:body,
+        notes:String(body),
       })
-    }).then(response=>response.json()).then(data=>{
-         console.log(data);
+    }).then(response=>response.json())
+    .then(data =>{
+      console.log(data);
+    }).catch(err => 
+      {
+        // handle error
     })
+    handleClose();
+  }
+
+  const addAlertNote = () => {
     handleClose();
   }
 
@@ -78,7 +93,17 @@ export default function AddCaseButton() {
             onChange={captureBody}
           />
         </DialogContent>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DesktopDatePicker
+            label="Time Picker"
+            inputFormat="MM/dd/yyyy"
+            value={time}
+            onChange={handleChangeTime}
+            renderInput={(params) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
         <DialogActions>
+          <Button onClick={addAlertNote}>Set Alert</Button>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={addNote}>Add Note</Button>
         </DialogActions>
