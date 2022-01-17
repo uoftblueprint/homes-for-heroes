@@ -44,6 +44,19 @@ Customer.getByEmail = function (email) {
     });
   });
 }
+Customer.getCustomerInfo = function(user_id) {
+  return new Promise((resolve, reject) => {
+    const query = 
+    `select c.name, c.email, c.phone, u.street_name, 
+    u.city, u.province, u.applicant_dob 
+    from client_users as c inner join UserInfo as u 
+    on c.user_id = u.user_id where c.user_id = ?`
+      sql.query(query, [user_id], function(err, userInfo) {
+          if (err) reject(err);
+          resolve(userInfo);
+      });
+  });
+};
 
 Customer.retrieveAll = function () {
   return new Promise(function (resolve, reject) {
@@ -147,3 +160,4 @@ Customer.queryUserData = function(query_params) {
 }
 
 module.exports = Customer;
+
