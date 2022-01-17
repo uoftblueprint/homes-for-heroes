@@ -13,17 +13,10 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
-import Typography from "@mui/material/Typography";
-import Autocomplete from "@mui/material/Autocomplete"
-import Chip from "@mui/material/Chip"
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
-import CancelIcon from '@mui/icons-material/Cancel';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import LaunchIcon from "@mui/icons-material/Launch";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import data from "./MOCK_DATA.json"
 
 const useStyles = makeStyles({
   root: {
@@ -60,14 +53,13 @@ const useStyles = makeStyles({
   },
 });
 
-function loadServerRows(searchParams, page, pageSize) {
+function loadServerRows(searchString, page, pageSize) {
   return new Promise((resolve) => {
-    let url = "http://localhost:3000/getUserData?";
+    let url = "api/customers/queryUserData?";
 
     url += `page=${page}`;
     url += `&page_size=${pageSize}`;
-    searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
-    console.log(url);
+    url += `&q=${searchString}`;
 
     fetch(url, {
       headers: {
@@ -77,9 +69,8 @@ function loadServerRows(searchParams, page, pageSize) {
     })
       .then((resp) => resp.json())
       .then((resp) => {
-        resolve(resp.map((element, index) => ({...element, "id":index})));
+        resolve(resp);
       });
-  // resolve(data.slice((page-1) * pageSize, page * pageSize * 5))
   });
 }
 
@@ -116,8 +107,6 @@ export default function CRM() {
   const [page, setPage] = React.useState(1);
   const [rows, setRows] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
-  const [searchCategory, setSearchCategory] = React.useState("name");
-  const [searchParams, setSearchParams] = React.useState([]);
 
   let pageCount = Math.ceil(rows.length / pageSize);
 
@@ -137,7 +126,7 @@ export default function CRM() {
 
     (async () => {
       setLoading(true);
-      const newRows = await loadServerRows(searchParams, page, pageSize);
+      const newRows = await loadServerRows(searchString, page, pageSize);
       if (!active) {
         return;
       }
@@ -148,7 +137,7 @@ export default function CRM() {
     return () => {
       active = false;
     };
-  }, [searchParams, page, pageSize]);
+  }, [searchString, page, pageSize]);
 
   return (
     <Card
@@ -156,36 +145,10 @@ export default function CRM() {
       direction="column"
       sx={{ minHeight: 1000, minWidth: 375, width: "100%", maxWidth: 1200 }}
     >
-      <Grid 
-      display="flex"
-      direction="row" 
-      >
-
-          {/* <TextField
+      <Grid component="form" onSubmit={handleSubmit}>
+        <FormControl sx={{ width: "100%" }}>
+          <TextField
             className={classes.SearchInputField}
-            variant="outlined"
-            placeholder="Search Users"
-            name="search"
-            type="text"
-            InputProps={{
-              startAdornment: <Select></Select>,
-              endAdornment: <IconButton><SearchIcon /></IconButton>
-            }}
-          /> */}
-          <Select
-          value={searchCategory}
-          onChange={(e) => setSearchCategory(e.target.value)}
-          >
-            <MenuItem value={"name"}>Name</MenuItem>
-            <MenuItem value={"email"}>Email</MenuItem>
-            <MenuItem value={"phone"}>Phone</MenuItem>
-            <MenuItem value={"status"}>Status</MenuItem>
-            <MenuItem value={"demographic"}>Demographic</MenuItem>
-            <MenuItem value={"income"}>Income</MenuItem>
-          </Select>
-        <TextField
-            className={classes.SearchInputField}
-            fullWidth 
             variant="outlined"
             placeholder="Search Users"
             name="search"
@@ -193,64 +156,11 @@ export default function CRM() {
             InputProps={{
               startAdornment: <SearchIcon fontSize="small" />,
             }}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                setSearchParams(arr => ([...arr, {
-                  "name": searchCategory,
-                  "value": e.target.value
-                }]));
-                e.target.value = ""
-              }
-            }}
-        />
-          {/* <Autocomplete
-            multiple
-            sx={{minWidth: "70%"}}
-            id="tags-filled" 
-            options={[]}
-            defaultValue={[]}
-            freeSolo 
-            value={searchParams.keys} 
-            onChange={(e) => setSearchParams({ ...searchParams, [searchCategory]: e.target.value })}
-            renderTags={(value, getTagProps) =>{  
-              value.map((option, index) => (
-                <Chip
-                  variant="outlined"
-                  label={option + searchParams[option]}  
-                /> 
-              ));
-              }
-            } 
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                InputLabelProps={{shrink: false}}
-                variant="filled" 
-                placeholder={searchCategory}
-               
-                
-              />
-            )}
           />
-          <IconButton><SearchIcon /></IconButton> */}
+        </FormControl>
       </Grid>
-      <List
-      >
-        {searchParams.map((param) => (
-          <ListItem>
-            <IconButton
-              onClick={(e) => setSearchParams(arr => arr.filter(element => element.name != param.name))}
-            >
-              <CancelIcon />
-            </IconButton>
-            <Typography>
-              {param.name + ":" + param.value}
-            </Typography>
-          </ListItem>
-        ))}
-      </List>
       <Grid
-        container 
+        container
         display="flex"
         direction="row"
         alignItems="center"
@@ -301,7 +211,6 @@ export default function CRM() {
       </Grid>
       <DataGrid
         container
-        sx={{minHeight: 500}}
         display="flex"
         direction="row"
         className={classes.root}
@@ -339,26 +248,16 @@ export default function CRM() {
           },
           {
             editable: "false",
-            field: "applicant_phone",
+            field: "phone",
             headerName: "PHONE",
             flex: 1.5,
           },
           {
             status: "false",
-            field: "curr_level",
+            field: "status",
             headerName: "STATUS",
             flex: 1,
           },
-          {
-            field: "Demographic",
-            headerName: "DEMOGRAPHICS",
-            flex: 2,
-          },
-          {
-            field: "income",
-            headerName: "INCOME",
-            flex: 1,
-          } 
         ]}
       />
     </Card>
