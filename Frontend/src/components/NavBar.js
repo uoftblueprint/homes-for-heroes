@@ -1,8 +1,5 @@
 import * as React from 'react';
 import { AppBar, Toolbar } from "@mui/material";
-import Typography from '@mui/material/Typography'
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 
 import MenuIcon from "@mui/icons-material/Menu";
 import { useMediaQuery } from '@mui/material';
@@ -10,7 +7,12 @@ import { withRouter } from "react-router-dom";
 
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import Box from '@mui/material/Box'
+import Icon from '@mui/material/Icon';
+import SvgLogo from './logo.svg'
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles' 
 
@@ -27,28 +29,19 @@ const theme = createTheme({
 
 const Header = props => {
   const { history } = props;
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const handleMenu = event => {
-    setAnchorEl(event.currentTarget);
-  };
+  const [open, toggleOpen] = React.useState(false);
+  const isMobile = useMediaQuery(theme.breakpoints.down("md")); 
 
   const handleMenuClick = pageURL => {
     history.push(pageURL);
-    setAnchorEl(null);
+    toggleOpen(false);
   };
 
   const handleButtonClick = pageURL => {
     history.push(pageURL);
   };
 
-  const menuItems = [
-    {
-      menuTitle: "Home",
-      pageURL: "/"
-    },
+  const menuItems = [ 
     {
       menuTitle: "User CRM",
       pageURL: "/usercrm"
@@ -58,23 +51,20 @@ const Header = props => {
       pageURL: "/usercase"
     },
     {
-      menuTitle: "Profile",
-      pageURL: "/profile"
-    }
+      menuTitle: "Forms",
+      pageURL: "forms"
+    },
+    {
+      menuTitle: "Admin Privileges",
+      pageURL: "admin"
+    },  
   ];
 
   return (
     <ThemeProvider theme={theme}>
       <AppBar position="static" sx={{ background: 'primary.main', p: 1.5}}>
         <Toolbar>
-          <Typography
-            variant="h5"
-            sx={{ mr: 7 }}
-          >
-            HFH
-          </Typography>
-
-          {isMobile ? (
+              {isMobile ? (
             <>
               <IconButton
                 edge="start"
@@ -83,41 +73,38 @@ const Header = props => {
                   color: "inherit"
                 }}
                 aria-label="menu"
-                onClick={handleMenu}
+                onClick={() => toggleOpen(true)}
               >
                 <MenuIcon />
               </IconButton>
-
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right"
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right"
-                }}
+              <SwipeableDrawer
+                anchor="left"
                 open={open}
-                onClose={() => setAnchorEl(null)}
+                onClose={() => toggleOpen(false)}
+                onOpen={() => toggleOpen(true)}
               >
-                {menuItems.map(menuItem => {
+                <List>
+                  {menuItems.map(menuItem => {
                   const { menuTitle, pageURL } = menuItem;
                   return (
-                    <MenuItem onClick={() => handleMenuClick(pageURL)}>
-                      {menuTitle}
-                    </MenuItem>
+                    <ListItem onClick={() => handleMenuClick(pageURL)}>
+                      <ListItemText>{menuTitle}</ListItemText> 
+                    </ListItem>
                   );
                 })}
-                <MenuItem onClick={() => handleMenuClick("login")}>
+                <ListItem onClick={() => handleMenuClick("login")}>
                   Login
-                </MenuItem>
-              </Menu>
+                </ListItem>
+                </List>
+              </SwipeableDrawer>
             </>
           ) : (
             <>
+                <IconButton onClick={() => handleMenuClick("/")}>
+                  <Icon sx={{ height: 75, width: 75 }}>
+                    <img src={SvgLogo} height={75} width={75} alt=""/>
+                  </Icon>
+                </IconButton>
               <div sx={{
                 display: "flex",
                 flex: 1,
@@ -128,20 +115,29 @@ const Header = props => {
                   return (
                     <Button
                       onClick={() => handleButtonClick(pageURL)}
-                      sx={{ color: 'white', m: 2, fontSize: 16 }}
+                      sx={{ fontWeight: 'bold', color: 'white', m: 2, fontSize: 16 }}
                     >
                       {menuTitle}
                     </Button>
                   )
                 })}
               </div>
+
+              <div style={{marginLeft:'auto'}}>
+              <Button
+                onClick={() => handleButtonClick("profile")}
+                sx={{ marginLeft: 'auto', color: 'white', fontSize: 16 }}
+              >
+                Profile
+              </Button>
               
               <Button
                 onClick={() => handleButtonClick("login")}
-                sx={{ color: 'white', fontSize: 16 }}
+                sx={{ marginLeft: 'auto', color: 'white', fontSize: 16 }}
               >
                 Login
               </Button>
+              </div>
             </>
         )}
         </Toolbar>
