@@ -31,14 +31,8 @@ export default function AddCaseButton() {
   const addNote = () => {
     let dt = new Date().toLocaleDateString();
     setDate(dt);
-    fetch('/casenote', {
-      method: 'POST',
-      body: JSON.stringify({
-        user_id:String(name),
-        admin_id:"admin",
-        notes:String(body),
-      })
-    }).then(response=>response.json())
+    fetch('/api/casenote')
+    .then(response=>response.json())
     .then(data =>{
       this.setState({
         user_id:String(name),
@@ -55,15 +49,8 @@ export default function AddCaseButton() {
   const addAlertNote = () => {
     let dt = new Date().toLocaleDateString();
     setDate(dt);
-    fetch('/casenote', {
-      method: 'POST',
-      body: JSON.stringify({
-        user_id:String(name),
-        alert_id:null,
-        admin_id:"admin",
-        notes:String(body),
-      })
-    }).then(response=>response.json())
+    fetch('/api/casenote')
+    .then(response=>response.json())
     .then(data =>{
       this.setState({
         user_id:String(name),
