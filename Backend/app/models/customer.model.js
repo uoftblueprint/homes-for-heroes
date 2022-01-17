@@ -1,5 +1,5 @@
 const sql = require('./db.js');
-const CustomerQueryData = require('./customer-query-data.model.js');
+const CustomerQueryData = require('./query-models/customer-query-data.model.js');
 const bcrypt = require('bcrypt')
 
 // constructor
