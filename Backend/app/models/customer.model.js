@@ -1,14 +1,49 @@
 const sql = require('./db.js');
 const CustomerQueryData = require('./customer-query-data.model.js');
+const bcrypt = require('bcrypt')
 
 // constructor
 const Customer = function (customer) {
   this.user_id = customer.user_id;
   this.name = customer.name;
   this.email = customer.email;
+  this.password = customer.password;
   this.phone = customer.phone;
   this.alert_case_id = customer.alert_case_id;
 };
+
+Customer.prototype.isValidPassword = async function(password) {
+  if(!this.password) return false;
+  return await bcrypt.compare(password, this.password);
+}
+
+Customer.create = function (name, phone, email, password) {
+  return new Promise(function (resolve, reject) {
+    sql.query('INSERT INTO client_users (name, phone, email, password) VALUES (?, ?, ?, ?)',
+    [name, phone, email, bcrypt.hashSync(password, 15)],
+    function(err) {
+      if (err) reject(err);
+      else {
+        sql.query('SELECT LAST_INSERT_ID()', function(err, rows) {
+          if (err) reject(err);
+          else resolve(new Customer({user_id: rows[0], name: name, email: email, phone: phone}));
+        });
+      }
+    });
+  });
+}
+
+Customer.getByEmail = function (email) {
+  return new Promise(function (resolve, reject) {
+    sql.query('SELECT * FROM client_users WHERE email = ? LIMIT 1',
+    [email],
+    function(err, rows) {
+      if (err) reject(err);
+      else if(!rows[0]) resolve(undefined);
+      else resolve(new Customer(rows[0]));
+    });
+  });
+}
 
 Customer.retrieveAll = function () {
   return new Promise(function (resolve, reject) {
@@ -17,6 +52,7 @@ Customer.retrieveAll = function () {
       else {
         const customers = [];
         rows.forEach(row => {
+          delete row['password'];
           customers.push(new Customer(row));
         });
         resolve(customers);
