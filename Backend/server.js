@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 
+require('./app/auth/auth');
+
 const app = express();
 
 // TODO: set a fixed origin
@@ -24,6 +26,7 @@ app.get("/", (req, res) => {
 
 require("./app/routes/customer.routes")(app);
 require("./app/routes/casenote.routes")(app);
+require("./app/routes/auth.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
