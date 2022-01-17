@@ -164,18 +164,6 @@ export default function CRM() {
       display="flex"
       direction="row" 
       >
-
-          {/* <TextField
-            className={classes.SearchInputField}
-            variant="outlined"
-            placeholder="Search Users"
-            name="search"
-            type="text"
-            InputProps={{
-              startAdornment: <Select></Select>,
-              endAdornment: <IconButton><SearchIcon /></IconButton>
-            }}
-          /> */}
           <Select
           value={searchCategory}
           onChange={(e) => setSearchCategory(e.target.value)}
@@ -206,37 +194,7 @@ export default function CRM() {
                 e.target.value = ""
               }
             }}
-        />
-          {/* <Autocomplete
-            multiple
-            sx={{minWidth: "70%"}}
-            id="tags-filled" 
-            options={[]}
-            defaultValue={[]}
-            freeSolo 
-            value={searchParams.keys} 
-            onChange={(e) => setSearchParams({ ...searchParams, [searchCategory]: e.target.value })}
-            renderTags={(value, getTagProps) =>{  
-              value.map((option, index) => (
-                <Chiptext/csv'
-                  variant="outlined"
-                  label={option + searchParams[option]}  
-                /> 
-              ));
-              }
-            } 
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                InputLabelProps={{shrink: false}}
-                variant="filled" 
-                placeholder={searchCategory}
-               
-                
-              />
-            )}
-          />
-          <IconButton><SearchIcon /></IconButton> */}
+        /> 
       </Grid>
       <Grid
       display="flex"
