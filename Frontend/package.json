@@ -10,6 +10,8 @@
     "@mui/icons-material": "^5.0.5",
     "@mui/lab": "^5.0.0-alpha.63",
     "@mui/material": "^5.1.0",
+    "@mui/styles": "^5.2.3",
+    "@mui/x-data-grid": "^5.2.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
