@@ -14,22 +14,17 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import Typography from "@mui/material/Typography";
-import Autocomplete from "@mui/material/Autocomplete"
 import Chip from "@mui/material/Chip"
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
-import CancelIcon from '@mui/icons-material/Cancel';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import LaunchIcon from "@mui/icons-material/Launch";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import data from "./MOCK_DATA.json"
+// import data from "./MOCK_DATA.json"
 
 const useStyles = makeStyles({
   root: {
     marginTop: "10px",
-    border: 0,
-    fontFamily: "Inter",
+    border: 0, 
     alignContent: "flex-start",
     justifyContent: "flex-start",
     "& .MuiDataGrid-columnHeaderTitle": {
@@ -77,21 +72,28 @@ function loadServerRows(searchParams, page, pageSize) {
     })
       .then((resp) => resp.json())
       .then((resp) => {
-        resolve(resp.map((element, index) => ({...element, "id":index})));
+        if (resp.constructor === Array){
+          console.log(resp.constructor);
+          resolve(resp.map((element, index) => ({ ...element, "id": index })));
+        }
+        {
+          resolve([])
+        }
       });
-  // resolve(data.slice((page-1) * pageSize, page * pageSize * 5))
+    // resolve(data.slice((page-1) * pageSize, page * pageSize * 5))
   });
 }
 
-function exportCSV(searchString) {
-  let url = "api/getUserInfoCSV?";
+function exportCSV(searchParams) {
+  let url = "http://localhost:3000/getUsersInfoCSV?";
 
-  url += `q=${searchString}`;
+  searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
+  console.log(url);
 
   fetch(url, {
     headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
+      "Content-Type": "text/csv",
+      Accept: "text/csv",
     },
   })
     .then((res) => {
@@ -112,7 +114,6 @@ export default function CRM() {
   const classes = useStyles();
 
   const [pageSize, setPageSize] = React.useState(5);
-  const [searchString, setSearchString] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [rows, setRows] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -126,11 +127,6 @@ export default function CRM() {
     setPageSize(value);
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setPage(1);
-    setSearchString(e.target[0].value);
-  };
 
   React.useEffect(() => {
     let active = true;
@@ -154,8 +150,16 @@ export default function CRM() {
     <Card
       display="flex"
       direction="column"
-      sx={{ minHeight: 1000, minWidth: 375, width: "100%", maxWidth: 1200 }}
+      sx={{ mt: '15px', boxShadow: 'None', minHeight: 1000, minWidth: 375, width: "100%", maxWidth: 1200 }}
     >
+      <Grid
+      display="flex"
+      direction="row"
+      >
+        <Typography sx={{ fontSize: 48, mb: '1px'}}>
+          CRM
+        </Typography>
+      </Grid>
       <Grid 
       display="flex"
       direction="row" 
@@ -214,7 +218,7 @@ export default function CRM() {
             onChange={(e) => setSearchParams({ ...searchParams, [searchCategory]: e.target.value })}
             renderTags={(value, getTagProps) =>{  
               value.map((option, index) => (
-                <Chip
+                <Chiptext/csv'
                   variant="outlined"
                   label={option + searchParams[option]}  
                 /> 
@@ -234,21 +238,18 @@ export default function CRM() {
           />
           <IconButton><SearchIcon /></IconButton> */}
       </Grid>
-      <List
+      <Grid
+      display="flex"
+      direction="row"
       >
-        {searchParams.map((param) => (
-          <ListItem>
-            <IconButton
-              onClick={(e) => setSearchParams(arr => arr.filter(element => element.name != param.name))}
-            >
-              <CancelIcon />
-            </IconButton>
-            <Typography>
-              {param.name + ":" + param.value}
-            </Typography>
-          </ListItem>
+        {searchParams.map((param) => ( 
+            <Chip
+              sx={{m: '10px'}}
+              label={param.name + '=' + param.value} 
+              onDelete={(e) => setSearchParams(arr => arr.filter(element => element !== param))}
+            /> 
         ))}
-      </List>
+      </Grid>
       <Grid
         container 
         display="flex"
@@ -294,7 +295,7 @@ export default function CRM() {
         >
           <ArrowForwardIosIcon />
         </IconButton>
-        <Button onClick={() => exportCSV(searchString)}>
+        <Button onClick={() => exportCSV(searchParams)}>
           Export as CSV
           <FileDownloadIcon />
         </Button>
@@ -323,7 +324,7 @@ export default function CRM() {
                     flexWrap: "wrap",
                   }}
                 >
-                  <Link href={`/casenotes/${params.id}`}>
+                  <Link href={`/usercase/${params.id}`}>
                     <span>{params.formattedValue}</span>
                     <LaunchIcon sx={{ fontSize: 16 }} />
                   </Link>

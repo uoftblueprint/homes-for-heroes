@@ -6,4 +6,5 @@ module.exports = app => {
   app.get('/getUserData', customers.getUserData);
   app.get('/customers/:user_id/alertCase', customers.getAlertCase);
   app.put('/customers/:user_id/alertCase', customers.setAlertCase);
+  app.get('/getUsersInfoCSV', customers.getUserInfoCSV);
 };

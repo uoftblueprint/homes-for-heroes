@@ -17,27 +17,34 @@ export default function CaseList({ users }) {
       });
   };
 
-  return (
-    <List dense sx={{ width: '100%', maxWidth: 400, bgcolor: 'gray' }}>
-      {users.map(user => {
-        return (
-          <>
-            <ListItem
-              key={user.id}
-              secondaryAction={
-                <IconButton edge="end" aria-label="show-card">
-                  <ArrowDropDownIcon onClick={() => showCard(user.id)} />
-                </IconButton>
-              }
-            >
-              {user.name}
-            </ListItem>
-            {currentCase.user_id === user.id ? (
-              <CaseCard user={user} case={currentCase}></CaseCard>
-            ) : null}
-          </>
-        );
-      })}
-    </List>
-  );
+  let usersToRender;
+  if (users) {
+    usersToRender = users.map(user => {
+      return (
+        <List dense sx={{ width: '100%', maxWidth: 400, bgcolor: 'gray' }}>
+          {users.map(user => {
+            return (
+              <>
+                <ListItem
+                  key={user.id}
+                  secondaryAction={
+                    <IconButton edge="end" aria-label="show-card">
+                      <ArrowDropDownIcon onClick={() => showCard(user.id)} />
+                    </IconButton>
+                  }
+                >
+                  {user.name}
+                </ListItem>
+                {currentCase.user_id === user.id ? (
+                  <CaseCard user={user} case={currentCase}></CaseCard>
+                ) : null}
+              </>
+            );
+          })}
+        </List>
+      )
+    })
+  }
+
+  return <div>{usersToRender}</div>
 }
