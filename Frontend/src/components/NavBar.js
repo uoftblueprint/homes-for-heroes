@@ -57,6 +57,10 @@ const Header = props => {
       menuTitle: "User Case",
       pageURL: "/usercase"
     },
+    {
+      menuTitle: "Profile",
+      pageURL: "/profile"
+    }
   ];
 
   return (
