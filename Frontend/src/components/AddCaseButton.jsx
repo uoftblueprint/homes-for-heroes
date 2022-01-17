@@ -40,7 +40,11 @@ export default function AddCaseButton() {
       })
     }).then(response=>response.json())
     .then(data =>{
-      console.log(data);
+      this.setState({
+        user_id:String(name),
+        admin_id:"admin",
+        notes:String(body),
+      });
     }).catch(err => 
       {
         // handle error
@@ -49,6 +53,28 @@ export default function AddCaseButton() {
   }
 
   const addAlertNote = () => {
+    let dt = new Date().toLocaleDateString();
+    setDate(dt);
+    fetch('/casenote', {
+      method: 'POST',
+      body: JSON.stringify({
+        user_id:String(name),
+        alert_id:null,
+        admin_id:"admin",
+        notes:String(body),
+      })
+    }).then(response=>response.json())
+    .then(data =>{
+      this.setState({
+        user_id:String(name),
+        alert_id:'ALERT',
+        admin_id:"admin",
+        notes:String(body),
+      });
+    }).catch(err => 
+      {
+        // handle error
+    })
     handleClose();
   }
 
@@ -101,7 +127,7 @@ export default function AddCaseButton() {
             onChange={handleChangeTime}
             renderInput={(params) => <TextField {...params} />}
             />
-          </LocalizationProvider>
+        </LocalizationProvider>
         <DialogActions>
           <Button onClick={addAlertNote}>Set Alert</Button>
           <Button onClick={handleClose}>Cancel</Button>
