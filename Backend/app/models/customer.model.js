@@ -134,8 +134,7 @@ Customer.getCases = function(user_id, start_date, end_date) {
 
 Customer.queryUserData = function(query_params) {
   return new Promise(function(resolve, reject) {
-    q = new CustomerQueryData(query_params);
-    q.validate();
+    let q = new CustomerQueryData(query_params);
     q.constructQuery();
     console.log(q);
     const data_query = `
