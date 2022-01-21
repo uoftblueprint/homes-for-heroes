@@ -92,7 +92,11 @@ export default function ProfilePage( {user_id} ) {
    return (
       <ThemeProvider theme={theme}>
          <div>
-            <Tabs value={value} onChange={handleTabs} sx={{mb:'20px'}} centered sx={{mt: 5}}>
+            <Typography sx={{fontSize: '1.8rem', fontWeight: 600, mt: '75px', mb: '25px'}}>
+               Your Profile
+            </Typography>
+
+            <Tabs value={value} onChange={handleTabs} sx={{mb:'20px'}} centered>
                <Tab icon={<InfoIcon />} iconPosition="start" label="User Information" sx={{width: '300px'}}/>
                <Tab icon={<SettingsIcon />} iconPosition="start" label="Manage Password"/>
             </Tabs>
@@ -123,8 +127,8 @@ export default function ProfilePage( {user_id} ) {
                                  key={row.subheading}
                                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                  >
-                                 <TableCell component="th" scope="row" style={{ fontWeight: 600, fontSize: '15px'}}>
-                                    {row.subheading}
+                                 <TableCell component="th" scope="row" style={{ fontSize: '16px'}}>
+                                    {<b>{row.subheading}:</b>}
                                  </TableCell>
                                  <TableCell align="right">{row.info}</TableCell>
                                  </TableRow>
@@ -164,9 +168,9 @@ export default function ProfilePage( {user_id} ) {
                ) : (
                   <div>
                      <Box sx={{height:500}}>
-                        <Box sx={{display: 'flex', justifyContent: 'center'}}>
-                           <Typography type={passwordShown ? "text": "password"}>
-                              Password: {userInfo.password}
+                        <Box sx={{display: 'flex', justifyContent: 'center', mt: 7, mb: 3}}>
+                           <Typography type={passwordShown ? "text": "password"} sx={{fontSize:'18px', padding:'7px 0'}}>
+                              <b>Password</b>: {userInfo.password}
                            </Typography>
                            <IconButton onClick={togglePasswordVisibility}>
                               {passwordShown ? <VisibilityIcon /> : <VisibilityOffIcon />}
