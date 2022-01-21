@@ -54,7 +54,7 @@ export default function CaseList() {
           } /*{ width: '100%', maxWidth: 400, bgcolor: 'gray' }*/
         }
       >
-        {users.map(user => {
+        {users ? users.map(user => {
           return (
             <>
               <ListItem
@@ -83,7 +83,7 @@ export default function CaseList() {
               <Divider></Divider>
             </>
           );
-        })}
+        }) : null}
       </List>
     </>
   );
