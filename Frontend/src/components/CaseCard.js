@@ -1,31 +1,28 @@
 import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
+import Grid from '@mui/material/Grid';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import AddIcon from '@mui/icons-material/Add';
 
-export default function CaseCard ({user, note}) {
+export default function CaseCard({ user, note }) {
   return (
-    <Card sx={{ minWidth: 275, maxWidth: 550 }}>
-      <CardContent>
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-         {user.name}
-        </Typography>
-        <Typography variant="h5" component="div">
-          Notes:
-        </Typography>
-        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-          {note.notes}
-        </Typography>
-        <Typography variant="body2">
-          {/* Created {props.date} by {props.çsignature} */}
-          Created at {note.last_updated} by this admin
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Button size="small">Learn More</Button>
-      </CardActions>
-    </Card>
+    <Grid container spacing={2} sx={{marginBottom: '20px'}}>
+      <Grid item xs={12}>
+      <Alert
+      variant="outlined"
+      severity="info"
+      sx={{width: '80%', margin: 'auto', textAlign: 'left'}}
+      >
+      <AlertTitle>Alert created at {note.last_update} by this admin</AlertTitle>{note.notes}</Alert>
+      </Grid>
+      <Grid item xs={6}>
+      <Button variant="outlined" size="small"><VisibilityIcon></VisibilityIcon>View Full Profile</Button>
+      </Grid>
+      <Grid item xs={6}>
+      <Button variant="outlined" size="small"><AddIcon></AddIcon>Add Case Notes</Button>
+      </Grid>
+    </Grid>
   );
 }

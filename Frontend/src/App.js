@@ -1,6 +1,7 @@
 import './App.css';
 
 import NavBar from './components/NavBar';
+import CaseList from './components/CaseList';
 import { Route, Switch } from "react-router-dom";
 import Login from './components/Login.js';
 import CRM from './components/CRM.js';
@@ -15,7 +16,7 @@ function App() {
         <Switch>
           <Route exact from="/" render={props => <Typography color='black'>Home</Typography>} />
           <Route exact path="/usercrm" render={props => <CRM {...props} />} />
-          <Route exact path="/usercase" render={props => <Login {...props} />} />
+          <Route exact path="/usercase" render={props => <CaseList {...props} />} />
           <Route exact path="/forms" render={props => <Typography color='black'>Forms</Typography>} />
           <Route exact path="/admin" render={props => <Typography color='black'>Admin</Typography>} />
           {/* temp profile page: */}
