@@ -8,6 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 export default function AddCaseButton() {
   const [dt, setDate] = React.useState(null);
@@ -78,9 +79,10 @@ export default function AddCaseButton() {
   return (
     <div>
       <Button variant="outlined" onClick={handleOpen}>
-        Open Popup
+        <AddOutlinedIcon />
+        Add Case
       </Button>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} PaperProps={{ sx: { width: "50%", height: "100%" } }}>
         <DialogTitle>Add Case Note</DialogTitle>
         <DialogContent>
           <TextField
@@ -99,7 +101,8 @@ export default function AddCaseButton() {
             id="name"
             label="Notes"
             multiline
-            maxRows={10}
+            minRows={15}
+            maxRows={50}
             type="notes"
             fullWidth
             variant="standard"

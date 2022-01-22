@@ -9,9 +9,9 @@ INSERT INTO cases VALUES
 (12, 2, NULL, now(), 2),
 (13, 2, NULL, now(), 3);
 INSERT INTO UserInfo VALUES 
-(11, "F", "abby2@gmail.com", 905456, now(), "123 Apple Street", "Level 1", "Vancouver", "BC", NULL), 
-(12, "F", "sarah@outlook.com", 416123, now(), "13 St George Street", "Level 2", "Victoria", "BC", NULL), 
-(13, "M", "alexp@gmail.com", 416416, now(), "336 Spadina Avenue", "Level 1", "Calgary", "AB", NULL);
+(11, "F", "abby2@gmail.com", 905456, "1950-01-01", "123 Apple Street", "Level 1", "Vancouver", "BC", NULL), 
+(12, "F", "sarah@outlook.com", 416123, "1955-01-01", "13 St George Street", "Level 2", "Victoria", "BC", NULL), 
+(13, "M", "alexp@gmail.com", 416416, "1960-01-01", "336 Spadina Avenue", "Level 1", "Calgary", "AB", NULL);
 INSERT INTO NextKinInfo VALUES 
 (20, 11, "kin_a", NULL, "647123", "123kin@kin.com", "336 Spadina"), 
 (30, 12, "kin_b", NULL, "416123", "1kin@kin.com", "30 Tree Street"), 

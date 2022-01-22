@@ -5,7 +5,7 @@ import AlertTitle from '@mui/material/AlertTitle';
 import { useHistory } from "react-router-dom";
 import Button from '@mui/material/Button';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import AddIcon from '@mui/icons-material/Add';
+import AddCaseButton from './AddCaseButton';
 
 export default function CaseCard({ user, note }) {
   const history = useHistory();
@@ -28,7 +28,7 @@ export default function CaseCard({ user, note }) {
       <Button variant="outlined" size="small" onClick={viewProfile}><VisibilityIcon></VisibilityIcon>View Full Profile</Button>
       </Grid>
       <Grid item xs={6}>
-      <Button variant="outlined" size="small"><AddIcon></AddIcon>Add Case Notes</Button>
+      <AddCaseButton />
       </Grid>
     </Grid>
     );
