@@ -1,5 +1,6 @@
 const sql = require('./db.js');
 const CustomerQueryData = require('./customer-query-data.model.js');
+const CustomerProfile = require('./customer-profile.model');
 
 // constructor
 const Customer = function (customer) {
@@ -123,6 +124,20 @@ Customer.queryUserData = function(query_params) {
     })
   })
 }
+
+Customer.updateProfile = function(user_id, query_params) {
+  return new Promise((resolve, reject) => {
+    //console.log(query_params);
+    cust = new CustomerProfile(query_params);
+    // need to update client_users and UserInfo tables separately
+    //sql_qry_c = 'UPDATE client_users SET phone = ? WHERE user_id = ?';
+    sql.query("UPDATE client_users SET phone = ? WHERE user_id = ?", [cust.phone, user_id],
+      function(err, rows) {
+        if (err) reject(err);
+        else resolve(rows[0]);
+      });
+  });
+};
 
 module.exports = Customer;
 
