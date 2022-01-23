@@ -8,13 +8,35 @@ import DialogTitle from '@mui/material/DialogTitle';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
-export default function AddCaseButton() {
+export default function AddCaseButton(props) {
   const [dt, setDate] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [body, setBody] = React.useState("");
-  const [name, setName] = React.useState("");
+  const [title, setTitle] = React.useState("");
   const [time, setTime] = React.useState(dt);
+
+  const normRequestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      user_id: props.user_id,
+      admin_id: 2,
+      notes: body
+    })
+  };  
+
+  const alertRequestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      alert_id: props.user_id,
+      user_id: props.user_id,
+      admin_id: 2,
+      notes: body
+    })
+  };  
 
   const handleChangeTime = (newTime) => {
     setTime(newTime);
@@ -31,43 +53,22 @@ export default function AddCaseButton() {
   const addNote = () => {
     let dt = new Date().toLocaleDateString();
     setDate(dt);
-    fetch('/api/casenote')
-    .then(response=>response.json())
-    .then(data =>{
-      this.setState({
-        user_id:String(name),
-        admin_id:"admin",
-        notes:String(body),
-      });
-    }).catch(err => 
-      {
-        // handle error
-    })
+    fetch('http://localhost:3000/casenote', normRequestOptions)
+      .then(response => response.json());
     handleClose();
   }
 
   const addAlertNote = () => {
     let dt = new Date().toLocaleDateString();
     setDate(dt);
-    fetch('/api/casenote')
-    .then(response=>response.json())
-    .then(data =>{
-      this.setState({
-        user_id:String(name),
-        alert_id:'ALERT',
-        admin_id:"admin",
-        notes:String(body),
-      });
-    }).catch(err => 
-      {
-        // handle error
-    })
+    fetch('http://localhost:3000/casenote', alertRequestOptions)
+      .then(response => response.json());
     handleClose();
   }
 
-  const captureName = (e) => {
+  const captureTitle = (e) => {
     e.preventDefault();
-    setName(e.target.value);
+    setTitle(e.target.value);
   }
 
   const captureBody = (e) => {
@@ -78,20 +79,21 @@ export default function AddCaseButton() {
   return (
     <div>
       <Button variant="outlined" onClick={handleOpen}>
-        Open Popup
+        <AddOutlinedIcon />
+        Add Case
       </Button>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} PaperProps={{ sx: { width: "50%", height: "100%" } }}>
         <DialogTitle>Add Case Note</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
             id="name"
-            label="Client Name"
+            label="Case Title"
             type="client"
             fullWidth
             variant="standard"
-            onChange={captureName}
+            onChange={captureTitle}
           />
           <TextField
             autoFocus
@@ -99,7 +101,8 @@ export default function AddCaseButton() {
             id="name"
             label="Notes"
             multiline
-            maxRows={10}
+            minRows={15}
+            maxRows={50}
             type="notes"
             fullWidth
             variant="standard"

@@ -9,6 +9,7 @@ import Privileges from './components/Privileges.js';
 import ProfilePage from './components/ProfilePage.js';
 import UserInfo from './components/UserInfo.js';
 import { Typography } from '@mui/material';
+import CaseDetail from './components/CaseDetail';
 
 function App() {
   return (

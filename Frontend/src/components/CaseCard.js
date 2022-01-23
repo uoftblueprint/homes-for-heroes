@@ -5,7 +5,7 @@ import AlertTitle from '@mui/material/AlertTitle';
 import { useHistory } from "react-router-dom";
 import Button from '@mui/material/Button';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import AddIcon from '@mui/icons-material/Add';
+import AddCaseButton from './AddCaseButton';
 
 export default function CaseCard({ user, note }) {
   const history = useHistory();
