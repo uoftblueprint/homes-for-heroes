@@ -24,6 +24,7 @@ app.get("/", (req, res) => {
 
 require("./app/routes/customer.routes")(app);
 require("./app/routes/casenote.routes")(app);
+require("./app/routes/admin.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
