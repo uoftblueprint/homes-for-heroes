@@ -37,10 +37,11 @@ export default function CaseCard() {
           .catch(err => {
             console.error(err);
         });
-        fetch(`http://localhost:3000/getCases?user_id=${id}`)
+        fetch(`http://localhost:3000/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`)
           .then(response => response.json())
           .then(res => {
             setCaseNotes(res.cases);
+            console.log(res.cases);
         })
       }, []);
   
@@ -103,7 +104,7 @@ export default function CaseCard() {
                           <Typography>Case Note {index}</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
-                          <Typography>{item}</Typography>
+                          <Typography>{item.notes}</Typography>
                         </AccordionDetails>
                       </Accordion>
                     ))}
