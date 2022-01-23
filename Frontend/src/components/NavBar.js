@@ -52,11 +52,11 @@ const Header = props => {
     },
     {
       menuTitle: "Forms",
-      pageURL: "forms"
+      pageURL: "/forms"
     },
     {
       menuTitle: "Admin Privileges",
-      pageURL: "admin"
+      pageURL: "/admin"
     },  
   ];
 

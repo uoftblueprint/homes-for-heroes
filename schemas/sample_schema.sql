@@ -5,9 +5,10 @@ INSERT INTO client_users VALUES
 INSERT INTO admin_users VALUES 
 ("Admin A", "admina@hfh.com", "10293", "password", "55 Apple Road", 2);
 INSERT INTO cases VALUES
-(11, 2, NULL, now(), 1),
-(12, 2, NULL, now(), 2),
-(13, 2, NULL, now(), 3);
+(11, 2, 'This is Case Note 1', now(), 1),
+(11, 2, 'This is Case Note 2', now(), 2),
+(12, 2, NULL, now(), 3),
+(13, 2, NULL, now(), 4);
 INSERT INTO UserInfo VALUES 
 (11, "F", "abby2@gmail.com", 905456, now(), "123 Apple Street", "Level 1", "Vancouver", "BC", NULL), 
 (12, "F", "sarah@outlook.com", 416123, now(), "13 St George Street", "Level 2", "Victoria", "BC", NULL), 

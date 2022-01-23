@@ -117,11 +117,11 @@ Customer.setAlertCaseId = function (user_id, case_id) {
 
 Customer.getCases = function(user_id, start_date, end_date) {
   return new Promise((resolve, reject) => {
-      sql.query("SELECT * FROM cases WHERE user_id = ? AND date(last_update) between ? and ?", 
+      sql.query("SELECT * FROM cases WHERE user_id = ? AND date(last_update) between '?' and '?'", 
       [user_id, start_date, end_date],
       function(err, cases) {
           if (err) reject(err);
-          if (cases.length == 0) {
+          if (cases.length == 0) { 
             // no case data found for this user/client
             resolve([]);
           }
@@ -139,7 +139,7 @@ Customer.queryUserData = function(query_params) {
     console.log(q);
     const data_query = `
     SELECT
-      client.name, client.email,
+      client.user_id, client.name, client.email,
       info.gender, info.applicant_phone, info.applicant_dob, info.curr_level, info.city, info.province,
       kin.kin_name, kin.relationship, kin.kin_phone, kin.kin_email
     FROM client_users AS client
