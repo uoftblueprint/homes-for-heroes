@@ -73,9 +73,19 @@ const customerController = {
       console.error(err);
       res.send({'error': err});
     }
+  },
+
+  async updateProfile(req, res) {
+    try {
+      const { user_id } = req.params;
+      const profile = await Customer.updateProfile(user_id, req.query);
+      res.send(profile);
+    } catch (err) {
+      console.error(err);
+      res.send({"error": err});
+    }
   }
 };
-
 
 module.exports = customerController;
 
