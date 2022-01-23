@@ -25,10 +25,10 @@ export default function CaseCard({ user, note }) {
       <AlertTitle>Alert created at {note.last_update} by this admin</AlertTitle>{note.notes}</Alert>
       </Grid>
       <Grid item xs={6}>
-      <Button variant="outlined" size="small" onClick={viewProfile}><VisibilityIcon></VisibilityIcon>View Full Profile</Button>
+        <Button variant="outlined" size="small" onClick={viewProfile}><VisibilityIcon></VisibilityIcon>View Full Profile</Button>
       </Grid>
       <Grid item xs={6}>
-      <AddCaseButton />
+        <AddCaseButton user_id={user.user_id}/>
       </Grid>
     </Grid>
     );
