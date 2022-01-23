@@ -1,7 +1,7 @@
 const Admin = require("./admin.model");
 const { query } = require("./db");
 
-const AdminProfile = function(user_id, query_params) {
+const AdminProfile = function(admin_id, query_params) {
   this.admin_id = admin_id;
   this.name = query_params.name;
   this.email = query_params.email;
