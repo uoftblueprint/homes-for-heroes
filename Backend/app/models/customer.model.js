@@ -128,13 +128,15 @@ Customer.queryUserData = function(query_params) {
 Customer.updateProfile = function(user_id, query_params) {
   return new Promise((resolve, reject) => {
     //console.log(query_params);
-    cust = new CustomerProfile(query_params);
+    cust = new CustomerProfile(user_id, query_params);
+    queries = cust.buildQueries();
+    qry = queries.join(";");
     // need to update client_users and UserInfo tables separately
     //sql_qry_c = 'UPDATE client_users SET phone = ? WHERE user_id = ?';
-    sql.query("UPDATE client_users SET phone = ? WHERE user_id = ?", [cust.phone, user_id],
+    sql.query(qry,
       function(err, rows) {
         if (err) reject(err);
-        else resolve(rows[0]);
+        else resolve(rows);
       });
   });
 };
