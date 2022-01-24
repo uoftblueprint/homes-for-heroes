@@ -50,15 +50,64 @@ export default function ProfilePage( {user_id} ) {
    //
 
    // User Info Table
-   const [userInfo, setUserInfo] = useState({});
+   const [userInfo, setUserInfo] = useState({
+      name: '',
+      email: '',
+      phone: '',
+      street_name: '',
+      city: '',
+      province: '',
+      applicant_dob: ''
+   });
 
-   fetch(`/api/getCustomerInfo/:${user_id}`)
-      .then(response => response.json())
-      .then(data => setUserInfo(data))
-      .then(console.log(userInfo))
-      .catch(error => {
-         console.error(error);
+   function fetchInfo () {
+      fetch(`http://localhost:3000/getCustomerInfo/11`)
+         .then(resp => resp.json())
+         .then(data => {
+            setUserInfo({
+               ...userInfo,
+               name: data.customerInfo[0].name,
+               email: data.customerInfo[0].email,
+               phone: data.customerInfo[0].phone,
+               street_name: data.customerInfo[0].street_name,
+               city: data.customerInfo[0].city,
+               province: data.customerInfo[0].province,
+               applicant_dob:data.customerInfo[0].applicant_dob
+            });
+            // console.log(data.customerInfo[0].name);
+            // console.log(data.customerInfo[0].hasOwnProperty('name'))
+            console.log(userInfo);
+         })
+         .catch(error => {
+            console.error(error);
+         }
+      );
+   }
+
+   React.useEffect(() => {
+      fetchInfo()
+   }, []);
+
+   function postInfo(user_id, data) {
+      fetch(`http://localhost:3000/updateProfile`, {
+         method: 'POST',
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify(data),
+      })
+      .then(resp => resp.json())
+      .then(data => {
+         console.log('Success:', data);
+      })
+      .catch((error) => {
+         console.error('Error:', error);
       });
+   }
+
+   React.useEffect(() => {
+      postInfo(user_id, userInfo)
+   }, [userInfo])
 
    function createInfo(subheading, info) {
       return {subheading, info}
@@ -66,19 +115,43 @@ export default function ProfilePage( {user_id} ) {
 
    const rows = [
       createInfo('Name', {userInfo}.name),
-      createInfo('Email', {userInfo}.name),
+      createInfo('Email', {userInfo}.email),
       createInfo('Phone', {userInfo}.phone),
-      createInfo('Street Address', {userInfo}.address),
+      createInfo('Street Name', {userInfo}.street_name),
       createInfo('City', {userInfo}.city),
       createInfo('Province', {userInfo}.province),
-      createInfo('Date of Birth \n (MM/DD/YYYY)', {userInfo}.birthdate)
+      createInfo('Date of Birth \n (MM/DD/YYYY)', {userInfo}.applicant_dob)
    ];
    //
+
+   const [formInfo, setFormInfo] = useState({
+      name: '',
+      email: '',
+      phone: '',
+      street_name: '',
+      city: '',
+      province: '',
+      dob: ''
+   })
+
+   const handleSubmit = (event) => {
+      event.preventDefault();
+      console.log(formInfo);
+    };
+
+   const handleInputChange = (event) => {
+      const { name, value } = event.target;
+      setFormInfo({
+        ...formInfo,
+        [name]: value,
+      });
+    };
 
    //Edit User Info
    const [editInfoStatus, setEditInfoStatus] = useState(false);
 
    const [editPasswordStatus, setEditPasswordStatus] = useState(false);
+
    //
 
    // Password
@@ -103,15 +176,21 @@ export default function ProfilePage( {user_id} ) {
 
             <TabPanel value={value} index={0}>
                {editInfoStatus ? (
-                  <Box sx={{display: 'inline-flex', flexDirection: 'column', height: 500}}>
+                  <Box component="form" onSubmit={handleSubmit} sx={{display: 'inline-flex', flexDirection: 'column', height: 500}}>
                      {rows.map((row) => (
-                        <TextField label={row.subheading} defaultValue={row.info} size='standard' sx={{fontSize: '15px', width:500}} />
+                        <TextField 
+                           label={row.subheading} 
+                           defaultValue={row.info} 
+                           value={formInfo.row.info} 
+                           onChange={handleInputChange} 
+                           size='standard' 
+                           sx={{fontSize: '15px', width:500}} />
                      ))}
                      <Box sx={{display: 'inline-flex', justifyContent: 'center', mt:'15px'}}>
                         <Button variant='outlined' onClick={() => setEditInfoStatus(false)} sx={{mr: 1}}>
                            Cancel
                         </Button>
-                        <Button variant='outlined' onClick={() => setEditInfoStatus(false)} sx={{ml: 1}}>
+                        <Button variant='outlined' type='submit' onClick={() => setEditInfoStatus(false) } sx={{ml: 1}}>
                            Submit
                         </Button>
                      </Box>
