@@ -31,6 +31,17 @@ export default function CaseList() {
       });
   };
 
+  const filterPosts = (posts, query) => {
+    if (!query) {
+        return posts;
+    }
+
+    return posts.filter((post) => {
+        const postName = post.name.toLowerCase();
+        return postName.includes(query);
+    });
+  };
+
   return (
     <>
       <Typography sx={{ fontSize: 48, mb: '1px'}}>Case Management</Typography>

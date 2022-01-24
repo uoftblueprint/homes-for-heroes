@@ -17,6 +17,7 @@ export default function AddCaseButton(props) {
   const [title, setTitle] = React.useState("");
   const [time, setTime] = React.useState(dt);
 
+  // manual admin_id, must change when we set up admin auth
   const normRequestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -28,10 +29,9 @@ export default function AddCaseButton(props) {
   };  
 
   const alertRequestOptions = {
-    method: 'POST',
+    method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ 
-      alert_id: props.user_id,
       user_id: props.user_id,
       admin_id: 2,
       notes: body
@@ -61,7 +61,8 @@ export default function AddCaseButton(props) {
   const addAlertNote = () => {
     let dt = new Date().toLocaleDateString();
     setDate(dt);
-    fetch('http://localhost:3000/casenote', alertRequestOptions)
+    // case_id manual as well, temp
+    fetch('http://localhost:3000/${props.user_id}/alertCase?case_id=0', alertRequestOptions)
       .then(response => response.json());
     handleClose();
   }
@@ -101,7 +102,7 @@ export default function AddCaseButton(props) {
             id="name"
             label="Notes"
             multiline
-            minRows={15}
+            minRows={25}
             maxRows={50}
             type="notes"
             fullWidth

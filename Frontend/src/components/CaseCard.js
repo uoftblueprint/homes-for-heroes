@@ -14,6 +14,13 @@ export default function CaseCard({ user, note }) {
     history.push(`/casenotes/${user.user_id}`);
   }
 
+  let formatDate = (dt) => {
+    var d = (new Date(dt) + '').split(' ');
+    d[2] = d[2] + ',';
+
+    return [d[0], d[1], d[2], d[3]].join(' ');
+  }
+
   return (
     <Grid container spacing={2} sx={{marginBottom: '20px'}}>
       <Grid item xs={12}>
@@ -22,7 +29,7 @@ export default function CaseCard({ user, note }) {
       severity="info"
       sx={{width: '80%', margin: 'auto', textAlign: 'left'}}
       >
-      <AlertTitle>Alert created at {note.last_update} by this admin</AlertTitle>{note.notes}</Alert>
+      <AlertTitle>Alert created at {formatDate(note.last_update)} by this admin </AlertTitle>{note.notes}</Alert>
       </Grid>
       <Grid item xs={6}>
         <Button variant="outlined" size="small" onClick={viewProfile}><VisibilityIcon></VisibilityIcon>View Full Profile</Button>
