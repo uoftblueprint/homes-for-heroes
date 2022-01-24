@@ -13,16 +13,19 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
+import Typography from "@mui/material/Typography";
+import Chip from "@mui/material/Chip"
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
 import LaunchIcon from "@mui/icons-material/Launch";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import { useHistory } from "react-router-dom";
+// import data from "./MOCK_DATA.json"
 
 const useStyles = makeStyles({
   root: {
     marginTop: "10px",
-    border: 0,
-    fontFamily: "Inter",
+    border: 0, 
     alignContent: "flex-start",
     justifyContent: "flex-start",
     "& .MuiDataGrid-columnHeaderTitle": {
@@ -69,20 +72,27 @@ function loadServerRows(searchString, page, pageSize) {
     })
       .then((resp) => resp.json())
       .then((resp) => {
-        resolve(resp);
+        if (resp.constructor === Array){
+          resolve(resp);
+        }
+        {
+          resolve([])
+        }
       });
+    // resolve(data.slice((page-1) * pageSize, page * pageSize * 5))
   });
 }
 
-function exportCSV(searchString) {
-  let url = "api/getUserInfoCSV?";
+function exportCSV(searchParams) {
+  let url = "http://localhost:3000/getUsersInfoCSV?";
 
-  url += `q=${searchString}`;
+  searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
+  console.log(url);
 
   fetch(url, {
     headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
+      "Content-Type": "text/csv",
+      Accept: "text/csv",
     },
   })
     .then((res) => {
@@ -103,7 +113,6 @@ export default function CRM() {
   const classes = useStyles();
 
   const [pageSize, setPageSize] = React.useState(5);
-  const [searchString, setSearchString] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [rows, setRows] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -114,12 +123,11 @@ export default function CRM() {
     setPage(1);
     setPageSize(value);
   }
+  const history = useHistory();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setPage(1);
-    setSearchString(e.target[0].value);
-  };
+  const viewProfile = (id) => {
+    history.push(`/casenotes/${id}`);
+  }
 
   React.useEffect(() => {
     let active = true;
@@ -143,12 +151,34 @@ export default function CRM() {
     <Card
       display="flex"
       direction="column"
-      sx={{ minHeight: 1000, minWidth: 375, width: "100%", maxWidth: 1200 }}
+      sx={{ mt: '15px', boxShadow: 'None', minHeight: 1000, minWidth: 375, width: "100%", maxWidth: 1200 }}
     >
-      <Grid component="form" onSubmit={handleSubmit}>
-        <FormControl sx={{ width: "100%" }}>
-          <TextField
+      <Grid
+      display="flex"
+      direction="row"
+      >
+        <Typography sx={{ fontSize: 48, mb: '1px'}}>
+          CRM
+        </Typography>
+      </Grid>
+      <Grid 
+      display="flex"
+      direction="row" 
+      >
+          <Select
+          value={searchCategory}
+          onChange={(e) => setSearchCategory(e.target.value)}
+          >
+            <MenuItem value={"name"}>Name</MenuItem>
+            <MenuItem value={"email"}>Email</MenuItem>
+            <MenuItem value={"phone"}>Phone</MenuItem>
+            <MenuItem value={"status"}>Status</MenuItem>
+            <MenuItem value={"demographic"}>Demographic</MenuItem>
+            <MenuItem value={"income"}>Income</MenuItem>
+          </Select>
+        <TextField
             className={classes.SearchInputField}
+            fullWidth 
             variant="outlined"
             placeholder="Search Users"
             name="search"
@@ -156,8 +186,28 @@ export default function CRM() {
             InputProps={{
               startAdornment: <SearchIcon fontSize="small" />,
             }}
-          />
-        </FormControl>
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                setSearchParams(arr => ([...arr, {
+                  "name": searchCategory,
+                  "value": e.target.value
+                }]));
+                e.target.value = ""
+              }
+            }}
+        /> 
+      </Grid>
+      <Grid
+      display="flex"
+      direction="row"
+      >
+        {searchParams.map((param) => ( 
+            <Chip
+              sx={{m: '10px'}}
+              label={param.name + '=' + param.value} 
+              onDelete={(e) => setSearchParams(arr => arr.filter(element => element !== param))}
+            /> 
+        ))}
       </Grid>
       <Grid
         container
@@ -204,7 +254,7 @@ export default function CRM() {
         >
           <ArrowForwardIosIcon />
         </IconButton>
-        <Button onClick={() => exportCSV(searchString)}>
+        <Button onClick={() => exportCSV(searchParams)}>
           Export as CSV
           <FileDownloadIcon />
         </Button>
@@ -215,6 +265,7 @@ export default function CRM() {
         direction="row"
         className={classes.root}
         pageSize={pageSize}
+        getRowId={row => row.user_id}
         rows={rows}
         loading={loading}
         columns={[
@@ -232,7 +283,7 @@ export default function CRM() {
                     flexWrap: "wrap",
                   }}
                 >
-                  <Link href={`/casenotes/${params.id}`}>
+                  <Link onClick={() => viewProfile(params.id)}>
                     <span>{params.formattedValue}</span>
                     <LaunchIcon sx={{ fontSize: 16 }} />
                   </Link>
