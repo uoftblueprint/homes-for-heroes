@@ -11,8 +11,6 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 export default function CaseCard() {
 
@@ -22,12 +20,6 @@ export default function CaseCard() {
     const [alert, setAlert] = useState([]);
     const [caseNotes, setCaseNotes] = useState([]);
 
-    let formatDate = (dt) => {
-        var d = (new Date(dt) + '').split(' ');
-        d[2] = d[2] + ',';
-    
-        return [d[0], d[1], d[2], d[3]].join(' ');
-    }
 
     useEffect(() => {
         fetch(`http://localhost:3000/customers`)
@@ -38,7 +30,7 @@ export default function CaseCard() {
                     setCurr(res.customers[keyName]);
                 }
               })
-        });
+        })
         fetch(`http://localhost:3000/customers/${id}/alertCase`)
           .then(response => response.json())
           .then(caseNote => setAlert(caseNote))
@@ -49,7 +41,8 @@ export default function CaseCard() {
           .then(response => response.json())
           .then(res => {
             setCaseNotes(res.cases);
-        });
+            console.log(res.cases);
+        })
       }, []);
   
     return (
@@ -62,37 +55,34 @@ export default function CaseCard() {
                     <CardContent>
                         <Grid container spacing={2} >
                             <Grid item xs={12}>
-                                <Typography sx={{ fontSize: 40, float: "left" }} color="text.primary">
+                                <Typography sx={{ fontSize: 32 }} color="text.primary">
                                     {curr.name}
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                <Typography sx={{ fontSize: 16, float: "left" }} color="text.primary">
+                                <Typography sx={{ fontSize: 16 }} color="text.primary">
                                     E-mail: {curr.email}
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                <Typography sx={{ fontSize: 16, float: "left" }} color="text.primary">
+                                <Typography sx={{ fontSize: 16 }} color="text.primary">
                                     Phone: {curr.phone}
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                <Typography sx={{ fontSize: 16, float: "left" }} color="text.primary">
+                                <Typography sx={{ fontSize: 16 }} color="text.primary">
                                     Status: Level {curr.alert_case_id}
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                <Typography sx={{ fontSize: 16, float: "left" }} color="text.primary">
+                                <Typography sx={{ fontSize: 16 }} color="text.primary">
                                     Next of kin contact: Undetermined
                                 </Typography>
                             </Grid>
                             <Grid item xs={4}>
-                                <Typography sx={{ fontSize: 16, float: "left" }} color="text.primary">
+                                <Typography sx={{ fontSize: 16 }} color="text.primary">
                                     Next of kin phone: Undetermined
                                 </Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Button variant="outlined" size="small" sx={{ float:"left" }}><VisibilityIcon />View Intake Form</Button>
                             </Grid>
                         </Grid>
                     </CardContent>
@@ -110,10 +100,8 @@ export default function CaseCard() {
                           expandIcon={<ExpandMoreIcon />}
                           aria-controls="panel1a-content"
                           id="panel1a-header"
-                          sx={{ display: "flex", justifyContent:"space-between" }}
                         >
-                          <Typography sx={{ width:"10%" }}>Case Note {index+1}</Typography>
-                          <Typography sx={{ color: 'text.secondary', marginLeft:"auto", paddingRight:"10px" }}><CalendarTodayIcon />{formatDate(item.last_update)}</Typography>
+                          <Typography>Case Note {index}</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
                           <Typography>{item.notes}</Typography>

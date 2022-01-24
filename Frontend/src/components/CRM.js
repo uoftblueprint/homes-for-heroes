@@ -56,13 +56,14 @@ const useStyles = makeStyles({
   },
 });
 
-function loadServerRows(searchString, page, pageSize) {
+function loadServerRows(searchParams, page, pageSize) {
   return new Promise((resolve) => {
-    let url = "api/customers/queryUserData?";
+    let url = "http://localhost:3000/getUserData?";
 
     url += `page=${page}`;
     url += `&page_size=${pageSize}`;
-    url += `&q=${searchString}`;
+    searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
+    console.log(url);
 
     fetch(url, {
       headers: {
@@ -116,6 +117,8 @@ export default function CRM() {
   const [page, setPage] = React.useState(1);
   const [rows, setRows] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const [searchCategory, setSearchCategory] = React.useState("name");
+  const [searchParams, setSearchParams] = React.useState([]);
 
   let pageCount = Math.ceil(rows.length / pageSize);
 
@@ -134,7 +137,7 @@ export default function CRM() {
 
     (async () => {
       setLoading(true);
-      const newRows = await loadServerRows(searchString, page, pageSize);
+      const newRows = await loadServerRows(searchParams, page, pageSize);
       if (!active) {
         return;
       }
@@ -145,7 +148,7 @@ export default function CRM() {
     return () => {
       active = false;
     };
-  }, [searchString, page, pageSize]);
+  }, [searchParams, page, pageSize]);
 
   return (
     <Card
@@ -210,7 +213,7 @@ export default function CRM() {
         ))}
       </Grid>
       <Grid
-        container
+        container 
         display="flex"
         direction="row"
         alignItems="center"
@@ -261,6 +264,7 @@ export default function CRM() {
       </Grid>
       <DataGrid
         container
+        sx={{minHeight: 500}}
         display="flex"
         direction="row"
         className={classes.root}
@@ -299,16 +303,26 @@ export default function CRM() {
           },
           {
             editable: "false",
-            field: "phone",
+            field: "applicant_phone",
             headerName: "PHONE",
             flex: 1.5,
           },
           {
             status: "false",
-            field: "status",
+            field: "curr_level",
             headerName: "STATUS",
             flex: 1,
           },
+          {
+            field: "Demographic",
+            headerName: "DEMOGRAPHICS",
+            flex: 2,
+          },
+          {
+            field: "income",
+            headerName: "INCOME",
+            flex: 1,
+          } 
         ]}
       />
     </Card>
