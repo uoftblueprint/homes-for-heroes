@@ -117,7 +117,7 @@ Customer.setAlertCaseId = function (user_id, case_id) {
 
 Customer.getCases = function(user_id, start_date, end_date) {
   return new Promise((resolve, reject) => {
-      sql.query("SELECT * FROM cases WHERE user_id = ? AND date(last_update) between '?' and '?'", 
+      sql.query("SELECT * FROM cases WHERE user_id = ? AND date(last_update) between ? and ?", 
       [user_id, start_date, end_date],
       function(err, cases) {
           if (err) reject(err);

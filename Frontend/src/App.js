@@ -7,7 +7,6 @@ import Login from './components/Login.js';
 import CRM from './components/CRM.js';
 import Privileges from './components/Privileges.js';
 import ProfilePage from './components/ProfilePage.js';
-import UserInfo from './components/UserInfo.js';
 import { Typography } from '@mui/material';
 import CaseDetail from './components/CaseDetail';
 
@@ -22,7 +21,7 @@ function App() {
           <Route exact path="/usercase" render={props => <CaseList {...props} />} />
           <Route exact path="/forms" render={props => <Typography color='black'>Forms</Typography>} />
           <Route exact path="/admin" render={props => <Privileges {...props} />} />
-          <Route exact path="/casenotes/:user_id" render={props => <UserInfo {...props} />} />
+          <Route exact path="/casenotes/:id" render={props => <CaseDetail {...props} />} />
           {/* temp profile page: */}
           <Route exact path="/profile" render={props => <ProfilePage {...props} />} />
           <Route exact path='/login' render={props => <Login {...props} />} />
