@@ -19,6 +19,7 @@ import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
 import LaunchIcon from "@mui/icons-material/Launch";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import { useHistory } from "react-router-dom";
 // import data from "./MOCK_DATA.json"
 
 const useStyles = makeStyles({
@@ -73,8 +74,7 @@ function loadServerRows(searchParams, page, pageSize) {
       .then((resp) => resp.json())
       .then((resp) => {
         if (resp.constructor === Array){
-          console.log(resp.constructor);
-          resolve(resp.map((element, index) => ({ ...element, "id": index })));
+          resolve(resp);
         }
         {
           resolve([])
@@ -126,7 +126,11 @@ export default function CRM() {
     setPage(1);
     setPageSize(value);
   }
+  const history = useHistory();
 
+  const viewProfile = (id) => {
+    history.push(`/casenotes/${id}`);
+  }
 
   React.useEffect(() => {
     let active = true;
@@ -265,6 +269,7 @@ export default function CRM() {
         direction="row"
         className={classes.root}
         pageSize={pageSize}
+        getRowId={row => row.user_id}
         rows={rows}
         loading={loading}
         columns={[
@@ -282,7 +287,7 @@ export default function CRM() {
                     flexWrap: "wrap",
                   }}
                 >
-                  <Link href={`/usercase/${params.id}`}>
+                  <Link onClick={() => viewProfile(params.id)}>
                     <span>{params.formattedValue}</span>
                     <LaunchIcon sx={{ fontSize: 16 }} />
                   </Link>
