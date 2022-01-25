@@ -9,10 +9,10 @@ import Privileges from './components/Privileges.js';
 import ProfilePage from './components/ProfilePage.js';
 import { Typography } from '@mui/material';
 import CaseDetail from './components/CaseDetail';
-import FormTop from './components/form/FormTop.js';
-import FormCreator from "./components/form/FormCreator";
-import FormView from "./components/form/FormView";
-import FormEditor from "./components/form/FormEditor";
+import FormTop from './pages/form/FormTop.js';
+import FormCreate from "./pages/form/FormCreate";
+import FormView from "./pages/form/FormView";
+import FormEdit from "./pages/form/FormEdit";
 
 function App() {
   return (
@@ -24,9 +24,9 @@ function App() {
           <Route exact path="/usercrm" render={props => <CRM {...props} />} />
           <Route exact path="/usercase" render={props => <CaseList {...props} />} />
           <Route exact path="/forms" component={FormTop} />
-            <Route exact path="/forms/create" component={FormCreator} />
+            <Route exact path="/forms/create" component={FormCreate} />
             <Route exact path="/forms/view/:formId" component={FormView} />
-            <Route exact path="/forms/edit/:formId" component={FormEditor} />
+            <Route exact path="/forms/edit/:formId" component={FormEdit} />
           <Route exact path="/admin" render={props => <Privileges {...props} />} />
           <Route exact path="/casenotes/:id" render={props => <CaseDetail {...props} />} />
           {/* temp profile page: */}
