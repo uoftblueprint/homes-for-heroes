@@ -1,5 +1,4 @@
 const CustomForm = require('../models/custom-form.model');
-const Customer = require("../models/customer.model");
 
 
 const customFormController = {

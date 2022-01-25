@@ -4,12 +4,25 @@ import { Button, Checkbox, Container, CssBaseline, FormControlLabel, Typography,
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-const theme = createTheme();
+const theme = createTheme({
+  palette: {
+    background: {
+      default: 'white',
+    },
+    primary: {
+      main: '#C91C1C',
+    },
+    secondary: {
+      main: '#2196F3',
+    },
+  }
+});
 
 const INITIAL_USER = {
-  username: '',
+  email: '',
   password: ''
 };  
+
 
 export default function Login() {
   const [user, setUser] = React.useState(INITIAL_USER);
@@ -33,8 +46,8 @@ export default function Login() {
 
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Container component="main" maxWidth="xs">
-        <CssBaseline />
         <Box
           sx={{
             marginTop: 8,
@@ -44,17 +57,17 @@ export default function Login() {
           }}
         >
           <Typography component="h1" variant="h5">
-            Log In
+            Sign in to access system
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               required
               fullWidth
               margin="normal"
-              id="username"
-              label="Username"
-              name="username"
-              autoComplete="username"
+              id="email"
+              label="Email"
+              name="Email"
+              autoComplete="Email"
             />
             <TextField
               required
@@ -80,18 +93,23 @@ export default function Login() {
                 )
               }}
             />
-            <FormControlLabel
+            {/* <FormControlLabel
               control={<Checkbox value="remember" />}
               label="Remember me"
-            />
+            /> */}
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, textTransform: 'none', fontSize: 16 }}
             >
-              Log In
+              Sign In
             </Button>
+
+            <Typography sx={{ fontSize: 14, color: 'grey' }}>
+              If you don't have credentials, please contact your team's supervisor for access
+            </Typography>
+
           </Box>
         </Box>
       </Container>
