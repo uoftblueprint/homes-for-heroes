@@ -7,7 +7,7 @@ import Login from './components/Login.js';
 import CRM from './components/CRM.js';
 import Privileges from './components/Privileges.js';
 import ProfilePage from './components/ProfilePage.js';
-import { Typography } from '@mui/material';
+import Home from './components/Home';
 import CaseDetail from './components/CaseDetail';
 import FormTop from './pages/form/FormTop.js';
 import FormCreate from "./pages/form/FormCreate";
@@ -20,7 +20,7 @@ function App() {
       <header className="App-header">
         <NavBar />
         <Switch>
-          <Route exact from="/" render={props => <Typography color='black'>Home</Typography>} />
+          <Route exact from="/" render={props => <Home />} />
           <Route exact path="/usercrm" render={props => <CRM {...props} />} />
           <Route exact path="/usercase" render={props => <CaseList {...props} />} />
           <Route exact path="/forms" component={FormTop} />

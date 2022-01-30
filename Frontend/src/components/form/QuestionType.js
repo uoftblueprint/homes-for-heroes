@@ -35,7 +35,7 @@ const QuestionType = function (qType) {
             name: "Multiple Choice",
             icon: RadioButtonCheckedIcon,
             divider: false,
-            options: <Radio/>
+            options: <Radio />
         },
         {
             qType: 4,
