@@ -9,4 +9,12 @@ var connection = mysql.createPool({
   multipleStatements: true
 });
 
+// uncomment for troubleshooting the connection
+// connection.getConnection(function(err) {
+//   if (err) {
+//     return console.error('error: ' + err.message);
+//   }
+//   console.log('Connected to the MySQL server.');
+// });
+
 module.exports = connection;

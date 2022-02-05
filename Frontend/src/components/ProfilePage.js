@@ -23,7 +23,6 @@ const theme = createTheme({
    },
 });
 
-// Tabs
 function TabPanel(props) {
    const {children, value, index} = props;
    return (
@@ -38,16 +37,13 @@ function TabPanel(props) {
       </div>
    );
 }
-//
 
 export default function ProfilePage( {user_id} ) {
    // Tabs
    const [value, setValue] = React.useState(0);
-
    const handleTabs = (event, val) => {
       setValue(val)
    };
-   //
 
    // User Info Table
    const [userInfo, setUserInfo] = useState({
@@ -59,8 +55,10 @@ export default function ProfilePage( {user_id} ) {
       province: '',
       applicant_dob: ''
    });
+   const [rows, setRows] = React.useState([]);
+   const [loading, setLoading] = React.useState(false);
 
-   function fetchInfo () {
+   function fetchInfo() {
       fetch(`http://localhost:3000/getCustomerInfo/11`)
          .then(resp => resp.json())
          .then(data => {
@@ -74,8 +72,6 @@ export default function ProfilePage( {user_id} ) {
                province: data.customerInfo[0].province,
                applicant_dob:data.customerInfo[0].applicant_dob
             });
-            // console.log(data.customerInfo[0].name);
-            // console.log(data.customerInfo[0].hasOwnProperty('name'))
             console.log(userInfo);
          })
          .catch(error => {
@@ -85,73 +81,87 @@ export default function ProfilePage( {user_id} ) {
    }
 
    React.useEffect(() => {
-      fetchInfo()
-   }, []);
+      let active = true;
 
-   function postInfo(user_id, data) {
-      fetch(`http://localhost:3000/updateProfile`, {
-         method: 'POST',
-         headers: {
-            'Content-Type': 'application/json',
-         },
-         body: JSON.stringify(data),
-      })
-      .then(resp => resp.json())
-      .then(data => {
-         console.log('Success:', data);
-      })
-      .catch((error) => {
-         console.error('Error:', error);
-      });
-   }
+      (async () => {
+         setLoading(true);
+         await fetchInfo();
+         if (!active) {
+            return;
+         }
+         setLoading(false);
+      })();
+
+      return () => {
+         active = false;
+      };
+   }, [])
 
    React.useEffect(() => {
-      postInfo(user_id, userInfo)
+      changeInfo()
    }, [userInfo])
 
-   function createInfo(subheading, info) {
-      return {subheading, info}
-   }
-
-   const rows = [
-      createInfo('Name', {userInfo}.name),
-      createInfo('Email', {userInfo}.email),
-      createInfo('Phone', {userInfo}.phone),
-      createInfo('Street Name', {userInfo}.street_name),
-      createInfo('City', {userInfo}.city),
-      createInfo('Province', {userInfo}.province),
-      createInfo('Date of Birth \n (MM/DD/YYYY)', {userInfo}.applicant_dob)
-   ];
-   //
-
-   const [formInfo, setFormInfo] = useState({
-      name: '',
-      email: '',
-      phone: '',
-      street_name: '',
-      city: '',
-      province: '',
-      dob: ''
-   })
+   const [formInfo, setFormInfo] = useState({})
 
    const handleSubmit = (event) => {
       event.preventDefault();
-      console.log(formInfo);
+      (async () => {
+         await setUserInfo({
+            ...userInfo,
+            ...formInfo
+         });
+      })();
+      setEditingInfo(false)
     };
 
    const handleInputChange = (event) => {
-      const { name, value } = event.target;
+      const { id, value } = event.target;
       setFormInfo({
-        ...formInfo,
-        [name]: value,
+         ...formInfo,
+        [id]: value
       });
     };
 
+   const requestOptions = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+         name: userInfo.name,
+         email: userInfo.email,
+         phone: userInfo.phone,
+         street_name: userInfo.street_name,
+         city: userInfo.city,
+         province: userInfo.province,
+         applicant_dob: userInfo.applicant_dob
+      })
+   };  
+
+   const changeInfo = () => {
+      fetch('http://localhost:3000/updateCustomerProfile/11', requestOptions)
+         .then(response => response.json());
+   }
+
+   // function postInfo(user_id, data) {
+   //    fetch(`http://localhost:3000/updateProfile`, {
+   //       method: 'POST',
+   //       headers: {
+   //          'Content-Type': 'application/json',
+   //       },
+   //       body: JSON.stringify(data),
+   //    })
+   //    .then(resp => resp.json())
+   //    .then(data => {
+   //       console.log('Success:', data);
+   //    })
+   //    .catch((error) => {
+   //       console.error('Error:', error);
+   //    });
+   // }
+
    //Edit User Info
-   const [editInfoStatus, setEditInfoStatus] = useState(false);
+   const [editingInfo, setEditingInfo] = useState(false);
 
    const [editPasswordStatus, setEditPasswordStatus] = useState(false);
-
    //
 
    // Password
@@ -161,6 +171,25 @@ export default function ProfilePage( {user_id} ) {
       setPasswordShown(!passwordShown);
    };
    //
+
+   function cleanKey(str) {
+      if (str === "applicant_dob") {
+         return "date of birth";
+      }
+      else {
+         return str.replace("_", " ")
+      }
+   }
+
+   function cleanVal(str) {
+      if (str[4] === '-' && str[7] === '-' && str[10] === 'T' && str[13] === ':' && str[16] === ':' && str.at(-1) === 'Z') {
+         return str.slice(0, 10);
+      }
+      else {
+         return str;
+      }
+   }
+
 
    return (
       <ThemeProvider theme={theme}>
@@ -175,22 +204,26 @@ export default function ProfilePage( {user_id} ) {
             </Tabs>
 
             <TabPanel value={value} index={0}>
-               {editInfoStatus ? (
+               {editingInfo ? (
                   <Box component="form" onSubmit={handleSubmit} sx={{display: 'inline-flex', flexDirection: 'column', height: 500}}>
-                     {rows.map((row) => (
-                        <TextField 
-                           label={row.subheading} 
-                           defaultValue={row.info} 
-                           value={formInfo.row.info} 
-                           onChange={handleInputChange} 
-                           size='standard' 
-                           sx={{fontSize: '15px', width:500}} />
+
+                     {Object.entries(userInfo).map((row) => (
+                        <TextField
+                           id={row[0]}
+                           label={cleanKey(row[0])}
+                           defaultValue={cleanVal(row[1])}
+                           value={userInfo[cleanVal(row[1])]}
+                           onChange={handleInputChange}
+                           size='standard'
+                           variant='standard'
+                           sx={{ fontSize: '15px', width:500, textTransform: 'capitalize', mb: '8px'}} />
                      ))}
+
                      <Box sx={{display: 'inline-flex', justifyContent: 'center', mt:'15px'}}>
-                        <Button variant='outlined' onClick={() => setEditInfoStatus(false)} sx={{mr: 1}}>
+                        <Button variant='outlined' type='button' onClick={() => setEditingInfo(false)} sx={{mr: 1}}>
                            Cancel
                         </Button>
-                        <Button variant='outlined' type='submit' onClick={() => setEditInfoStatus(false) } sx={{ml: 1}}>
+                        <Button variant='outlined' type='submit' sx={{ml: 1}}>
                            Submit
                         </Button>
                      </Box>
@@ -201,23 +234,21 @@ export default function ProfilePage( {user_id} ) {
                         <TableContainer>
                            <Table sx={{ minWidth: '500px' }} aria-label="simple table">
                            <TableBody>
-                              {rows.map((row) => (
-                                 <TableRow
-                                 key={row.subheading}
-                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                 >
-                                 <TableCell component="th" scope="row" style={{ fontSize: '16px'}}>
-                                    {<b>{row.subheading}:</b>}
+
+                           {Object.entries(userInfo).map((row) => (
+                              <TableRow key={row[0]} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                 <TableCell component="th" scope="row" style={{ fontSize: '16px', textTransform: 'capitalize' }}>
+                                    {<b>{cleanKey(row[0])}:</b>}
                                  </TableCell>
-                                 <TableCell align="right">{row.info}</TableCell>
-                                 </TableRow>
-                              ))}
+                                 <TableCell align="right" style={{ fontSize: '16px'}}>{cleanVal(row[1])}</TableCell>
+                              </TableRow>
+                           ))}
                            </TableBody>
                            </Table>
                         </TableContainer>
                      </Box>
                      <Box>
-                        <Button variant='outlined' startIcon={<EditIcon />} onClick={() => setEditInfoStatus(true)} sx={{padding: '7px', width:'200px', mt: '15px'}}>
+                        <Button variant='outlined' startIcon={<EditIcon />} onClick={() => setEditingInfo(true)} sx={{padding: '7px', width:'200px', mt: '15px'}}>
                            Edit Information
                         </Button>
                      </Box>
