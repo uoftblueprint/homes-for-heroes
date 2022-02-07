@@ -77,8 +77,7 @@ function loadServerRows(searchParams, page, pageSize) {
       .then((resp) => {
         if (resp.constructor === Array) {
           resolve(resp);
-        }
-        {
+        } else {
           resolve([]);
         }
       });
