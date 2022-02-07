@@ -4,7 +4,7 @@ const Customer = require('../models/customer.model');
 
 const options = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: 'CHANGEME',
+  secretOrKey: 'CHANGEME', // TODO: Switch to pub/priv keypair
 };
 
 module.exports = (passport) => {
