@@ -1,6 +1,7 @@
 const customers = require('../controllers/customer.controller');
 const validationSchema = require('../validators/customer.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
+const passport = require('passport');
 
 module.exports = (app) => {
   app.get('/customers', customers.getAllUsers);
@@ -14,6 +15,7 @@ module.exports = (app) => {
 
   app.get(
     '/getUserData',
+    passport.authenticate('jwt', { failureRedirect: '/login', session: false }),
     validationSchema.getUserDataSchema,
     validationErrorHandler,
     customers.getUserData,
