@@ -1,19 +1,19 @@
 const mysql = require('mysql2');
 const dbConfig = require('../config/db.config.js');
+const loggger = require('../logger');
 
-var connection = mysql.createPool({
+const connection = mysql.createPool({
   host: dbConfig.HOST,
   user: dbConfig.USER,
   password: dbConfig.PASSWORD,
   database: dbConfig.DB,
 });
 
-// uncomment for troubleshooting the connection
-// connection.getConnection(function(err) {
-//   if (err) {
-//     return console.error('error: ' + err.message);
-//   }
-//   console.log('Connected to the MySQL server.');
-// });
+connection.getConnection(function (err) {
+  if (err) {
+    return loggger.error(err);
+  }
+  loggger.info('Connected to the MySQL server.');
+});
 
 module.exports = connection;
