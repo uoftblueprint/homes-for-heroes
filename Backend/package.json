@@ -26,8 +26,8 @@
     "mysql2": "^2.3.3",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0",
-    "winston": "^3.5.1"
+    "winston": "^3.5.1",
+    "json2csv": "^5.0.6"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
