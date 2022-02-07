@@ -5,6 +5,18 @@ const Json2csvParser = require("json2csv").Parser;
 // Create and Save a new Customer
 
 const customerController = {
+  async getCustomerInfo(req, res) {
+    try {
+      const { user_id } = req.params;
+      const info = await Customer.getCustomerInfo(user_id);
+      res.send({ customerInfo: info });
+    } catch (err) {
+      console.error(err);
+      res.status(500);
+      res.send({ error: err });
+    }
+  },
+
   async getAllUsers(req, res) {
     try {
       const results = await Customer.retrieveAll();
@@ -77,3 +89,4 @@ const customerController = {
 
 
 module.exports = customerController;
+
