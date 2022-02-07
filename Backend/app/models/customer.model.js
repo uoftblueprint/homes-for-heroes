@@ -1,6 +1,7 @@
 const sql = require('./db.js');
 const CustomerQueryData = require('./query-models/customer-query-data.model.js');
 const bcrypt = require('bcrypt');
+const logger = require('../logger');
 
 // constructor
 const Customer = function (customer) {
@@ -30,7 +31,7 @@ Customer.create = function (name, phone, email, password) {
             else
               resolve(
                 new Customer({
-                  user_id: rows[0],
+                  user_id: rows[0]['LAST_INSERT_ID()'],
                   name: name,
                   email: email,
                   phone: phone,
@@ -50,12 +51,27 @@ Customer.getByEmail = function (email) {
       [email],
       function (err, rows) {
         if (err) reject(err);
-        else if (!rows[0]) resolve(undefined);
+        else if (!rows[0]) reject(new Error('User not found'));
         else resolve(new Customer(rows[0]));
       },
     );
   });
 };
+
+Customer.getById = function (user_id) {
+  return new Promise(function (resolve, reject) {
+    sql.query(
+      'SELECT * FROM client_users WHERE user_id = ? LIMIT 1',
+      [user_id],
+      function (err, rows) {
+        if (err) reject(err);
+        else if (!rows[0]) reject(new Error('User not found'));
+        else resolve(new Customer(rows[0]));
+      },
+    );
+  });
+};
+
 Customer.getCustomerInfo = function (user_id) {
   return new Promise((resolve, reject) => {
     const query = `select c.name, c.email, c.phone, u.street_name, 
@@ -149,7 +165,7 @@ Customer.queryUserData = function (query_params) {
   return new Promise(function (resolve, reject) {
     let q = new CustomerQueryData(query_params);
     q.constructQuery();
-    console.log(q);
+    logger.debug(q);
     const data_query = `
     SELECT
       client.user_id, client.name, client.email,
@@ -162,7 +178,7 @@ Customer.queryUserData = function (query_params) {
     ORDER BY client.name
     LIMIT ${q.offset}, ${q.limit}
     `;
-    console.log(data_query);
+    logger.debug(data_query);
 
     sql.query(data_query, function (err, row) {
       if (err) reject(err);
