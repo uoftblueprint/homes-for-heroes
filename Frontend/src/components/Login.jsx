@@ -27,21 +27,34 @@ const theme = createTheme({
   },
 });
 
-// const INITIAL_USER = {
-//   email: '',
-//   password: '',
-// };
-
 export default function Login() {
-  // const [user, setUser] = React.useState(INITIAL_USER);
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
-  // function handleChange(event) {
-  //   const { name, value } = event.target;
-  //   setUser(prevState => ({ ...prevState, [name]: value }));
-  // }
+  function handleEmailChange(e) {
+    setEmail(e.target.value);
+  }
 
-  const handleSubmit = (event) => {
+  function handlePasswordChange(e) {
+    setPassword(e.target.value);
+  }
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    try {
+      const res = await fetch('http://localhost:3000/login', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const { token } = await res.json();
+      console.log(token);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const [showPassword, setShowPassword] = useState(false);
@@ -81,6 +94,8 @@ export default function Login() {
               label="Email"
               name="Email"
               autoComplete="Email"
+              onChange={handleEmailChange}
+              value={email}
             />
             <TextField
               required
@@ -89,8 +104,10 @@ export default function Login() {
               id="password"
               label="Password"
               name="password"
+              value={password}
               autoComplete="current-password"
               type={showPassword ? 'text' : 'password'}
+              onChange={handlePasswordChange}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -124,8 +141,8 @@ export default function Login() {
             </Button>
 
             <Typography sx={{ fontSize: 14, color: 'grey' }}>
-              If you don&apos;t have credentials, please contact your team&apos;s
-              supervisor for access
+              If you don&apos;t have credentials, please contact your
+              team&apos;s supervisor for access
             </Typography>
           </Box>
         </Box>
