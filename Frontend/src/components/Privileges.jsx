@@ -1,26 +1,26 @@
-import * as React from "react";
+import * as React from 'react';
 
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTheme } from "@mui/material/styles";
-import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/DeleteOutline";
-import CheckIcon from "@mui/icons-material/Check";
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/DeleteOutline';
+import CheckIcon from '@mui/icons-material/Check';
 
 // Demo purposes
 
@@ -33,7 +33,7 @@ function stringToColor(string) {
     hash = string.charCodeAt(i) + ((hash << 5) - hash);
   }
 
-  let color = "#";
+  let color = '#';
 
   for (i = 0; i < 3; i += 1) {
     const value = (hash >> (i * 8)) & 0xff;
@@ -49,48 +49,48 @@ function stringAvatar(name) {
     sx: {
       bgcolor: stringToColor(name),
     },
-    children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+    children: `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`,
   };
 }
 
 export default function Privileges() {
-  const locations = ["Toronto", "Montreal"];
+  const locations = ['Toronto', 'Montreal'];
   const theme = useTheme();
-  const fullscreen = useMediaQuery(theme.breakpoints.down("md"));
-  const [svLocation, setSvLocation] = React.useState("Toronto");
+  const fullscreen = useMediaQuery(theme.breakpoints.down('md'));
+  const [svLocation, setSvLocation] = React.useState('Toronto');
   const [dialog, toggleDialog] = React.useState(false);
   const [adminDialog, toggleAdminDialog] = React.useState(false);
   const [supervisors, setSupervisors] = React.useState([
     {
-      name: "Don Jon",
-      svregion: "Toronto",
+      name: 'Don Jon',
+      svregion: 'Toronto',
       isAdmin: true,
     },
     {
-      name: "Barry Allen",
-      svregion: "Montreal",
+      name: 'Barry Allen',
+      svregion: 'Montreal',
       isAdmin: false,
     },
     {
-      name: "Evan Hansen",
-      svregion: "Toronto",
+      name: 'Evan Hansen',
+      svregion: 'Toronto',
       isAdmin: true,
     },
     {
-      name: "Sasha Blouse",
-      svregion: "Montreal",
+      name: 'Sasha Blouse',
+      svregion: 'Montreal',
       isAdmin: true,
     },
     {
-      name: "Mary Poppins",
-      svregion: "Montreal",
+      name: 'Mary Poppins',
+      svregion: 'Montreal',
       isAdmin: false,
     },
   ]);
 
   return (
     <Grid container display="flex" justifyContent="center">
-      <Card sx={{ maxWidth: 385, mt: "40px", mr: "30px", border: 1 }}>
+      <Card sx={{ maxWidth: 385, mt: '40px', mr: '30px', border: 1 }}>
         <CardContent>
           <Grid container display="flex" direction="row" justify="space-evenly">
             <Typography>System Admins</Typography>
@@ -98,7 +98,7 @@ export default function Privileges() {
               size="small"
               onClick={() => toggleAdminDialog(true)}
               startIcon={<AddIcon />}
-              sx={{ marginLeft: "auto" }}
+              sx={{ marginLeft: 'auto' }}
             >
               Add New
             </Button>
@@ -106,7 +106,7 @@ export default function Privileges() {
           <Typography
             variant="body2"
             color="text.secondary"
-            sx={{ textAlign: "left" }}
+            sx={{ textAlign: 'left' }}
           >
             System administrators have access to all areas of this application.
             There must always be at least one.
@@ -130,14 +130,14 @@ export default function Privileges() {
                                 };
                               }
                               return user;
-                            })
+                            }),
                           )
                         }
                         startIcon={<DeleteIcon />}
                         sx={{
-                          fontWeight: "bold",
-                          color: "#C91C1C",
-                          marginLeft: "auto",
+                          fontWeight: 'bold',
+                          color: '#C91C1C',
+                          marginLeft: 'auto',
                         }}
                       >
                         Remove
@@ -171,7 +171,10 @@ export default function Privileges() {
                         disabled
                         size="small"
                         startIcon={<CheckIcon />}
-                        sx={{ color: "#BDBDBD", marginLeft: "auto" }}
+                        sx={{
+                          color: '#BDBDBD',
+                          marginLeft: 'auto',
+                        }}
                       >
                         Already Admin
                       </Button>
@@ -188,11 +191,14 @@ export default function Privileges() {
                                 };
                               }
                               return user;
-                            })
+                            }),
                           )
                         }
                         startIcon={<AddIcon />}
-                        sx={{ color: "#B20009", marginLeft: "auto" }}
+                        sx={{
+                          color: '#B20009',
+                          marginLeft: 'auto',
+                        }}
                       >
                         Make Admin
                       </Button>
@@ -214,7 +220,7 @@ export default function Privileges() {
           </DialogActions>
         </Dialog>
       </Card>
-      <Grid sx={{ mt: "40px" }}>
+      <Grid sx={{ mt: '40px' }}>
         <Autocomplete
           disablePortal
           autoHighlight
@@ -226,7 +232,7 @@ export default function Privileges() {
           sx={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label="Location" />}
         />
-        <Card sx={{ maxWidth: 385, mt: "40px", border: 1 }}>
+        <Card sx={{ maxWidth: 385, mt: '40px', border: 1 }}>
           <CardContent>
             <Grid
               container
@@ -239,7 +245,7 @@ export default function Privileges() {
                 size="small"
                 onClick={() => toggleDialog(true)}
                 startIcon={<AddIcon />}
-                sx={{ marginLeft: "auto" }}
+                sx={{ marginLeft: 'auto' }}
               >
                 Add New
               </Button>
@@ -247,7 +253,7 @@ export default function Privileges() {
             <Typography
               variant="body2"
               color="text.secondary"
-              sx={{ textAlign: "left" }}
+              sx={{ textAlign: 'left' }}
             >
               The following people are chapter supervisors of this chapter.
             </Typography>
@@ -266,18 +272,18 @@ export default function Privileges() {
                                 if (user.name === supervisor.name) {
                                   return {
                                     ...user,
-                                    svregion: "",
+                                    svregion: '',
                                   };
                                 }
                                 return user;
-                              })
+                              }),
                             )
                           }
                           startIcon={<DeleteIcon />}
                           sx={{
-                            fontWeight: "bold",
-                            color: "#C91C1C",
-                            marginLeft: "auto",
+                            fontWeight: 'bold',
+                            color: '#C91C1C',
+                            marginLeft: 'auto',
                           }}
                         >
                           Remove
@@ -315,7 +321,10 @@ export default function Privileges() {
                         disabled
                         size="small"
                         startIcon={<CheckIcon />}
-                        sx={{ color: "#BDBDBD", marginLeft: "auto" }}
+                        sx={{
+                          color: '#BDBDBD',
+                          marginLeft: 'auto',
+                        }}
                       >
                         Already Supervisor
                       </Button>
@@ -332,11 +341,14 @@ export default function Privileges() {
                                 };
                               }
                               return user;
-                            })
+                            }),
                           )
                         }
                         startIcon={<AddIcon />}
-                        sx={{ color: "#B20009", marginLeft: "auto" }}
+                        sx={{
+                          color: '#B20009',
+                          marginLeft: 'auto',
+                        }}
                       >
                         Make Supervisor
                       </Button>

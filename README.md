@@ -1,7 +1,9 @@
 # HomesForHeroes
 
 In the Frontend folder, you can run:
+
 ### `npm install`
+
 ### `npm start`
 
 Runs the app in the development mode.\
@@ -22,6 +24,4 @@ It correctly bundles React in production mode and optimizes the build for the be
 
 The build is minified and the filenames include the hashes.\
 
-
-In the Backend folder, we're using docker and node. 
-
+In the Backend folder, we're using docker and node.

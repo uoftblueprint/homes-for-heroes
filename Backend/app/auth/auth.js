@@ -5,34 +5,44 @@ const Customer = require('../models/customer.model');
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
 
-passport.use(new JWTstrategy(
-  { secretOrKey: 'CHANGE_ME', jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken },
-  async (token, done) => {
-    try {
-      return done(null, token.user);
-    } catch (error) {
-      done(error);
-    }
-  }
-))
+passport.use(
+  new JWTstrategy(
+    {
+      secretOrKey: 'CHANGE_ME',
+      jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken,
+    },
+    async (token, done) => {
+      try {
+        return done(null, token.user);
+      } catch (error) {
+        done(error);
+      }
+    },
+  ),
+);
 
 passport.use(
   'signup',
   new LocalStrategy(
     {
       usernameField: 'email',
-      passwordField: 'password'
+      passwordField: 'password',
     },
     async (email, password, done) => {
       try {
-        const customer = await Customer.create(Math.random().toString(), Math.random().toString(), email, password);
+        const customer = await Customer.create(
+          Math.random().toString(),
+          Math.random().toString(),
+          email,
+          password,
+        );
 
         return done(null, customer);
       } catch (error) {
         done(error);
       }
-    }
-  )
+    },
+  ),
 );
 
 passport.use(
@@ -40,7 +50,7 @@ passport.use(
   new LocalStrategy(
     {
       usernameField: 'email',
-      passwordField: 'password'
+      passwordField: 'password',
     },
     async (email, password, done) => {
       try {
@@ -58,10 +68,12 @@ passport.use(
 
         delete customer['password']; // No longer required for processing
 
-        return done(null, customer, { message: 'Logged in Successfully' });
+        return done(null, customer, {
+          message: 'Logged in Successfully',
+        });
       } catch (error) {
         return done(error);
       }
-    }
-  )
+    },
+  ),
 );

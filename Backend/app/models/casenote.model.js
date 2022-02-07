@@ -23,7 +23,7 @@ CaseNote.prototype.create = function () {
       function (err, result) {
         if (err) reject(err);
         else resolve(result.insertId); // Return the case_id
-      }
+      },
     );
   });
 };
@@ -36,7 +36,7 @@ CaseNote.getById = function (case_id) {
       function (err, rows) {
         if (err) reject(err);
         resolve(new CaseNote(rows[0]));
-      }
+      },
     );
   });
 };

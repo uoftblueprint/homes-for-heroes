@@ -1,7 +1,16 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Button, Checkbox, Container, CssBaseline, FormControlLabel, Typography, TextField, Box, InputAdornment, IconButton } from '@mui/material';
-import { Visibility, VisibilityOff } from "@mui/icons-material"
+import {
+  Button,
+  Container,
+  CssBaseline,
+  Typography,
+  TextField,
+  Box,
+  InputAdornment,
+  IconButton,
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -15,17 +24,16 @@ const theme = createTheme({
     secondary: {
       main: '#2196F3',
     },
-  }
+  },
 });
 
-const INITIAL_USER = {
-  email: '',
-  password: ''
-};  
-
+// const INITIAL_USER = {
+//   email: '',
+//   password: '',
+// };
 
 export default function Login() {
-  const [user, setUser] = React.useState(INITIAL_USER);
+  // const [user, setUser] = React.useState(INITIAL_USER);
 
   // function handleChange(event) {
   //   const { name, value } = event.target;
@@ -59,7 +67,12 @@ export default function Login() {
           <Typography component="h1" variant="h5">
             Sign in to access system
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
+          >
             <TextField
               required
               fullWidth
@@ -77,8 +90,7 @@ export default function Login() {
               label="Password"
               name="password"
               autoComplete="current-password"
-
-              type={showPassword ? "text": "password"}
+              type={showPassword ? 'text' : 'password'}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -90,7 +102,7 @@ export default function Login() {
                       {showPassword ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
                   </InputAdornment>
-                )
+                ),
               }}
             />
             {/* <FormControlLabel
@@ -101,18 +113,23 @@ export default function Login() {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2, textTransform: 'none', fontSize: 16 }}
+              sx={{
+                mt: 3,
+                mb: 2,
+                textTransform: 'none',
+                fontSize: 16,
+              }}
             >
               Sign In
             </Button>
 
             <Typography sx={{ fontSize: 14, color: 'grey' }}>
-              If you don't have credentials, please contact your team's supervisor for access
+              If you don&apos;t have credentials, please contact your team&apos;s
+              supervisor for access
             </Typography>
-
           </Box>
         </Box>
       </Container>
     </ThemeProvider>
-  )
+  );
 }

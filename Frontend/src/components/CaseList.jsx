@@ -16,37 +16,41 @@ export default function CaseList() {
 
   useEffect(() => {
     fetch(`http://localhost:3000/customers`)
-      .then(response => response.json())
-      .then(res => {
-        setUsers(res.customers)
-      })
+      .then((response) => response.json())
+      .then((res) => {
+        setUsers(res.customers);
+      });
   }, []);
 
-  const showCard = id => {
+  const showCard = (id) => {
     fetch(`http://localhost:3000/customers/${id}/alertCase`)
-      .then(response => response.json())
-      .then(caseNote => setCurrentCase(caseNote))
-      .catch(err => {
+      .then((response) => response.json())
+      .then((caseNote) => setCurrentCase(caseNote))
+      .catch((err) => {
         console.error(err);
       });
   };
 
   const filterPosts = (posts, query) => {
     if (!query) {
-        return posts;
+      return posts;
     }
 
     return posts.filter((post) => {
-        const postName = post.name.toLowerCase();
-        return postName.includes(query);
+      const postName = post.name.toLowerCase();
+      return postName.includes(query);
     });
   };
 
   return (
     <>
-      <Typography sx={{ fontSize: 48, mb: '1px'}}>Case Management</Typography>
+      <Typography sx={{ fontSize: 48, mb: '1px' }}>Case Management</Typography>
       <TextField
-        sx={{ backgroundColor: '#F7F8F9', width: '75%', marginBottom: '2%'}}
+        sx={{
+          backgroundColor: '#F7F8F9',
+          width: '75%',
+          marginBottom: '2%',
+        }}
         fullWidth
         variant="outlined"
         placeholder="Search Users"
@@ -55,7 +59,7 @@ export default function CaseList() {
         InputProps={{
           startAdornment: <SearchIcon fontSize="small" />,
         }}
-        onKeyPress={e => {}}
+        onKeyPress={(e) => {}}
       />
       <List
         sx={
@@ -65,36 +69,42 @@ export default function CaseList() {
           } /*{ width: '100%', maxWidth: 400, bgcolor: 'gray' }*/
         }
       >
-        {users ? users.map(user => {
-          return (
-            <>
-              <ListItem
-                key={'l' + user.user_id}
-                sx={{m: 1}}
-                secondaryAction={
-                  <IconButton edge="end" aria-label="show-card">
-                    {currentCase.user_id === user.user_id ? (
-                      <ExpandLessOutlinedIcon onClick={() => setCurrentCase({})} />
-                    ) : (
-                      <ExpandMoreOutlinedIcon onClick={() => showCard(user.user_id)} />
-                    )}
-                  </IconButton>
-                }
-              >
-                {user.name}
-              </ListItem>
-              {currentCase.user_id === user.user_id ? (
-                <CaseCard
-                  key={'c' + user.user_id}
-                  sx={{boxShadow: 0}}
-                  user={user}
-                  note={currentCase}
-                ></CaseCard>
-              ) : null}
-              <Divider></Divider>
-            </>
-          );
-        }) : null}
+        {users
+          ? users.map((user) => {
+              return (
+                <>
+                  <ListItem
+                    key={'l' + user.user_id}
+                    sx={{ m: 1 }}
+                    secondaryAction={
+                      <IconButton edge="end" aria-label="show-card">
+                        {currentCase.user_id === user.user_id ? (
+                          <ExpandLessOutlinedIcon
+                            onClick={() => setCurrentCase({})}
+                          />
+                        ) : (
+                          <ExpandMoreOutlinedIcon
+                            onClick={() => showCard(user.user_id)}
+                          />
+                        )}
+                      </IconButton>
+                    }
+                  >
+                    {user.name}
+                  </ListItem>
+                  {currentCase.user_id === user.user_id ? (
+                    <CaseCard
+                      key={'c' + user.user_id}
+                      sx={{ boxShadow: 0 }}
+                      user={user}
+                      note={currentCase}
+                    ></CaseCard>
+                  ) : null}
+                  <Divider></Divider>
+                </>
+              );
+            })
+          : null}
       </List>
     </>
   );

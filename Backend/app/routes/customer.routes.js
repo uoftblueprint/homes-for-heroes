@@ -2,48 +2,48 @@ const customers = require('../controllers/customer.controller');
 const validationSchema = require('../validators/customer.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/customers', customers.getAllUsers);
 
   app.get(
     '/getCases',
     validationSchema.getCasesSchema,
     validationErrorHandler,
-    customers.getCases
+    customers.getCases,
   );
 
   app.get(
     '/getUserData',
     validationSchema.getUserDataSchema,
     validationErrorHandler,
-    customers.getUserData
+    customers.getUserData,
   );
 
   app.get(
     '/getCustomerInfo/:user_id',
     validationSchema.getCustomerInfoSchema,
     validationErrorHandler,
-    customers.getCustomerInfo
+    customers.getCustomerInfo,
   );
 
   app.get(
     '/customers/:user_id/alertCase',
     validationSchema.getAlertCaseSchema,
     validationErrorHandler,
-    customers.getAlertCase
+    customers.getAlertCase,
   );
 
   app.put(
     '/customers/:user_id/alertCase',
     validationSchema.setAlertCaseSchema,
     validationErrorHandler,
-    customers.setAlertCase
+    customers.setAlertCase,
   );
 
   app.get(
     '/getUsersInfoCSV',
     validationSchema.getUserInfoCSVSchema,
     validationErrorHandler,
-    customers.getUserInfoCSV
+    customers.getUserInfoCSV,
   );
 };
