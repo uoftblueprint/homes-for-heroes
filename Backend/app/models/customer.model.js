@@ -149,7 +149,7 @@ Customer.getCases = function (user_id, start_date, end_date) {
       [user_id, start_date, end_date],
       (err, cases) => {
         if (err) reject(err);
-        if (cases.length == 0) {
+        if (cases.length === 0) {
           // no case data found for this user/client
           resolve([]);
         }
@@ -163,7 +163,7 @@ Customer.getCases = function (user_id, start_date, end_date) {
 
 Customer.queryUserData = function (query_params) {
   return new Promise((resolve, reject) => {
-    let q = new CustomerQueryData(query_params);
+    const q = new CustomerQueryData(query_params);
     q.constructQuery();
     logger.debug(q);
     const data_query = `
@@ -217,14 +217,14 @@ Customer.getUserInfoCSV = function (
       conditions.push('k.kin_name = ?');
       fields.push(kin_name);
     }
-    var sql_query =
-      `SELECT c.name, c.email,
+    var sql_query = `SELECT c.name, c.email,
       u.gender, u.applicant_phone, u.applicant_dob, u.curr_level, u.city, u.province,
       k.kin_name, k.relationship, k.kin_phone, k.kin_email
     FROM client_users AS c
       LEFT JOIN UserInfo AS u ON u.user_id = c.user_id
-      LEFT JOIN NextKinInfo AS k ON k.user_id = c.user_id ` +
-      (conditions.length ? 'WHERE ' + conditions.join('AND ') : '');
+      LEFT JOIN NextKinInfo AS k ON k.user_id = c.user_id ${
+        conditions.length ? `WHERE ${conditions.join('AND ')}` : ''
+      }`;
     sql.query(sql_query, fields, (err, info) => {
       if (err) reject(err);
       resolve(info);

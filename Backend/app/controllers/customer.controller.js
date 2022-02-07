@@ -70,7 +70,7 @@ const customerController = {
         address,
         kin_name,
       );
-      if (info.length != 0) {
+      if (info.length !== 0) {
         const infoJson = JSON.parse(JSON.stringify(info));
         const jsonParser = new Json2csvParser({ header: true });
         const resultsCSV = jsonParser.parse(infoJson);

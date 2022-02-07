@@ -28,7 +28,7 @@ CustomForm.prototype.create = function () {
 CustomForm.queryForm = function (query_params) {
   return new Promise((resolve, reject) => {
     // construct query
-    let q = new CustomFormQueryData(query_params);
+    const q = new CustomFormQueryData(query_params);
     q.constructQuery();
     logger.debug(q);
 

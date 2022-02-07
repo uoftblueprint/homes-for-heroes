@@ -10,9 +10,9 @@ const CaseNote = function (caseNote) {
 CaseNote.prototype.create = function () {
   return new Promise((resolve, reject) => {
     if (
-      this.user_id == undefined ||
-      this.admin_id == undefined ||
-      this.notes == undefined
+      this.user_id === undefined ||
+      this.admin_id === undefined ||
+      this.notes === undefined
     ) {
       reject('Incomplete case note');
       return;

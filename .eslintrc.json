@@ -17,6 +17,11 @@
     "quotes": ["error", "single"],
     "semi": ["error", "always"],
     "no-console": "error",
-    "prefer-arrow-callback": "warn"
+    "prefer-arrow-callback": "warn",
+    "eqeqeq": "warn",
+    "no-eval": "error",
+    "prefer-const": "warn",
+    "prefer-destructuring": "warn",
+    "prefer-template": "warn"
   }
 }
