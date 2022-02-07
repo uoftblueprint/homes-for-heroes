@@ -9,7 +9,7 @@ const connection = mysql.createPool({
   database: dbConfig.DB,
 });
 
-connection.getConnection(function (err) {
+connection.getConnection((err) => {
   if (err) {
     return loggger.error(err);
   }

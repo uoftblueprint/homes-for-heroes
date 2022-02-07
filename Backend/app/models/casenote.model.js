@@ -20,7 +20,7 @@ CaseNote.prototype.create = function () {
     sql.query(
       'INSERT INTO cases (user_id, admin_id, notes) VALUES (?)',
       [[this.user_id, this.admin_id, this.notes]],
-      function (err, result) {
+      (err, result) => {
         if (err) reject(err);
         else resolve(result.insertId); // Return the case_id
       },
@@ -33,7 +33,7 @@ CaseNote.getById = function (case_id) {
     sql.query(
       'SELECT * FROM cases WHERE case_id = ?',
       [case_id],
-      function (err, rows) {
+      (err, rows) => {
         if (err) reject(err);
         resolve(new CaseNote(rows[0]));
       },

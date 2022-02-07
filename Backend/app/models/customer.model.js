@@ -19,14 +19,14 @@ Customer.prototype.isValidPassword = async function (password) {
 };
 
 Customer.create = function (name, phone, email, password) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     sql.query(
       'INSERT INTO client_users (name, phone, email, password) VALUES (?, ?, ?, ?)',
       [name, phone, email, bcrypt.hashSync(password, 15)],
-      function (err) {
+      (err) => {
         if (err) reject(err);
         else {
-          sql.query('SELECT LAST_INSERT_ID()', function (err, rows) {
+          sql.query('SELECT LAST_INSERT_ID()', (err, rows) => {
             if (err) reject(err);
             else
               resolve(
@@ -45,11 +45,11 @@ Customer.create = function (name, phone, email, password) {
 };
 
 Customer.getByEmail = function (email) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     sql.query(
       'SELECT * FROM client_users WHERE email = ? LIMIT 1',
       [email],
-      function (err, rows) {
+      (err, rows) => {
         if (err) reject(err);
         else if (!rows[0]) reject(new Error('User not found'));
         else resolve(new Customer(rows[0]));
@@ -59,11 +59,11 @@ Customer.getByEmail = function (email) {
 };
 
 Customer.getById = function (user_id) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     sql.query(
       'SELECT * FROM client_users WHERE user_id = ? LIMIT 1',
       [user_id],
-      function (err, rows) {
+      (err, rows) => {
         if (err) reject(err);
         else if (!rows[0]) reject(new Error('User not found'));
         else resolve(new Customer(rows[0]));
@@ -78,7 +78,7 @@ Customer.getCustomerInfo = function (user_id) {
     u.city, u.province, u.applicant_dob 
     from client_users as c inner join UserInfo as u 
     on c.user_id = u.user_id where c.user_id = ?`;
-    sql.query(query, [user_id], function (err, userInfo) {
+    sql.query(query, [user_id], (err, userInfo) => {
       if (err) reject(err);
       resolve(userInfo);
     });
@@ -86,8 +86,8 @@ Customer.getCustomerInfo = function (user_id) {
 };
 
 Customer.retrieveAll = function () {
-  return new Promise(function (resolve, reject) {
-    sql.query('SELECT * FROM client_users', function (err, rows) {
+  return new Promise((resolve, reject) => {
+    sql.query('SELECT * FROM client_users', (err, rows) => {
       if (err) reject(err);
       else {
         const customers = [];
@@ -102,11 +102,11 @@ Customer.retrieveAll = function () {
 };
 
 Customer.getAlertCaseId = function (user_id) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     sql.query(
       'SELECT alert_case_id FROM client_users WHERE user_id = ?',
       [user_id],
-      function (err, rows) {
+      (err, rows) => {
         if (err) reject(err);
         else if (rows[0] === undefined) reject('User does not exist.');
         else resolve(rows[0].alert_case_id);
@@ -116,11 +116,11 @@ Customer.getAlertCaseId = function (user_id) {
 };
 
 Customer.getAlertCase = function (user_id) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     sql.query(
       'SELECT cases.* FROM client_users INNER JOIN cases ON client_users.alert_case_id = cases.case_id WHERE client_users.user_id = ?',
       [user_id],
-      function (err, rows) {
+      (err, rows) => {
         if (err) reject(err);
         else if (rows[0] === undefined) reject('Alert note does not exist.');
         else resolve(rows[0]);
@@ -130,11 +130,11 @@ Customer.getAlertCase = function (user_id) {
 };
 
 Customer.setAlertCaseId = function (user_id, case_id) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     sql.query(
       'UPDATE client_users SET alert_case_id = ? WHERE user_id = ?',
       [case_id, user_id],
-      function (err, rows) {
+      (err, rows) => {
         if (err) reject(err);
         else resolve(rows[0]);
       },
@@ -147,7 +147,7 @@ Customer.getCases = function (user_id, start_date, end_date) {
     sql.query(
       'SELECT * FROM cases WHERE user_id = ? AND date(last_update) between ? and ?',
       [user_id, start_date, end_date],
-      function (err, cases) {
+      (err, cases) => {
         if (err) reject(err);
         if (cases.length == 0) {
           // no case data found for this user/client
@@ -162,7 +162,7 @@ Customer.getCases = function (user_id, start_date, end_date) {
 };
 
 Customer.queryUserData = function (query_params) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     let q = new CustomerQueryData(query_params);
     q.constructQuery();
     logger.debug(q);
@@ -180,7 +180,7 @@ Customer.queryUserData = function (query_params) {
     `;
     logger.debug(data_query);
 
-    sql.query(data_query, function (err, row) {
+    sql.query(data_query, (err, row) => {
       if (err) reject(err);
       resolve(row);
     });
@@ -225,7 +225,7 @@ Customer.getUserInfoCSV = function (
       LEFT JOIN UserInfo AS u ON u.user_id = c.user_id
       LEFT JOIN NextKinInfo AS k ON k.user_id = c.user_id ` +
       (conditions.length ? 'WHERE ' + conditions.join('AND ') : '');
-    sql.query(sql_query, fields, function (err, info) {
+    sql.query(sql_query, fields, (err, info) => {
       if (err) reject(err);
       resolve(info);
     });

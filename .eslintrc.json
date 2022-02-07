@@ -16,6 +16,7 @@
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single"],
     "semi": ["error", "always"],
-    "no-console": "error"
+    "no-console": "error",
+    "prefer-arrow-callback": "warn"
   }
 }

@@ -16,7 +16,7 @@ CustomForm.prototype.create = function () {
     sql.query(
       'INSERT INTO CustomForm (admin_id, title, form_body) VALUES (?)',
       [[this.admin_id, this.title, this.form_body]],
-      function (err, result) {
+      (err, result) => {
         if (err) reject(err);
         else resolve(result.insertId);
       },
@@ -26,7 +26,7 @@ CustomForm.prototype.create = function () {
 
 // takes custom query and queries form CustomForm table
 CustomForm.queryForm = function (query_params) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     // construct query
     let q = new CustomFormQueryData(query_params);
     q.constructQuery();
@@ -41,7 +41,7 @@ CustomForm.queryForm = function (query_params) {
         `;
     logger.debug(data_query);
 
-    sql.query(data_query, function (err, row) {
+    sql.query(data_query, (err, row) => {
       if (err) reject(err);
       resolve(row);
     });
