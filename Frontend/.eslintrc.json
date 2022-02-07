@@ -15,7 +15,7 @@
     "react/jsx-indent-props": "off",
     "react/jsx-key": "warn",
     "react/jsx-max-props-per-line": "off",
-    "react/jsx-no-bind": "warn",
+    "react/jsx-no-bind": "off",
     "react/jsx-no-duplicate-props": "warn",
     "react/jsx-no-literals": "off",
     "react/jsx-no-undef": "warn",
@@ -35,6 +35,7 @@
     "react/prop-types": "warn",
     "react/react-in-jsx-scope": "off",
     "react/self-closing-comp": "warn",
-    "react/sort-comp": "warn"
+    "react/sort-comp": "warn",
+    "no-console": "warn"
   }
 }
