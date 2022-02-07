@@ -6,7 +6,7 @@ USE homes_for_heroes;
 
 DROP TABLE IF EXISTS admin_users;
 CREATE TABLE IF NOT EXISTS admin_users (
-    name VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     phone VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS admin_users (
 
 DROP TABLE IF EXISTS client_users;
 CREATE TABLE IF NOT EXISTS client_users (
-    name VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     phone VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
