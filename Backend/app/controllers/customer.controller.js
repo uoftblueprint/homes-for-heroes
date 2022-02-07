@@ -59,20 +59,9 @@ const customerController = {
       const cases = await Customer.getCases(user_id, start_date, end_date);
       res.send({ cases: cases });
     } catch (err) {
-      console.error(err);
       // TODO error handling
       console.error(err);
       res.send({ error: err });
-    }
-  },
-
-  async getUserData(req, res) {
-    try {
-      const user_data = await Customer.queryUserData(req.query);
-      res.send(user_data)
-    } catch (err) {
-      console.error(err);
-      res.send({'error': err});
     }
   },
   async getUserInfoCSV(req, res) {

@@ -20,10 +20,7 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "mysql2": "^2.3.3",
-    "passport": "^0.5.2",
-    "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0",
-    "json2csv": "^5.0.6"
+    "json2csv": "^5.0.6",
+    "mysql2": "^2.3.3"
   }
 }
