@@ -1,33 +1,46 @@
-const passport = require('passport');
 const jwt = require('jsonwebtoken');
+const Customer = require('../models/customer.model');
+const logger = require('../logger');
+
+const issueJWT = (user) => {
+  const payload = {
+    id: user.user_id,
+    role: 1, // TODO: Change role based on type of user (client: 1, admin: 2, superadmin: 3)
+    iat: Date.now(),
+  };
+
+  return jwt.sign(payload, 'CHANGEME', { expiresIn: '1d' });
+};
 
 const authController = {
   async signUp(req, res, next) {
-    // const { name, phone, email, password } = req.body;
-    if (req.user) res.send('Success');
-    else {
-      next(new Error('Unsuccessful'));
+    const { name, phone, email, password } = req.body;
+
+    try {
+      const user = await Customer.create(name, phone, email, password);
+      const token = issueJWT(user);
+      res.json({ token });
+    } catch (err) {
+      next(err);
     }
   },
   async login(req, res, next) {
     const { email, password } = req.body;
-    passport.authenticate('login', async (err, customer, msg) => {
-      try {
-        if (err || !customer)
-          return next(err || msg.message || new Error('An error occured.'));
 
-        req.login(customer, { session: false }, async (err) => {
-          if (err) return next(err);
+    try {
+      const user = await Customer.getByEmail(email);
 
-          const body = { id: customer.id, email: customer.email };
-          const token = jwt.sign({ user: body }, 'CHANGE_ME');
+      logger.debug('%j', user);
 
-          return res.json({ token });
-        });
-      } catch (err) {
-        return next(err);
+      if (await user.isValidPassword(password)) {
+        const token = issueJWT(user);
+        res.json({ token });
+      } else {
+        next(new Error('Invalid password'));
       }
-    })(req, res, next);
+    } catch (err) {
+      next(err);
+    }
   },
 };
 
