@@ -1,8 +1,9 @@
 const express = require('express');
 const cors = require('cors');
+const passport = require('passport');
+const logger = require('./app/logger');
 const catchAllErrorHandler = require('./app/middleware/catch-all-error-handler');
-// Load authentication module
-require('./app/auth/auth');
+const requestLoggingHandler = require('./app/middleware/request-logging-handler');
 
 const app = express();
 
@@ -13,8 +14,15 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// Load authentication module
+require('./app/auth/auth')(passport);
+app.use(passport.initialize());
+
 // parse requests of content-type - application/json
 app.use(express.json());
+
+// Log every request
+app.use(requestLoggingHandler);
 
 require('./app/routes/customer.routes')(app);
 require('./app/routes/casenote.routes')(app);
@@ -27,5 +35,5 @@ app.use(catchAllErrorHandler);
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+  logger.info(`Server is running on port ${PORT}.`);
 });
