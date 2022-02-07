@@ -6,13 +6,6 @@ const CustomForm = function (body) {
     this.admin_id = body.admin_id
     this.title = body.title
     this.form_body = JSON.stringify(body.form_body)
-
-    this.validate = function() {
-        if (!this.admin_id || !this.title || !this.form_body) {
-            throw "invalid request";
-        }
-    }
-
 };
 
 // create form
@@ -33,7 +26,6 @@ CustomForm.prototype.create = function() {
 // takes custom query and queries form CustomForm table
 CustomForm.queryForm = function(query_params) {
     return new Promise(function(resolve, reject) {
-
         // construct query
         let q = new CustomFormQueryData(query_params);
         q.constructQuery();

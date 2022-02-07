@@ -2,12 +2,13 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
 const authController = {
-  async signUp(req, res) {
+  async signUp(req, res, next) {
     // const { name, phone, email, password } = req.body;
     if(req.user)
       res.send('Success');
-    else
-      res.send('Unsuccessful')
+    else {
+      next(new Error('Unsuccessful'));
+    }
   },
   async login(req, res, next) {
     const { email, password } = req.body;
