@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "dev": "NODE_ENV=development nodemon server.js",
+    "start": "NODE_ENV=production node server.js"
   },
   "keywords": [
     "nodejs",
@@ -25,6 +26,19 @@
     "mysql2": "^2.3.3",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "winston": "^3.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "server",
+      "app/"
+    ],
+    "ext": "js",
+    "ignore": [],
+    "delay": "3"
   }
 }
