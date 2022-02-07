@@ -1,4 +1,5 @@
 const CustomForm = require('../models/custom-form.model');
+const logger = require('../logger');
 
 const customFormController = {
   async getCustomForm(req, res, next) {
@@ -12,7 +13,7 @@ const customFormController = {
   },
   async createCustomForm(req, res, next) {
     try {
-      console.log(req.body);
+      logger.debug(req.body);
       const form = new CustomForm(req.body);
       const form_id = await form.create();
       res.json(form_id);

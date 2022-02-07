@@ -1,5 +1,6 @@
 const Customer = require('../models/customer.model');
 const Json2csvParser = require('json2csv').Parser;
+const logger = require('../logger');
 
 // Create and Save a new Customer
 
@@ -79,7 +80,7 @@ const customerController = {
         );
         res.set('Content-Type', 'text/csv');
         res.send(resultsCSV);
-        console.log('File successfully downloaded.');
+        logger.info('File successfully downloaded.');
       } else {
         next(new Error('No data to export.'));
       }

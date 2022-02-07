@@ -1,5 +1,6 @@
 const sql = require('./db.js');
 const CustomFormQueryData = require('./query-models/custom-form-query-data.model');
+const logger = require('../logger');
 
 // constructor
 const CustomForm = function (body) {
@@ -29,7 +30,7 @@ CustomForm.queryForm = function (query_params) {
     // construct query
     let q = new CustomFormQueryData(query_params);
     q.constructQuery();
-    console.log(q);
+    logger.debug(q);
 
     const data_query = `
         SELECT
@@ -38,7 +39,7 @@ CustomForm.queryForm = function (query_params) {
         ${q.query}
         ORDER BY form.created_date DESC
         `;
-    console.log(data_query);
+    logger.debug(data_query);
 
     sql.query(data_query, function (err, row) {
       if (err) reject(err);
