@@ -39,9 +39,9 @@ const authController = {
     try {
       const user = await Customer.getByEmail(email);
 
-      logger.debug('%j', user);
-
-      if (await user.isValidPassword(password)) {
+      if(!user.verified) {
+        next(new Error('User is not verified yet!'));
+      } else if (await user.isValidPassword(password)) {
         const token = issueUserJWT(user);
         res.json({ token });
       } else {
@@ -54,8 +54,8 @@ const authController = {
   async verify(req, res, next) {
     const { verificationCode } = req.params;
     try {
-      const { user_id } = verifyEmailJWT(verificationCode);
-      const verified = await Customer.verify(user_id);
+      const { id } = verifyEmailJWT(verificationCode);
+      const verified = await Customer.verify(id);
       res.json({ success: verified });
     } catch (err) {
       next(err);
