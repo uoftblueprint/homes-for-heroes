@@ -4,6 +4,7 @@ const passport = require('passport');
 const logger = require('./app/logger');
 const catchAllErrorHandler = require('./app/middleware/catch-all-error-handler');
 const requestLoggingHandler = require('./app/middleware/request-logging-handler');
+const apiRouter = require('./app/routes');
 
 const app = express();
 
@@ -24,10 +25,8 @@ app.use(express.json());
 // Log every request
 app.use(requestLoggingHandler);
 
-require('./app/routes/customer.routes')(app);
-require('./app/routes/casenote.routes')(app);
-require('./app/routes/auth.routes')(app);
-require('./app/routes/custom-form.routes')(app);
+// Set the api endpoint
+app.use('/api', apiRouter);
 
 // Catch any errors that haven't been caught by the appropriate handler
 app.use(catchAllErrorHandler);
