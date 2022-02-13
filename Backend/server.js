@@ -16,7 +16,7 @@ app.use(cors(corsOptions));
 
 // Load authentication module
 require('./app/auth/auth')(passport);
-app.use(passport.initialize());
+app.use(passport.initialize({}));
 
 // parse requests of content-type - application/json
 app.use(express.json());
