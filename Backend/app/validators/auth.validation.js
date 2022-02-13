@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 
 const validationSchema = {
   signUpSchema: [
@@ -8,6 +8,7 @@ const validationSchema = {
     body('password').isStrongPassword(),
   ],
   loginSchema: [body('email').notEmpty(), body('password').notEmpty()],
+  verifySchema: [param('verificationCode').isJWT()]
 };
 
 module.exports = validationSchema;
