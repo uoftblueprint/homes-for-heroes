@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const passport = require('passport');
 const logger = require('./app/logger');
 const catchAllErrorHandler = require('./app/middleware/catch-all-error-handler');
 const requestLoggingHandler = require('./app/middleware/request-logging-handler');
@@ -15,10 +14,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-// Load authentication module
-require('./app/auth/auth')(passport);
-app.use(passport.initialize({}));
 
 // parse requests of content-type - application/json
 app.use(express.json());
