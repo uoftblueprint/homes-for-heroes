@@ -1,7 +1,7 @@
 INSERT INTO client_users VALUES 
-("Abby C", "abby2@gmail.com", "905456", "password2", TRUE, NULL, 11),
-("Sarah F", "sarah@outlook.com", "416123", "password3", TRUE, NULL, 12),
-("Alex P", "alexp@outlook.com", "416416", "password4", TRUE, NULL, 13);
+("Abby C", "abby2@gmail.com", "905456", "password2", TRUE, NULL, NULL, 11),
+("Sarah F", "sarah@outlook.com", "416123", "password3", TRUE, NULL, NULL, 12),
+("Alex P", "alexp@outlook.com", "416416", "password4", TRUE, NULL, NULL, 13);
 INSERT INTO admin_users VALUES 
 ("Admin A", "admina@hfh.com", "10293", "password", "55 Apple Road", 2);
 INSERT INTO cases VALUES
