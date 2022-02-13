@@ -19,7 +19,7 @@ DROP TABLE IF EXISTS client_users;
 CREATE TABLE IF NOT EXISTS client_users (
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    phone VARCHAR(255) NOT NULL UNIQUE,
+    phone VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     verified BOOLEAN NOT NULL,
     alert_case_id INT UNIQUE,
