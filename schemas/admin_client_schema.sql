@@ -31,6 +31,18 @@ CREATE TABLE IF NOT EXISTS client_users (
         ON DELETE SET NULL
 );
 
+DROP TABLE IF EXISTS federated_credentials;
+CREATE TABLE IF NOT EXISTS federated_credentials (
+    user_id INT NOT NULL UNIQUE,
+    provider VARCHAR(255) NOT NULL,
+    subject VARCHAR(255) NOT NULL UNIQUE,
+    PRIMARY KEY (subject),
+    FOREIGN KEY (user_id)
+    REFERENCES client_users(user_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+);
+
 DROP TABLE IF EXISTS cases;
 CREATE TABLE IF NOT EXISTS cases (
     user_id INT NOT NULL,
