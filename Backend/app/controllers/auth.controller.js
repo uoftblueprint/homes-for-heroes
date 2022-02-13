@@ -1,17 +1,12 @@
-const jwt = require('jsonwebtoken');
 const Customer = require('../models/customer.model');
 const logger = require('../logger');
 const mailer = require('../mailer');
 const nodemailer = require('nodemailer');
-
-const issueJWT = (user) => {
-  const payload = {
-    id: user.user_id,
-    role: 1, // TODO: Change role based on type of user (client: 1, admin: 2, superadmin: 3)
-  };
-
-  return jwt.sign(payload, 'CHANGEME', { expiresIn: '1d' });
-};
+const {
+  issueUserJWT,
+  issueEmailJWT,
+  verifyEmailJWT,
+} = require('../auth/helpers');
 
 const authController = {
   async signUp(req, res, next) {
@@ -19,15 +14,11 @@ const authController = {
 
     try {
       const user = await Customer.create(name, phone, email, password);
-      const verificationCode = jwt.sign(
-        { user_id: user.user_id },
-        'EMAIL_CHANGEME',
-        { expiresIn: '1d' },
-      );
+      const verificationCode = issueEmailJWT(user);
       // TODO: Grab correct hostname from env variables
       // TODO: Use frontend `verify` endpoint rather than the api directly
       const url = `http://${req.hostname}/api/verify/${verificationCode}`;
-
+      res.json({ success: true });
       const mailTransporter = await mailer();
       const info = await mailTransporter.sendMail({
         from: '"Homes for Heroes" <foo@example.com>', // sender address
@@ -38,7 +29,6 @@ const authController = {
       logger.info('Email sent to %s with id: %s', email, info.messageId);
       // TODO: Remove in production
       logger.info('Email preview URL: %s', nodemailer.getTestMessageUrl(info));
-      res.json({ success: true });
     } catch (err) {
       next(err);
     }
@@ -52,7 +42,7 @@ const authController = {
       logger.debug('%j', user);
 
       if (await user.isValidPassword(password)) {
-        const token = issueJWT(user);
+        const token = issueUserJWT(user);
         res.json({ token });
       } else {
         next(new Error('Invalid password'));
@@ -64,7 +54,7 @@ const authController = {
   async verify(req, res, next) {
     const { verificationCode } = req.params;
     try {
-      const { user_id } = jwt.verify(verificationCode, 'EMAIL_CHANGEME');
+      const { user_id } = verifyEmailJWT(verificationCode);
       const verified = await Customer.verify(user_id);
       res.json({ success: verified });
     } catch (err) {
