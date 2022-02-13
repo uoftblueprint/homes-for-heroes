@@ -2,7 +2,6 @@ const sql = require('./db.js');
 const CustomerQueryData = require('./query-models/customer-query-data.model.js');
 const bcrypt = require('bcrypt');
 const logger = require('../logger');
-const crypto = require('crypto');
 
 // constructor
 const Customer = function (customer) {
@@ -23,30 +22,42 @@ Customer.prototype.isValidPassword = async function (password) {
 
 Customer.create = function (name, phone, email, password) {
   return new Promise((resolve, reject) => {
-    const verificationCode = crypto.randomBytes(32).toString('hex');
     const hashedPassword = bcrypt.hashSync(password, 15);
     sql.query(
-      'INSERT INTO client_users (name, phone, email, password, verified, verification_code) VALUES (?, ?, ?, ?, FALSE, ?)',
-      [name, phone, email, hashedPassword, verificationCode],
+      'INSERT INTO client_users (name, phone, email, password, verified) VALUES (?, ?, ?, ?, FALSE)',
+      [name, phone, email, hashedPassword],
       (err) => {
         if (err) reject(err);
         else {
           sql.query('SELECT LAST_INSERT_ID()', (err, rows) => {
             if (err) reject(err);
-            else
+            else {
+              const user_id = rows[0]['LAST_INSERT_ID()'];
               resolve(
                 new Customer({
-                  user_id: rows[0]['LAST_INSERT_ID()'],
+                  user_id: user_id,
                   name: name,
                   email: email,
                   phone: phone,
-                  verified: false,
-                  verification_code: verificationCode
+                  verified: false
                 }),
               );
+            }
           });
         }
       },
+    );
+  });
+};
+
+Customer.verify = function(user_id) {
+  return new Promise((resolve, reject) => {
+    sql.query('UPDATE client_users SET verified = TRUE WHERE user_id = ?', 
+      [user_id],
+      (err) => {
+        if (err) reject(err);
+        else resolve(true);
+      }
     );
   });
 };
