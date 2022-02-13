@@ -53,7 +53,7 @@ export default function AddCaseButton(props) {
   const addNote = () => {
     let dt = new Date().toLocaleDateString();
     setDate(dt);
-    fetch('http://localhost:3000/casenote', normRequestOptions).then(
+    fetch('http://localhost:3000/api/casenote', normRequestOptions).then(
       (response) => response.json(),
     );
     handleClose();
@@ -62,7 +62,7 @@ export default function AddCaseButton(props) {
   const addAlertNote = () => {
     let dt = new Date().toLocaleDateString();
     setDate(dt);
-    fetch('http://localhost:3000/casenote', alertRequestOptions).then(
+    fetch('http://localhost:3000/api/casenote', alertRequestOptions).then(
       (response) => response.json(),
     );
     handleClose();

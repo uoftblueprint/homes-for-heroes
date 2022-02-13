@@ -26,20 +26,20 @@ export default function CaseCard() {
   const [alertOpen, setAlertOpen] = useState(false);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/getCustomerInfo/${id}/`)
+    fetch(`http://localhost:3000/api/getCustomerInfo/${id}/`)
       .then((response) => response.json())
       .then((res) => {
         setCurr(res.customerInfo[0]);
       });
 
-    fetch(`http://localhost:3000/customers/${id}/alertCase`)
+    fetch(`http://localhost:3000/api/customers/${id}/alertCase`)
       .then((response) => response.json())
       .then((caseNote) => setAlert(caseNote))
       .catch((err) => {
         console.error(err);
       });
     fetch(
-      `http://localhost:3000/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`,
+      `http://localhost:3000/api/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`,
     )
       .then((response) => response.json())
       .then((res) => {

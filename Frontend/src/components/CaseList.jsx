@@ -15,7 +15,7 @@ export default function CaseList() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/customers`)
+    fetch(`http://localhost:3000/api/customers`)
       .then((response) => response.json())
       .then((res) => {
         setUsers(res.customers);
@@ -23,7 +23,7 @@ export default function CaseList() {
   }, []);
 
   const showCard = (id) => {
-    fetch(`http://localhost:3000/customers/${id}/alertCase`)
+    fetch(`http://localhost:3000/api/customers/${id}/alertCase`)
       .then((response) => response.json())
       .then((caseNote) => setCurrentCase(caseNote))
       .catch((err) => {
