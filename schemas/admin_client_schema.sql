@@ -17,13 +17,14 @@ CREATE TABLE IF NOT EXISTS admin_users (
 
 DROP TABLE IF EXISTS client_users;
 CREATE TABLE IF NOT EXISTS client_users (
+    user_id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    phone VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
+    phone VARCHAR(255),
+    password VARCHAR(255),
     verified BOOLEAN NOT NULL,
+    oauth BOOLEAN NOT NULL,
     alert_case_id INT UNIQUE,
-    user_id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (user_id),
     FOREIGN KEY (alert_case_id)
     REFERENCES cases(case_id)
