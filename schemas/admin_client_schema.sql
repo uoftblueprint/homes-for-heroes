@@ -21,9 +21,11 @@ CREATE TABLE IF NOT EXISTS client_users (
     email VARCHAR(255) NOT NULL UNIQUE,
     phone VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    verified BOOLEAN NOT NULL,
+    verification_code VARCHAR(32) UNIQUE,
     alert_case_id INT UNIQUE,
     user_id INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (user_id)
+    PRIMARY KEY (user_id),
     FOREIGN KEY (alert_case_id)
     REFERENCES cases(case_id)
         ON UPDATE CASCADE
@@ -37,7 +39,7 @@ CREATE TABLE IF NOT EXISTS cases (
     notes TEXT,
     last_update DATETIME NOT NULL DEFAULT NOW(),
     case_id INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (case_id)
+    PRIMARY KEY (case_id),
     FOREIGN KEY (user_id)
 	REFERENCES client_users (user_id)
         ON UPDATE CASCADE
