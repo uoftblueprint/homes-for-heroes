@@ -13,7 +13,6 @@ const Customer = function (customer) {
   this.alert_case_id = customer.alert_case_id;
   this.verified = customer.verified;
   this.oauth = customer.oauth;
-  this.verification_code = customer.verification_code;
 };
 
 Customer.prototype.isValidPassword = async function (password) {
