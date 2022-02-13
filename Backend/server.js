@@ -5,6 +5,7 @@ const logger = require('./app/logger');
 const catchAllErrorHandler = require('./app/middleware/catch-all-error-handler');
 const requestLoggingHandler = require('./app/middleware/request-logging-handler');
 const apiRouter = require('./app/routes');
+const rateLimiter = require('./app/middleware/ratelimiter');
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use(express.json());
 
 // Log every request
 app.use(requestLoggingHandler);
+
+app.use(rateLimiter);
 
 // Set the api endpoint
 app.use('/api', apiRouter);
