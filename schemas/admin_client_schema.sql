@@ -22,7 +22,6 @@ CREATE TABLE IF NOT EXISTS client_users (
     phone VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     verified BOOLEAN NOT NULL,
-    verification_code VARCHAR(32) UNIQUE,
     alert_case_id INT UNIQUE,
     user_id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (user_id),
