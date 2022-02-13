@@ -55,7 +55,7 @@ export default function ProfilePage({ user_id }) {
   // User Info Table
   const [userInfo, setUserInfo] = useState({});
 
-  fetch(`/api/getCustomerInfo/:${user_id}`)
+  fetch(`/api/getCustomerInfo/${user_id}`)
     .then((response) => response.json())
     .then((data) => setUserInfo(data))
     .then(console.log(userInfo))
