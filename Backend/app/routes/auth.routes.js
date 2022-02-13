@@ -23,4 +23,6 @@ module.exports = (app) => {
     validationErrorHandler,
     authController.verify,
   );
+
+  app.get('/logout', authController.logout);
 };

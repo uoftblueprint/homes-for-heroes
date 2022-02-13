@@ -71,6 +71,14 @@ const authController = {
       next(err);
     }
   },
+  async logout(req, res, next) {
+    try {
+      // TODO: Clear the localstorage of the token
+      res.redirect('/');
+    } catch (err) {
+      next(err);
+    }
+  },
 };
 
 module.exports = authController;
