@@ -16,4 +16,11 @@ module.exports = (app) => {
     validationErrorHandler,
     authController.login,
   );
+
+  app.get(
+    '/verify/:verificationCode',
+    validationSchema.verifySchema,
+    validationErrorHandler,
+    authController.verify,
+  );
 };
