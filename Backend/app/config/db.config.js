@@ -1,7 +1,9 @@
+require('dotenv').config();
+
 module.exports = {
-  HOST: "127.0.0.1",
-  USER: "newuser",
-  PASSWORD: "password",
-  PORT: "3306",
-  DB: "homes_for_heroes"
+  HOST: process.env.DB_HOST,
+  USER: process.env.DB_USER,
+  PASSWORD: process.env.DB_PASSWORD,
+  PORT: process.env.DB_PORT,
+  DB: process.env.DB_NAME,
 };
