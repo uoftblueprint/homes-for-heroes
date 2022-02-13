@@ -12,6 +12,7 @@ const Customer = function (customer) {
   this.phone = customer.phone;
   this.alert_case_id = customer.alert_case_id;
   this.verified = customer.verified;
+  this.oauth = customer.oauth;
   this.verification_code = customer.verification_code;
 };
 
@@ -24,7 +25,7 @@ Customer.create = function (name, phone, email, password) {
   return new Promise((resolve, reject) => {
     const hashedPassword = bcrypt.hashSync(password, 15);
     sql.query(
-      'INSERT INTO client_users (name, phone, email, password, verified) VALUES (?, ?, ?, ?, FALSE)',
+      'INSERT INTO client_users (name, phone, email, password, verified, oauth) VALUES (?, ?, ?, ?, FALSE, FALSE)',
       [name, phone, email, hashedPassword],
       (err) => {
         if (err) reject(err);
@@ -39,7 +40,37 @@ Customer.create = function (name, phone, email, password) {
                   name: name,
                   email: email,
                   phone: phone,
-                  verified: false
+                  verified: false,
+                  oauth: false
+                }),
+              );
+            }
+          });
+        }
+      },
+    );
+  });
+};
+
+Customer.createOAuth = function (name, email) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'INSERT INTO client_users (name, email, verified, oauth) VALUES (?, ?, TRUE, TRUE)',
+      [name, email],
+      (err) => {
+        if (err) reject(err);
+        else {
+          sql.query('SELECT LAST_INSERT_ID()', (err, rows) => {
+            if (err) reject(err);
+            else {
+              const user_id = rows[0]['LAST_INSERT_ID()'];
+              resolve(
+                new Customer({
+                  user_id: user_id,
+                  name: name,
+                  email: email,
+                  verified: true,
+                  oauth: true,
                 }),
               );
             }
