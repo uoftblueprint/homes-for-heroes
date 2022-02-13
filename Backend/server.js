@@ -26,10 +26,12 @@ app.use(express.json());
 // Log every request
 app.use(requestLoggingHandler);
 
-app.use(rateLimiter);
-
 // Set the api endpoint
 app.use('/api', apiRouter);
+
+// Serve the React files if in prod mode
+if(process.env.NODE_ENV === 'production')
+  app.use(express.static('public'));
 
 // Catch any errors that haven't been caught by the appropriate handler
 app.use(catchAllErrorHandler);
