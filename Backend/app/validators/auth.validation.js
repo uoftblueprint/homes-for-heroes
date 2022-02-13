@@ -8,7 +8,7 @@ const validationSchema = {
     body('password').isStrongPassword(),
   ],
   loginSchema: [body('email').notEmpty(), body('password').notEmpty()],
-  verifySchema: [param('verificationCode').isJWT()]
+  verifySchema: [param('verificationCode').isJWT()],
 };
 
 module.exports = validationSchema;

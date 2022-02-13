@@ -14,7 +14,7 @@ const helpers = {
   },
   issueEmailJWT(user) {
     const payload = {
-      id: user.user_id
+      id: user.user_id,
     };
 
     return jwt.sign(payload, 'EMAIL_CHANGEME', { expiresIn: '1d' });

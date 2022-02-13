@@ -8,7 +8,12 @@ module.exports = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   // Log the rate-limits
   handler: (req, res, next, options) => {
-    logger.info('%s %s %s User rate limited', options.statusCode, req.method, req.url);
+    logger.info(
+      '%s %s %s User rate limited',
+      options.statusCode,
+      req.method,
+      req.url,
+    );
     res.status(options.statusCode).send(options.message);
-  }
+  },
 });

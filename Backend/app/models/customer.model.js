@@ -41,7 +41,7 @@ Customer.create = function (name, phone, email, password) {
                   email: email,
                   phone: phone,
                   verified: false,
-                  oauth: false
+                  oauth: false,
                 }),
               );
             }
@@ -81,14 +81,15 @@ Customer.createOAuth = function (name, email) {
   });
 };
 
-Customer.verify = function(user_id) {
+Customer.verify = function (user_id) {
   return new Promise((resolve, reject) => {
-    sql.query('UPDATE client_users SET verified = TRUE WHERE user_id = ?', 
+    sql.query(
+      'UPDATE client_users SET verified = TRUE WHERE user_id = ?',
       [user_id],
       (err) => {
         if (err) reject(err);
         else resolve(true);
-      }
+      },
     );
   });
 };
@@ -199,30 +200,52 @@ Customer.getCases = function (user_id, start_date, end_date) {
       (err, cases) => {
         if (err) reject(err);
         resolve(cases);
-      });
+      },
+    );
   });
 };
 
-
-Customer.getUserInfoCSV = function(client_name, email, phone, street_name, kin_name) {
+Customer.getUserInfoCSV = function (
+  client_name,
+  email,
+  phone,
+  street_name,
+  kin_name,
+) {
   return new Promise((resolve, reject) => {
     const conditions = [];
     const fields = [];
-    if (client_name) { conditions.push('c.name = ?'); fields.push(client_name); }
-    if (email) { conditions.push('c.email = ?'); fields.push(email); }
-    if (phone) { conditions.push('u.applicant_phone = ?'); fields.push(phone); }
-    if (street_name) { conditions.push('u.street_name = ?'); fields.push(street_name); }
-    if (kin_name) { conditions.push('k.kin_name = ?'); fields.push(kin_name); }
+    if (client_name) {
+      conditions.push('c.name = ?');
+      fields.push(client_name);
+    }
+    if (email) {
+      conditions.push('c.email = ?');
+      fields.push(email);
+    }
+    if (phone) {
+      conditions.push('u.applicant_phone = ?');
+      fields.push(phone);
+    }
+    if (street_name) {
+      conditions.push('u.street_name = ?');
+      fields.push(street_name);
+    }
+    if (kin_name) {
+      conditions.push('k.kin_name = ?');
+      fields.push(kin_name);
+    }
     const sql_query = `SELECT c.name, c.email,
       u.gender, u.applicant_phone, u.applicant_dob, u.curr_level, u.city, u.province,
       k.kin_name, k.relationship, k.kin_phone, k.kin_email
     FROM client_users AS c
       LEFT JOIN UserInfo AS u ON u.user_id = c.user_id
-      LEFT JOIN NextKin AS k ON k.user_id = c.user_id ${conditions.length ? (`WHERE ${conditions.join('AND ')}`) : ''}`;
+      LEFT JOIN NextKin AS k ON k.user_id = c.user_id ${
+  conditions.length ? `WHERE ${conditions.join('AND ')}` : ''
+}`;
     sql.query(sql_query, fields, (err, info) => {
       if (err) reject(err);
       resolve(info);
-
     });
   });
 };

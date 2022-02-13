@@ -25,8 +25,7 @@ app.use(requestLoggingHandler);
 app.use('/api', apiRouter);
 
 // Serve the React files if in prod mode
-if(process.env.NODE_ENV === 'production')
-  app.use(express.static('public'));
+if (process.env.NODE_ENV === 'production') app.use(express.static('public'));
 
 // Catch any errors that haven't been caught by the appropriate handler
 app.use(catchAllErrorHandler);
@@ -34,7 +33,9 @@ app.use(catchAllErrorHandler);
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  logger.info(`Server is running on port ${PORT} in ${process.env.NODE_ENV} mode.`);
+  logger.info(
+    `Server is running on port ${PORT} in ${process.env.NODE_ENV} mode.`,
+  );
 });
 
 process.on('SIGINT', () => {
