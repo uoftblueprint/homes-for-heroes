@@ -7,7 +7,7 @@ CREATE TABLE CustomForm (
     form_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     admin_id INT NOT NULL,
     created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    title VARChAR(256) NOT NULL,
+    title VARCHAR(256) NOT NULL,
     form_body JSON NOT NULL,
     CONSTRAINT FOREIGN KEY (admin_id) REFERENCES admin_users(admin_id)
 );
