@@ -1,4 +1,4 @@
-import { IconButton, TextField, Box, Button, Typography, Tabs, Tab, Table,TableContainer, TableBody, TableRow, TableCell } from '@mui/material';
+import { IconButton, TextField, Box, Button, Typography, Tabs, Tab, Table,TableContainer, TableBody, TableRow, TableCell, Alert } from '@mui/material';
 import * as React from 'react';
 import { useState } from 'react';
 import InfoIcon from '@mui/icons-material/Info';
@@ -8,6 +8,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles' 
+
+import validator from 'validator'
 
 const theme = createTheme({
    palette: {
@@ -103,15 +105,39 @@ export default function ProfilePage( {user_id} ) {
 
    const [formInfo, setFormInfo] = useState({})
 
+   const [errorStr, setErrorStr] = useState('');
+
    const handleSubmit = (event) => {
       event.preventDefault();
-      (async () => {
-         await setUserInfo({
-            ...userInfo,
-            ...formInfo
-         });
-      })();
-      setEditingInfo(false)
+      setErrorStr('')
+
+      if (!validator.isEmail(formInfo.email) | !validator.isMobilePhone(formInfo.phone) | !validator.isDate(formInfo.applicant_dob)) {
+         let errorLst = []
+
+         if (!validator.isEmail(formInfo.email)) {
+            errorLst.push(' email')
+         }
+         
+         if (!validator.isMobilePhone(formInfo.phone)) {
+            errorLst.push(' phone number')
+         }
+         
+         if (!validator.isDate(formInfo.applicant_dob)) {
+            errorLst.push(' date of birth')
+         }
+
+         const converted = errorLst.toString()
+         setErrorStr('Error - Invalid' + converted)
+      } else {
+         (async () => {
+            await setUserInfo({
+               ...userInfo,
+               ...formInfo
+            });
+         })();
+         setErrorStr('')
+         setEditingInfo(false)        
+      }
     };
 
    const handleInputChange = (event) => {
@@ -206,20 +232,20 @@ export default function ProfilePage( {user_id} ) {
             <TabPanel value={value} index={0}>
                {editingInfo ? (
                   <Box component="form" onSubmit={handleSubmit} sx={{display: 'inline-flex', flexDirection: 'column', height: 500}}>
-
                      {Object.entries(userInfo).map((row) => (
                         <TextField
                            id={row[0]}
                            label={cleanKey(row[0])}
                            defaultValue={cleanVal(row[1])}
-                           value={userInfo[cleanVal(row[1])]}
+                           value={userInfo[row[1]]}
+                           //value={userInfo[row[0]]}
                            onChange={handleInputChange}
                            size='standard'
                            variant='standard'
                            sx={{ fontSize: '15px', width:500, textTransform: 'capitalize', mb: '8px'}} />
                      ))}
 
-                     <Box sx={{display: 'inline-flex', justifyContent: 'center', mt:'15px'}}>
+                     <Box sx={{display: 'inline-flex', justifyContent: 'center', mt:'15px', mb:'15px'}}>
                         <Button variant='outlined' type='button' onClick={() => setEditingInfo(false)} sx={{mr: 1}}>
                            Cancel
                         </Button>
@@ -227,6 +253,12 @@ export default function ProfilePage( {user_id} ) {
                            Submit
                         </Button>
                      </Box>
+                     { errorStr !== '' ? (
+                        <Alert variant="filled" severity="error">
+                           {errorStr}
+                        </Alert>
+                     ) : null }
+
                   </Box>
                ) : (
                   <Box sx={{height: 500, display: 'inline-flex', flexDirection: 'column'}}>

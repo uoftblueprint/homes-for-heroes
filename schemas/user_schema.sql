@@ -18,8 +18,8 @@ CREATE TABLE UserInfo (
     -- CONSTRAINT FOREIGN KEY (user_id) REFERENCES client_users(user_id);
 );
 
-DROP TABLE IF EXISTS NextKinInfo;
-CREATE TABLE NextKinInfo (
+DROP TABLE IF EXISTS NextKin;
+CREATE TABLE NextKin (
     kin_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     kin_name CHAR(255) NOT NULL,

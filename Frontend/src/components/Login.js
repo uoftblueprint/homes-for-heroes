@@ -4,6 +4,9 @@ import { Button, Checkbox, Container, CssBaseline, FormControlLabel, Typography,
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+import { useDispatch } from "react-redux";
+import { login } from "../redux/userSlice";
+
 const theme = createTheme({
   palette: {
     background: {
@@ -18,22 +21,21 @@ const theme = createTheme({
   }
 });
 
-const INITIAL_USER = {
-  email: '',
-  password: ''
-};  
-
-
 export default function Login() {
-  const [user, setUser] = React.useState(INITIAL_USER);
+  const dispatch = useDispatch();
 
-  // function handleChange(event) {
-  //   const { name, value } = event.target;
-  //   setUser(prevState => ({ ...prevState, [name]: value }));
-  // }
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    dispatch(
+      login({
+        email: email,
+        password: password,
+        loggedIn: true,
+      })
+    );
   };
 
   const [showPassword, setShowPassword] = useState(false);
@@ -59,7 +61,7 @@ export default function Login() {
           <Typography component="h1" variant="h5">
             Sign in to access system
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={(event) => handleSubmit(event)} noValidate sx={{ mt: 1 }}>
             <TextField
               required
               fullWidth
@@ -67,6 +69,8 @@ export default function Login() {
               id="email"
               label="Email"
               name="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               autoComplete="Email"
             />
             <TextField
@@ -76,8 +80,9 @@ export default function Login() {
               id="password"
               label="Password"
               name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
-
               type={showPassword ? "text": "password"}
               InputProps={{
                 endAdornment: (
