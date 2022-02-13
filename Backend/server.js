@@ -5,7 +5,7 @@ const logger = require('./app/logger');
 const catchAllErrorHandler = require('./app/middleware/catch-all-error-handler');
 const requestLoggingHandler = require('./app/middleware/request-logging-handler');
 const apiRouter = require('./app/routes');
-const rateLimiter = require('./app/middleware/ratelimiter');
+const db = require('./app/models/db');
 
 const app = express();
 
@@ -39,5 +39,14 @@ app.use(catchAllErrorHandler);
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  logger.info(`Server is running on port ${PORT}.`);
+  logger.info(`Server is running on port ${PORT} in ${process.env.NODE_ENV} mode.`);
+});
+
+process.on('SIGINT', () => {
+  // Close the database connection gracefully on signal interrupt
+  db.end((err) => {
+    if (err) logger.error(err);
+    logger.info('Exiting gracefully.');
+    process.exit(err ? 1 : 0);
+  });
 });
