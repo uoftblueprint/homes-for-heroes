@@ -2,6 +2,7 @@ const sql = require('./db.js');
 const CustomerQueryData = require('./query-models/customer-query-data.model.js');
 const bcrypt = require('bcrypt');
 const logger = require('../logger');
+const crypto = require('crypto');
 
 // constructor
 const Customer = function (customer) {
@@ -11,6 +12,8 @@ const Customer = function (customer) {
   this.password = customer.password;
   this.phone = customer.phone;
   this.alert_case_id = customer.alert_case_id;
+  this.verified = customer.verified;
+  this.verification_code = customer.verification_code;
 };
 
 Customer.prototype.isValidPassword = async function (password) {
@@ -20,9 +23,11 @@ Customer.prototype.isValidPassword = async function (password) {
 
 Customer.create = function (name, phone, email, password) {
   return new Promise((resolve, reject) => {
+    const verificationCode = crypto.randomBytes(32).toString('hex');
+    const hashedPassword = bcrypt.hashSync(password, 15);
     sql.query(
-      'INSERT INTO client_users (name, phone, email, password) VALUES (?, ?, ?, ?)',
-      [name, phone, email, bcrypt.hashSync(password, 15)],
+      'INSERT INTO client_users (name, phone, email, password, verified, verification_code) VALUES (?, ?, ?, ?, FALSE, ?)',
+      [name, phone, email, hashedPassword, verificationCode],
       (err) => {
         if (err) reject(err);
         else {
@@ -35,6 +40,8 @@ Customer.create = function (name, phone, email, password) {
                   name: name,
                   email: email,
                   phone: phone,
+                  verified: false,
+                  verification_code: verificationCode
                 }),
               );
           });
@@ -157,19 +164,19 @@ Customer.getCases = function (user_id, start_date, end_date) {
 
 Customer.getUserInfoCSV = function(client_name, email, phone, street_name, kin_name) {
   return new Promise((resolve, reject) => {
-    var conditions = [];
-    var fields = [];
+    const conditions = [];
+    const fields = [];
     if (client_name) { conditions.push('c.name = ?'); fields.push(client_name); }
     if (email) { conditions.push('c.email = ?'); fields.push(email); }
     if (phone) { conditions.push('u.applicant_phone = ?'); fields.push(phone); }
     if (street_name) { conditions.push('u.street_name = ?'); fields.push(street_name); }
     if (kin_name) { conditions.push('k.kin_name = ?'); fields.push(kin_name); }
-    var sql_query = `SELECT c.name, c.email,
+    const sql_query = `SELECT c.name, c.email,
       u.gender, u.applicant_phone, u.applicant_dob, u.curr_level, u.city, u.province,
       k.kin_name, k.relationship, k.kin_phone, k.kin_email
     FROM client_users AS c
       LEFT JOIN UserInfo AS u ON u.user_id = c.user_id
-      LEFT JOIN NextKin AS k ON k.user_id = c.user_id ${  conditions.length ? (`WHERE ${  conditions.join( 'AND ')}`) : ''}`;
+      LEFT JOIN NextKin AS k ON k.user_id = c.user_id ${conditions.length ? (`WHERE ${conditions.join('AND ')}`) : ''}`;
     sql.query(sql_query, fields, (err, info) => {
       if (err) reject(err);
       resolve(info);
@@ -190,7 +197,7 @@ Customer.queryUserData = function (query_params) {
       kin.kin_name, kin.relationship, kin.kin_phone, kin.kin_email
     FROM client_users AS client
       LEFT JOIN UserInfo AS info ON info.user_id = client.user_id
-      LEFT JOIN NextKinInfo AS kin ON kin.user_id = client.user_id
+      LEFT JOIN NextKin AS kin ON kin.user_id = client.user_id
       ${q.query}
     ORDER BY client.name
     LIMIT ${q.offset}, ${q.limit}
@@ -200,51 +207,6 @@ Customer.queryUserData = function (query_params) {
     sql.query(data_query, (err, row) => {
       if (err) reject(err);
       resolve(row);
-    });
-  });
-};
-
-Customer.getUserInfoCSV = function (
-  client_name,
-  email,
-  phone,
-  street_name,
-  kin_name,
-) {
-  return new Promise((resolve, reject) => {
-    var conditions = [];
-    var fields = [];
-    if (client_name) {
-      conditions.push('c.name = ?');
-      fields.push(client_name);
-    }
-    if (email) {
-      conditions.push('c.email = ?');
-      fields.push(email);
-    }
-    if (phone) {
-      conditions.push('u.applicant_phone = ?');
-      fields.push(phone);
-    }
-    if (street_name) {
-      conditions.push('u.street_name = ?');
-      fields.push(street_name);
-    }
-    if (kin_name) {
-      conditions.push('k.kin_name = ?');
-      fields.push(kin_name);
-    }
-    var sql_query = `SELECT c.name, c.email,
-      u.gender, u.applicant_phone, u.applicant_dob, u.curr_level, u.city, u.province,
-      k.kin_name, k.relationship, k.kin_phone, k.kin_email
-    FROM client_users AS c
-      LEFT JOIN UserInfo AS u ON u.user_id = c.user_id
-      LEFT JOIN NextKinInfo AS k ON k.user_id = c.user_id ${
-  conditions.length ? `WHERE ${conditions.join('AND ')}` : ''
-}`;
-    sql.query(sql_query, fields, (err, info) => {
-      if (err) reject(err);
-      resolve(info);
     });
   });
 };
