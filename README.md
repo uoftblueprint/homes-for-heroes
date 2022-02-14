@@ -1,27 +1,69 @@
 # HomesForHeroes
 
-In the Frontend folder, you can run:
+# Getting Started
 
-### `npm install`
+## Installing dependencies
 
-### `npm start`
+To install all of the required dependencies in both the front and backend run the command:
+```
+npm run install:all
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Setting up secrets
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Duplicate the `.env.example` file found in the Backend folder and rename to `.env` then proceed to fill out the secrets with the appropriate constants.
 
-### `npm test`
+## Setting up the development environment
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+In order to integrate eslint and prettier into visible IDE errors, install the `eslint` and `prettier` VSCode extensions. (These should be already preinstalled with WebStorm).
 
-### `npm run build`
+Some may find it easy to setup run configurations for the `npm` commands in the package.json, this is highly recommended if you are using VSCode or WebStorm
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Linting
 
-The build is minified and the filenames include the hashes.\
+The project should automatically lint itself before a committ is made, however, if you would like to manually lint, here are your options.
 
-In the Backend folder, we're using docker and node.
+### Check for ESLint errors
+```
+npm run lint
+```
+
+### Autmomatically fix ESLint errors
+Note that the error must be automatically fixable (as shown by the wrench emoji [here](https://eslint.org/docs/rules/))
+```
+npm run lint:fix
+```
+
+### Format all files with prettier
+```
+npm run format
+```
+
+# Running the project
+
+## Development
+
+In order to run the project in development mode with code watching (auto-reload on save), run:
+```
+npm run dev
+```
+
+## Production
+
+### Building
+Before deploying the application, the React app must be built, this can be done with the following command:
+```
+npm run build
+```
+
+### PM2 Clustering
+
+This project uses `pm2` to cluster the backend into multiple processes across the CPU for performance, this can be deployed with the command:
+```
+npm run pm2:start
+```
+
+In order to kill all of the running pm2 processes, run the command:
+```
+npm run pm2:delete
+```
