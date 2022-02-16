@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Autocomplete from "@mui/material/Autocomplete";
@@ -18,11 +17,46 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import { makeStyles } from "@mui/styles";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
 import CheckIcon from "@mui/icons-material/Check";
+import SearchIcon from "@mui/icons-material/Search";
 
 // Demo purposes
+const useStyles = makeStyles({
+  root: {
+    marginTop: "10px",
+    border: 0, 
+    alignContent: "flex-start",
+    justifyContent: "flex-start",
+    "& .MuiDataGrid-columnHeaderTitle": {
+      fontSize: "small",
+      marginTop: "5px",
+      marginLeft: "-5px",
+      marginBottom: "10px",
+    },
+    "& .MuiDataGrid-columnHeaders": {
+      borderBottom: "none",
+    },
+    "& .MuiDataGrid-iconSeparator": {
+      display: "none",
+    },
+    "& .MuiDataGrid-cell": {
+      borderRight: "none",
+      borderBottom: "none !important",
+    },
+    "& .MuiDataGrid-footerContainer": {
+      display: "none",
+    },
+  },
+  SearchInputField: {
+    backgroundColor: "#F7F8F9",
+    "& .MuiFilledInput-input": {
+      padding: "10px",
+    },
+  },
+});
 
 function stringToColor(string) {
   let hash = 0;
@@ -54,41 +88,60 @@ function stringAvatar(name) {
 }
 
 export default function Privileges() {
-  const locations = ["Toronto", "Montreal"];
+
+  const classes = useStyles(); 
   const theme = useTheme();
   const fullscreen = useMediaQuery(theme.breakpoints.down("md"));
+  const [locations, setLocations] = React.useState(["Toronto", "Montreal"]);
   const [svLocation, setSvLocation] = React.useState("Toronto");
   const [dialog, toggleDialog] = React.useState(false);
   const [adminDialog, toggleAdminDialog] = React.useState(false);
+  const [chapterDialog, toggleChapterDialog] = React.useState(false);
+  const [chapterName, setChapterName] = React.useState("");
   const [supervisors, setSupervisors] = React.useState([
     {
+      id: "1",
       name: "Don Jon",
       svregion: "Toronto",
       isAdmin: true,
     },
     {
+      id: "2",
       name: "Barry Allen",
       svregion: "Montreal",
       isAdmin: false,
     },
     {
+      id: "3",
       name: "Evan Hansen",
       svregion: "Toronto",
       isAdmin: true,
     },
     {
+      id: "4",
       name: "Sasha Blouse",
       svregion: "Montreal",
       isAdmin: true,
     },
     {
+      id: "5",
       name: "Mary Poppins",
       svregion: "Montreal",
       isAdmin: false,
     },
   ]);
 
+  const handleChapterDialog = () => {
+    setLocations(prevArr => [...prevArr, chapterName]);
+    toggleChapterDialog(false);
+  }
+  
+  const submitChanges = () => {
+    console.log('hi')
+  }
+
   return (
+    <Grid display="flex" direction="column">
     <Grid container display="flex" justifyContent="center">
       <Card sx={{ maxWidth: 385, mt: "40px", mr: "30px", border: 1 }}>
         <CardContent>
@@ -162,6 +215,22 @@ export default function Privileges() {
         >
           <DialogTitle>Add System Admin</DialogTitle>
           <DialogContent>
+          <TextField
+            className={classes.SearchInputField}
+            fullWidth 
+            variant="outlined"
+            placeholder="Search Users"
+            name="search"
+            type="text"
+            InputProps={{
+              startAdornment: <SearchIcon fontSize="small" />,
+            }}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') { 
+                e.target.value = ""
+              }
+            }}
+        /> 
             {supervisors.map((supervisor) => {
               return (
                 <ListItem
@@ -214,7 +283,26 @@ export default function Privileges() {
           </DialogActions>
         </Dialog>
       </Card>
-      <Grid sx={{ mt: "40px" }}>
+        <Card sx={{ maxWidth: 385, mt: "40px", border: 1 }}>
+          <CardContent>  
+            <Grid container display="flex" direction="row" justify="space-evenly">
+            <Typography>Chapter Supervisors</Typography> 
+            <Button
+              size="small"
+              onClick={() => toggleChapterDialog(true)}
+              startIcon={<AddIcon />}
+              sx={{ marginLeft: "auto" }}
+            >
+              Add Chapter 
+            </Button>
+          </Grid>
+          <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ textAlign: "left" }}
+            >
+              The following people are chapter supervisors of the selected chapter.
+            </Typography>
         <Autocomplete
           disablePortal
           autoHighlight
@@ -223,17 +311,10 @@ export default function Privileges() {
           onChange={(event, value) => setSvLocation(value)}
           id="combo-box-demo"
           options={locations}
-          sx={{ width: 300 }}
+          sx={{ width: 250, mt: '20px' }}
           renderInput={(params) => <TextField {...params} label="Location" />}
         />
-        <Card sx={{ maxWidth: 385, mt: "40px", border: 1 }}>
-          <CardContent>
-            <Grid
-              container
-              display="flex"
-              direction="row"
-              justify="space-evenly"
-            >
+        <Grid container display="flex" direction="row" justify="space-evenly" sx={{ mt: '15px'}}>
               <Typography>{svLocation} Supervisors</Typography>
               <Button
                 size="small"
@@ -242,15 +323,8 @@ export default function Privileges() {
                 sx={{ marginLeft: "auto" }}
               >
                 Add New
-              </Button>
-            </Grid>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ textAlign: "left" }}
-            >
-              The following people are chapter supervisors of this chapter.
-            </Typography>
+              </Button> 
+        </Grid>    
             <List>
               {supervisors
                 .filter((el) => el.svregion === svLocation)
@@ -297,6 +371,29 @@ export default function Privileges() {
             </List>
           </CardContent>
         </Card>
+
+        <Dialog
+          maxWidth="sm"
+          fullWidth
+          fullScreen={fullscreen}
+          open={chapterDialog}
+          onClose={() => toggleChapterDialog(false)}
+        >
+          <DialogTitle>Add Chapter</DialogTitle>
+          <DialogContent>
+          <TextField 
+          label="Chapter Name" 
+          variant='standard' 
+          value={chapterName} 
+          onChange={(e) => setChapterName(e.target.value)} />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleChapterDialog}>
+              Add Chapter
+            </Button>
+          </DialogActions>
+        </Dialog>        
+
         <Dialog
           maxWidth="sm"
           fullWidth
@@ -306,6 +403,22 @@ export default function Privileges() {
         >
           <DialogTitle>Add Supervisor</DialogTitle>
           <DialogContent>
+            <TextField
+            className={classes.SearchInputField}
+            fullWidth 
+            variant="outlined"
+            placeholder="Search Users"
+            name="search"
+            type="text"
+            InputProps={{
+              startAdornment: <SearchIcon fontSize="small" />,
+            }}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') { 
+                e.target.value = ""
+              }
+            }}
+        /> 
             {supervisors.map((supervisor) => {
               return (
                 <ListItem
@@ -359,8 +472,19 @@ export default function Privileges() {
               Done
             </Button>
           </DialogActions>
-        </Dialog>
+        </Dialog> 
       </Grid>
-    </Grid>
+      <Grid
+      display='flex'
+      >
+        <Button
+        sx={{ marginLeft: 'auto' }}
+        onClick={submitChanges}
+        disabled={false}
+        >
+          Apply Changes
+          </Button>
+      </Grid>
+      </Grid>
   );
 }

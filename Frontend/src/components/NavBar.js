@@ -43,7 +43,7 @@ const Header = props => {
 
   const menuItems = [ 
     {
-      menuTitle: "User CRM",
+      menuTitle: "Veteran Info",
       pageURL: "/usercrm"
     },
     {
@@ -58,6 +58,10 @@ const Header = props => {
       menuTitle: "Admin Privileges",
       pageURL: "/admin"
     },  
+    {
+      menuTitle: "External Relations",
+      pageURL: "/partnercrm"
+    }
   ];
 
   return (
