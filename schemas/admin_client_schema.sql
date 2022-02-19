@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS admin_users (
     password VARCHAR(255) NOT NULL,
     address VARCHAR(255) NOT NULL,
     admin_id INT NOT NULL AUTO_INCREMENT,
+    role_id INT NOT NULL DEFAULT 0,
+    chapter_id INT DEFAULT NULL,
     PRIMARY KEY (admin_id)
 );
 
