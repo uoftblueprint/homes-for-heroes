@@ -1,23 +1,25 @@
 import './App.css';
-
-import NavBar from './components/NavBar';
-import CaseList from './components/CaseList';
+import * as React from 'react';
 import { Route, Switch } from "react-router-dom";
-import Login from './components/Login.js';
-import CRM from './components/CRM.js';
-import Privileges from './components/Privileges.js';
-import ProfilePage from './components/ProfilePage.js';
 import { Typography } from '@mui/material';
-import CaseDetail from './components/CaseDetail';
 import FormTop from './pages/form/FormTop.js';
 import FormCreate from "./pages/form/FormCreate";
 import FormView from "./pages/form/FormView";
 import FormEdit from "./pages/form/FormEdit";
+import NavBar from './components/NavBar';
+import CaseList from './pages/UserCase/CaseList';
+import Login from './pages/Login/Login.js';
+import CRM from './pages/UserCrm/CRM.js';
+import Privileges from './pages/Admin/Privileges copy.js';
+import ProfilePage from './pages/ProfilePage/ProfilePage.js';
+import CaseDetail from './pages/CaseDetails/CaseDetail';
+import PartnerCRM from './pages/PartnerCrm/PartnerCRM.js';
 
-function App() {
+
+function App() { 
   return (
     <div className="App">
-      <header className="App-header">
+      <header className="App-header">    
         <NavBar />
         <Switch>
           <Route exact from="/" render={props => <Typography color='black'>Home</Typography>} />
@@ -29,6 +31,7 @@ function App() {
             <Route exact path="/forms/edit/:formId" component={FormEdit} />
           <Route exact path="/admin" render={props => <Privileges {...props} />} />
           <Route exact path="/casenotes/:id" render={props => <CaseDetail {...props} />} />
+          <Route exact path="/partnercrm" render={props => <PartnerCRM {...props} />} /> 
           {/* temp profile page: */}
           <Route exact path="/profile" render={props => <ProfilePage {...props} />} />
           <Route exact path='/login' render={props => <Login {...props} />} />
