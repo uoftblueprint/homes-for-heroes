@@ -79,7 +79,7 @@ export default function FormBuilder(props) {
     const save = () => {
         props.saveDraft({
             // TODO: admin_id
-            admin_id: 1,
+            admin_id: 2,
             title: title,
             form_body: {
                 questions: questions

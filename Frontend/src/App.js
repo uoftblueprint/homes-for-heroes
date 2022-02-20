@@ -12,6 +12,7 @@ import CaseDetail from './components/CaseDetail';
 import FormTop from './pages/form/FormTop.js';
 import FormCreate from "./pages/form/FormCreate";
 import FormView from "./pages/form/FormView";
+import FormComplete from "./pages/form/FormComplete";
 import FormEdit from "./pages/form/FormEdit";
 
 function App() {
@@ -20,7 +21,8 @@ function App() {
       <header className="App-header">
         <NavBar />
         <Switch>
-          <Route exact from="/" render={props => <Home />} />
+          <Route exact from="/" component={Home} />
+            <Route exact path="forms/complete/:formId" component={FormComplete} />
           <Route exact path="/usercrm" render={props => <CRM {...props} />} />
           <Route exact path="/usercase" render={props => <CaseList {...props} />} />
           <Route exact path="/forms" component={FormTop} />

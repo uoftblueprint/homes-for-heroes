@@ -15,8 +15,6 @@ export default function Home() {
   const [pending, setPending] = useState([]);
 
   const admin_id = 2;
-  let { url } = useRouteMatch();
-
 
   useEffect(() => {
     (async () => {
@@ -55,7 +53,7 @@ export default function Home() {
                     </Typography>
                   </Grid>
                   <Grid item xs={4}>
-                    <Button component={Link} to={`${url}/forms/view/${item.form_id}`} variant="outlined" size="small" startIcon={<EditIcon />}>Complete Form</Button>
+                    <Button component={Link} to={`forms/complete/${item.form_id}`} variant="outlined" size="small" startIcon={<EditIcon />}>Complete Form</Button>
                   </Grid>
                 </ Grid>
               ))}
@@ -82,7 +80,7 @@ export default function Home() {
                     </Typography>
                   </Grid>
                   <Grid item xs={4}>
-                    <Button variant="outlined" size="small" startIcon={<VisibilityIcon />}>View Response</Button>
+                    <Button component={Link} to={`forms/view/${item.form_id}`} variant="outlined" size="small" startIcon={<VisibilityIcon />}>View Form</Button>
                   </Grid>
                   <Grid item xs={4}>
                     <Button variant="outlined" size="small" startIcon={<EditIcon />}>Edit Response</Button>
