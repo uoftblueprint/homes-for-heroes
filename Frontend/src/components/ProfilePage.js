@@ -1,11 +1,9 @@
-import { IconButton, TextField, Box, Button, Typography, Tabs, Tab, Table,TableContainer, TableBody, TableRow, TableCell, Alert } from '@mui/material';
+import { TextField, Box, Button, Typography, Tabs, Tab, Table,TableContainer, TableBody, TableRow, TableCell, Alert } from '@mui/material';
 import * as React from 'react';
 import { useState } from 'react';
 import InfoIcon from '@mui/icons-material/Info';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles' 
 
@@ -40,7 +38,7 @@ function TabPanel(props) {
    );
 }
 
-export default function ProfilePage( {user_id} ) {
+export default function ProfilePage() {
    // Tabs
    const [value, setValue] = React.useState(0);
    const handleTabs = (event, val) => {
@@ -67,7 +65,6 @@ export default function ProfilePage( {user_id} ) {
       province: '',
       applicant_dob: ''
    });
-   const [rows, setRows] = React.useState([]);
    const [loading, setLoading] = React.useState(false);
 
    function fetchInfo() {
@@ -188,36 +185,42 @@ export default function ProfilePage( {user_id} ) {
          .then(response => response.json());
    }
 
-   // function postInfo(user_id, data) {
-   //    fetch(`http://localhost:3000/updateProfile`, {
-   //       method: 'POST',
-   //       headers: {
-   //          'Content-Type': 'application/json',
-   //       },
-   //       body: JSON.stringify(data),
-   //    })
-   //    .then(resp => resp.json())
-   //    .then(data => {
-   //       console.log('Success:', data);
-   //    })
-   //    .catch((error) => {
-   //       console.error('Error:', error);
-   //    });
-   // }
+   const [pwErrorStr, setPwErrorStr] = useState('');
+
+   const [passwords, setPasswords] = useState({old: '', new: '', new2: '' });
+   
+   const handlePasswordInputChange = (event) => {
+      const { id, value } = event.target;
+      console.log(id)
+      console.log(value)
+      console.log(passwords)
+      setPasswords({
+         ...passwords,
+         [id]: value
+      })
+   }
+
+   const handlePasswordSubmit = (event) => {
+      setPwErrorStr('')
+      event.preventDefault()
+      if (passwords.old !== 'old') {
+         // TODO - implement verifying password
+         setPwErrorStr('Error: current password incorrect')
+      } else if (passwords.new!== passwords.new2) {
+         setPwErrorStr('Error: passwords do not match')
+      } else {
+         setPwErrorStr('')
+         changePassword()
+      }
+   }
+   
+   const changePassword = () => {
+      console.log(passwords)
+      // TODO - implement changing password
+   }
 
    //Edit User Info
    const [editingInfo, setEditingInfo] = useState(false);
-
-   const [editPasswordStatus, setEditPasswordStatus] = useState(false);
-   //
-
-   // Password
-   const [passwordShown, setPasswordShown] = useState(false);
-
-   const togglePasswordVisibility = () => {
-      setPasswordShown(!passwordShown);
-   };
-   //
 
    function cleanKey(str) {
       if (str === "applicant_dob") {
@@ -255,6 +258,7 @@ export default function ProfilePage( {user_id} ) {
                   <Box component="form" onSubmit={handleSubmit} sx={{display: 'inline-flex', flexDirection: 'column', height: 500}}>
                      {Object.entries(userInfo).map((row) => (
                         <TextField
+                           required
                            id={row[0]}
                            label={cleanKey(row[0])}
                            defaultValue={cleanVal(row[1])}
@@ -310,41 +314,23 @@ export default function ProfilePage( {user_id} ) {
             </TabPanel>
 
             <TabPanel value={value} index={1}>
-               {editPasswordStatus ? (
-                  <div>
-                     <Box sx={{height: 500}}>
-                        <Box sx={{display: 'inline-flex', flexDirection: 'column'}}>
-                           <TextField label='Current Password' sx={{width: '300px', mt:'20px', mb: '15px'}}/>
-                           <TextField label='New Password' sx={{mb: '15px'}}/>
-                           <TextField label='Re-enter New Password' sx={{mb: '15px'}}/>
-                        </Box>
-                        <Box sx={{display: 'flex', justifyContent:'center'}}>
-                           <Button variant='outlined' onClick={() => setEditPasswordStatus(false)} sx={{mr:1}}>
-                              Cancel
-                           </Button>
-                           <Button variant='outlined' onClick={() => setEditPasswordStatus(false)} sx={{ml:1}}>
-                              Submit
-                           </Button>
-                        </Box>
-                     </Box>
-                  </div>
-               ) : (
-                  <div>
-                     <Box sx={{height:500}}>
-                        <Box sx={{display: 'flex', justifyContent: 'center', mt: 7, mb: 3}}>
-                           <Typography type={passwordShown ? "text": "password"} sx={{fontSize:'18px', padding:'7px 0'}}>
-                              <b>Password</b>: {userInfo.password}
-                           </Typography>
-                           <IconButton onClick={togglePasswordVisibility}>
-                              {passwordShown ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                           </IconButton>
-                        </Box>
-                        <Button variant='outlined' startIcon={<EditIcon />} onClick={() => setEditPasswordStatus(true)}>
-                           Change Password
+               <div>
+                  <Box sx={{height: 500   }}>
+                     <Box component="form" onSubmit={handlePasswordSubmit} sx={{ width: '350px', display: 'inline-flex', flexDirection: 'column', alignItems:'flex-end'}}>
+                        <TextField required label='Current Password' type='password' sx={{width: '100%', mt:'20px', mb: '15px'}} id='old' value={passwords.old} onChange={handlePasswordInputChange}/>
+                        <TextField required label='New Password' type='password' sx={{width: '100%', mb: '15px'}} id='new' value={passwords.new} onChange={handlePasswordInputChange}/>
+                        <TextField required label='Re-enter New Password' type='password' sx={{width:'100%', mb: '15px'}} id='new2' value={passwords.new2} onChange={handlePasswordInputChange}/>
+                        <Button variant='outlined' type='submit' sx={{width:'40%', mb:'15px'}}>
+                           Submit
                         </Button>
+                        { pwErrorStr !== '' ? (
+                           <Alert variant="filled" severity="error" sx={{width:'100%'}}>
+                              {pwErrorStr}
+                           </Alert>
+                        ) : null }
                      </Box>
-                  </div>
-               )}
+                  </Box>
+               </div>
             </TabPanel>
 
          </div>
