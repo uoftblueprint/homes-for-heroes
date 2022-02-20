@@ -48,6 +48,16 @@ export default function ProfilePage( {user_id} ) {
    };
 
    // User Info Table
+   const [formInfo, setFormInfo] = useState({
+      name: '',
+      email: '',
+      phone: '',
+      street_name: '',
+      city: '',
+      province: '',
+      applicant_dob: ''
+   });
+
    const [userInfo, setUserInfo] = useState({
       name: '',
       email: '',
@@ -74,7 +84,16 @@ export default function ProfilePage( {user_id} ) {
                province: data.customerInfo[0].province,
                applicant_dob:data.customerInfo[0].applicant_dob
             });
-            console.log(userInfo);
+            setFormInfo({
+               ...formInfo,
+               name: data.customerInfo[0].name,
+               email: data.customerInfo[0].email,
+               phone: data.customerInfo[0].phone,
+               street_name: data.customerInfo[0].street_name,
+               city: data.customerInfo[0].city,
+               province: data.customerInfo[0].province,
+               applicant_dob:data.customerInfo[0].applicant_dob
+            });
          })
          .catch(error => {
             console.error(error);
@@ -99,17 +118,17 @@ export default function ProfilePage( {user_id} ) {
       };
    }, [])
 
-   React.useEffect(() => {
-      changeInfo()
-   }, [userInfo])
-
-   const [formInfo, setFormInfo] = useState({})
+   // React.useEffect(() => {
+   //    changeInfo()
+   // }, [userInfo])
 
    const [errorStr, setErrorStr] = useState('');
 
    const handleSubmit = (event) => {
       event.preventDefault();
       setErrorStr('')
+
+      console.log(userInfo, formInfo)
 
       if (!validator.isEmail(formInfo.email) | !validator.isMobilePhone(formInfo.phone) | !validator.isDate(formInfo.applicant_dob)) {
          let errorLst = []
@@ -136,7 +155,8 @@ export default function ProfilePage( {user_id} ) {
             });
          })();
          setErrorStr('')
-         setEditingInfo(false)        
+         setEditingInfo(false)
+         changeInfo()   
       }
     };
 
@@ -163,6 +183,7 @@ export default function ProfilePage( {user_id} ) {
    };  
 
    const changeInfo = () => {
+      console.log(requestOptions)
       fetch('http://localhost:3000/updateCustomerProfile/11', requestOptions)
          .then(response => response.json());
    }
