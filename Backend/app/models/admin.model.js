@@ -17,6 +17,16 @@ Admin.listAll = function() {
     });
 };
 
+Admin.getRole = function(admin_id) {
+    return new Promise(function (resolve, reject) {
+        sql.query('SELECT role_id FROM admin_users WHERE admin_id = ?', [admin_id], 
+        function (err, results) {
+            if (err) reject (err);
+            else resolve(JSON.parse(JSON.stringify(results[0])).role_id);
+        });
+    });
+}
+
 Admin.makeSupervisor = function(admin_id) {
     return new Promise(function (resolve, reject) {
         sql.query('UPDATE admin_users SET role_id = 1 WHERE admin_id = ?',
