@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Button, Checkbox, Container, CssBaseline, FormControlLabel, Typography, TextField, Box, InputAdornment, IconButton } from '@mui/material';
+import { Button, Container, CssBaseline, Typography, TextField, Box, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from "@mui/icons-material"
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
@@ -41,8 +41,11 @@ export default function Login() {
     event.preventDefault();
 
     fetch('http://localhost:3000/login', loginReqOptions)
-      .then(response => response);
-
+      .then(response => {
+        if (response.status !== 200) {
+          window.location.href = "http://localhost:3001/login"
+        }
+      })
     dispatch(
       login({
         email: email,
