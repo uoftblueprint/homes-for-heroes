@@ -27,8 +27,22 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const loginReqOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      email: email,
+      password: password,
+    }),
+    withCredentials: true,
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    fetch('http://localhost:3000/login', loginReqOptions)
+      .then(response => response);
+
     dispatch(
       login({
         email: email,
@@ -98,10 +112,6 @@ export default function Login() {
                 )
               }}
             />
-            {/* <FormControlLabel
-              control={<Checkbox value="remember" />}
-              label="Remember me"
-            /> */}
             <Button
               type="submit"
               fullWidth
