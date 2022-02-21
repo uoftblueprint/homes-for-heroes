@@ -59,7 +59,7 @@ export default function CaseCard() {
           Back
         </Button>
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={6}>
         <Card sx={{ maxWidth: 1000, mt: "40px", border: 1 }}>
           <CardContent>
             <Grid

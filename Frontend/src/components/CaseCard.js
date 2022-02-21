@@ -5,13 +5,17 @@ import AlertTitle from '@mui/material/AlertTitle';
 import { useHistory } from "react-router-dom";
 import Button from '@mui/material/Button';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import AddCaseButton from './AddCaseButton';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 export default function CaseCard({ user, note }) {
   const history = useHistory();
 
   const viewProfile = () => {
     history.push(`/casenotes/${user.user_id}`);
+  }
+
+  const addCase = () => {
+    history.push(`/addcase/${user.user_id}`);
   }
 
   return (
@@ -28,7 +32,7 @@ export default function CaseCard({ user, note }) {
       <Button variant="outlined" size="small" onClick={viewProfile} startIcon={<VisibilityIcon />}>View Full Profile</Button>
       </Grid>
       <Grid item xs={6}>
-      <AddCaseButton />
+      <Button variant="outlined" size="small" onClick={addCase}  startIcon={<AddOutlinedIcon />}>Add Case</Button>
       </Grid>
     </Grid>
     );

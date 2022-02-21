@@ -10,7 +10,8 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
-export default function AddCaseButton(props) {
+export default function AddCase (props) {
+  
   const [dt, setDate] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [body, setBody] = React.useState("");

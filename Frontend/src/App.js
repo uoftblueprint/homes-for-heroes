@@ -13,6 +13,7 @@ import FormTop from './pages/form/FormTop.js';
 import FormCreate from "./pages/form/FormCreate";
 import FormView from "./pages/form/FormView";
 import FormEdit from "./pages/form/FormEdit";
+import AddCase from "./components/AddCase.jsx";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route exact path="/forms/edit/:formId" component={FormEdit} />
           <Route exact path="/admin" render={props => <Privileges {...props} />} />
           <Route exact path="/casenotes/:id" render={props => <CaseDetail {...props} />} />
+          <Route exact path="/addcase/:id" render={props => <AddCase {...props} />} />
           {/* temp profile page: */}
           <Route exact path="/profile" render={props => <ProfilePage {...props} />} />
           <Route exact path='/login' render={props => <Login {...props} />} />
