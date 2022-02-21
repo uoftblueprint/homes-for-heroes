@@ -13,6 +13,7 @@ import CaseCard from './CaseCard';
 export default function CaseList() {
   const [currentCase, setCurrentCase] = useState({});
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
 
   useEffect(() => {
     fetch(`http://localhost:3000/customers`)
@@ -31,15 +32,16 @@ export default function CaseList() {
       });
   };
 
-  const filterPosts = (posts, query) => {
+  const filterUsers = (query) => {
     if (!query) {
-        return posts;
+      setFilteredUsers(users);
+      return;
     }
 
-    return posts.filter((post) => {
-        const postName = post.name.toLowerCase();
-        return postName.includes(query);
-    });
+    setFilteredUsers(users.filter((user) => {
+      const userName = user.name.toLowerCase();
+      return userName.includes(query);
+    }));
   };
 
   return (
@@ -55,7 +57,7 @@ export default function CaseList() {
         InputProps={{
           startAdornment: <SearchIcon fontSize="small" />,
         }}
-        onKeyPress={e => {}}
+        onChange={e => filterUsers(e.target.value)}
       />
       <List
         sx={
@@ -65,7 +67,7 @@ export default function CaseList() {
           } /*{ width: '100%', maxWidth: 400, bgcolor: 'gray' }*/
         }
       >
-        {users ? users.map(user => {
+        {filteredUsers ? filteredUsers.map(user => {
           return (
             <>
               <ListItem
