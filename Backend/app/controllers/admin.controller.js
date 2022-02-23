@@ -18,7 +18,7 @@ const adminController = {
   async updateProfile(req, res) {
     try {
       const { admin_id } = req.params;
-      const profile = await Admin.updateProfile(admin_id, req.query);
+      const profile = await Admin.updateProfile(admin_id, req.body);
       res.send(profile);
     } catch (err) {
       console.error(err);

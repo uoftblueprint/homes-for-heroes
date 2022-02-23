@@ -23,10 +23,11 @@ Admin.getAdminInfo = function(admin_id) {
   });
 };
 
-Admin.updateProfile = function(admin_id, query_params) {
+Admin.updateProfile = function(admin_id, body) {
   return new Promise((resolve, reject) => {
-    const adm = new AdminProfile(admin_id, query_params);
+    const adm = new AdminProfile(admin_id, body);
     queries = adm.buildQueries();
+    console.log(queries);
     qry = queries.join(";");
     sql.query(qry,
       function(err, rows) {
