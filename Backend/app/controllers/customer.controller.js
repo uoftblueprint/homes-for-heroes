@@ -78,7 +78,7 @@ const customerController = {
   async updateProfile(req, res) {
     try {
       const { user_id } = req.params;
-      const profile = await Customer.updateProfile(user_id, req.query);
+      const profile = await Customer.updateProfile(user_id, req.body);
       res.send(profile);
     } catch (err) {
       console.error(err);

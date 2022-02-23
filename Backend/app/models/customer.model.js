@@ -125,10 +125,10 @@ Customer.queryUserData = function(query_params) {
   })
 }
 
-Customer.updateProfile = function(user_id, query_params) {
+Customer.updateProfile = function(user_id, body) {
   return new Promise((resolve, reject) => {
     //console.log(query_params);
-    cust = new CustomerProfile(user_id, query_params);
+    cust = new CustomerProfile(user_id, body);
     queries = cust.buildQueries();
     qry = queries.join(";");
     // need to update client_users and UserInfo tables separately
