@@ -1,75 +1,76 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
+import Typography from "@mui/material/Typography";
 import Button from '@mui/material/Button';
+import Grid from "@mui/material/Grid";
+import { Prompt } from 'react-router'
+import { useHistory, useParams } from "react-router-dom";
 import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import SendIcon from '@mui/icons-material/Send';
 
-export default function AddCase (props) {
+export default function AddCase () {
   
-  const [dt, setDate] = React.useState(null);
-  const [open, setOpen] = React.useState(false);
-  const [body, setBody] = React.useState("");
-  const [title, setTitle] = React.useState("");
-  const [time, setTime] = React.useState(dt);
+  const [currUser, setCurrUser] = useState({});
+  const { id } = useParams();
+  const [shouldBlockNavigation, setNavigation] = useState(true);
 
-  const normRequestOptions = {
+  const [dt, setDate] = useState(null);
+  const [body, setBody] = useState("");
+  const [title, setTitle] = useState("");
+  const [time, setTime] = useState(dt);
+
+  const [stat, setStat] = React.useState('');
+  const history = useHistory();
+
+  const request = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      user_id: props.user_id,
+    body: JSON.stringify({
+      user_id: id,
       admin_id: 2,
-      notes: body
-    })
-  };  
+      notes: body,
+    }),
+  };
 
-  const alertRequestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      alert_id: props.user_id,
-      user_id: props.user_id,
-      admin_id: 2,
-      notes: body
-    })
-  };  
+  useEffect(() => {
+    setNavigation(true);
+    fetch(`http://localhost:3000/getCustomerInfo/${id}/`)
+      .then((response) => response.json())
+      .then((res) => {
+        setCurrUser(res.customerInfo[0]);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (shouldBlockNavigation) {
+      window.onbeforeunload = () => true
+    } else {
+      window.onbeforeunload = undefined
+    }
+  });
 
   const handleChangeTime = (newTime) => {
     setTime(newTime);
   };
 
-  const handleOpen = () => {
-    setOpen(true);
+  const handleChangeStatus = (event) => {
+    setStat(event.target.value);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const addNote = () => {
+  const handleSubmit = () => {
     let dt = new Date().toLocaleDateString();
     setDate(dt);
-    fetch('http://localhost:3000/casenote', normRequestOptions)
+    fetch('http://localhost:3000/casenote', request)
       .then(response => response.json());
-    handleClose();
-  }
-
-  const addAlertNote = () => {
-    let dt = new Date().toLocaleDateString();
-    setDate(dt);
-    fetch('http://localhost:3000/casenote', alertRequestOptions)
-      .then(response => response.json());
-    handleClose();
-  }
-
-  const captureTitle = (e) => {
-    e.preventDefault();
-    setTitle(e.target.value);
+    setNavigation(false);
+    history.goBack();
   }
 
   const captureBody = (e) => {
@@ -78,38 +79,27 @@ export default function AddCase (props) {
   }
 
   return (
-    <div>
-      <Button variant="outlined" onClick={handleOpen}>
-        <AddOutlinedIcon />
-        Add Case
-      </Button>
-      <Dialog open={open} onClose={handleClose} PaperProps={{ sx: { width: "50%", height: "100%" } }}>
-        <DialogTitle>Add Case Note</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Case Title"
-            type="client"
-            fullWidth
-            variant="standard"
-            onChange={captureTitle}
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Notes"
-            multiline
-            minRows={15}
-            maxRows={50}
-            type="notes"
-            fullWidth
-            variant="standard"
-            onChange={captureBody}
-          />
-        </DialogContent>
+    <Grid
+        container="true"
+        spacing={2}
+        sx={{ marginTop: "5px", paddingLeft: "100px", paddingRight: "100px" }}
+        direction="row"
+        justifyContent="flex-start"
+        width="max-width"
+    >
+      <Prompt
+        when={shouldBlockNavigation}
+        message='You have unsaved changes, are you sure you want to leave?'
+      />
+      <Grid item xs={3}>
+        <Button variant="outlined" onClick={() => history.goBack()}>
+          Back
+        </Button>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography sx={{ fontSize: 48, mb: '1px', float:"left", paddingLeft: "150px", paddingBottom: "20px"}}>Case Note for: {currUser.name}</Typography>
+      </Grid>
+      <Grid item xs={4}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DesktopDatePicker
             label="Time Picker"
@@ -117,14 +107,43 @@ export default function AddCase (props) {
             value={time}
             onChange={handleChangeTime}
             renderInput={(params) => <TextField {...params} />}
-            />
+          />
         </LocalizationProvider>
-        <DialogActions>
-          <Button onClick={addAlertNote}>Set Alert</Button>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={addNote}>Add Note</Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+      </Grid>
+      <Grid item xs={2}>
+        <FormControl fullWidth>
+        <InputLabel>Stage</InputLabel>
+        <Select
+          value={stat}
+          label="Stage"
+          onChange={handleChangeStatus}
+        >
+          <MenuItem value={0}>Discovery</MenuItem>
+          <MenuItem value={1}>Recovery</MenuItem>
+          <MenuItem value={2}>Retraining</MenuItem>
+          <MenuItem value={3}>Thriving</MenuItem>
+        </Select>
+      </FormControl>
+      </Grid>
+      <Grid item xs={12} marginLeft={"150px"} marginRight={"150px"}>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="name"
+          label="Notes"
+          multiline
+          minRows={15}
+          maxRows={50}
+          type="notes"
+          fullWidth
+          variant="standard"
+          onChange={captureBody}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <Button sx={{ float: "right", marginRight: "150px" }} onClick={handleSubmit} startIcon={<SendIcon />}>Submit</Button>
+      </Grid>
+    </Grid>
+      
   );
 }

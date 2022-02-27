@@ -19,7 +19,8 @@ export default function CaseList() {
     fetch(`http://localhost:3000/customers`)
       .then(response => response.json())
       .then(res => {
-        setUsers(res.customers)
+        setUsers(res.customers);
+        setFilteredUsers(res.customers);
       })
   }, []);
 
