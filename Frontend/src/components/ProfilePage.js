@@ -65,67 +65,48 @@ export default function ProfilePage() {
       province: '',
       applicant_dob: ''
    });
-   const [loading, setLoading] = React.useState(false);
+
+   const [loading, setLoading] = React.useState(false); // TODO: implement loading spinner?
 
    function fetchInfo() {
-      fetch(`http://localhost:3000/getCustomerInfo/11`)
-         .then(resp => resp.json())
-         .then(data => {
-            setUserInfo({
-               ...userInfo,
-               name: data.customerInfo[0].name,
-               email: data.customerInfo[0].email,
-               phone: data.customerInfo[0].phone,
-               street_name: data.customerInfo[0].street_name,
-               city: data.customerInfo[0].city,
-               province: data.customerInfo[0].province,
-               applicant_dob:data.customerInfo[0].applicant_dob
-            });
-            setFormInfo({
-               ...formInfo,
-               name: data.customerInfo[0].name,
-               email: data.customerInfo[0].email,
-               phone: data.customerInfo[0].phone,
-               street_name: data.customerInfo[0].street_name,
-               city: data.customerInfo[0].city,
-               province: data.customerInfo[0].province,
-               applicant_dob:data.customerInfo[0].applicant_dob
-            });
-         })
-         .catch(error => {
-            console.error(error);
-         }
-      );
+      return new Promise((resolve) => {
+         fetch(`http://localhost:3000/getCustomerInfo/11`)
+            .then(resp => resp.json())
+            .then(data => resolve(data))
+      })
    }
 
    React.useEffect(() => {
-      let active = true;
-
       (async () => {
          setLoading(true);
-         await fetchInfo();
-         if (!active) {
-            return;
-         }
+         const data = await fetchInfo();
+         setUserInfo({
+               name: data.customerInfo[0].name,
+               email: data.customerInfo[0].email,
+               phone: data.customerInfo[0].phone,
+               street_name: data.customerInfo[0].street_name,
+               city: data.customerInfo[0].city,
+               province: data.customerInfo[0].province,
+               applicant_dob:data.customerInfo[0].applicant_dob.slice(0, 10),
+         });
+         setFormInfo({
+            name: data.customerInfo[0].name,
+            email: data.customerInfo[0].email,
+            phone: data.customerInfo[0].phone,
+            street_name: data.customerInfo[0].street_name,
+            city: data.customerInfo[0].city,
+            province: data.customerInfo[0].province,
+            applicant_dob:data.customerInfo[0].applicant_dob.slice(0, 10),
+         });
          setLoading(false);
       })();
-
-      return () => {
-         active = false;
-      };
    }, [])
-
-   // React.useEffect(() => {
-   //    changeInfo()
-   // }, [userInfo])
 
    const [errorStr, setErrorStr] = useState('');
 
    const handleSubmit = (event) => {
       event.preventDefault();
       setErrorStr('')
-
-      console.log(userInfo, formInfo)
 
       if (!validator.isEmail(formInfo.email) | !validator.isMobilePhone(formInfo.phone) | !validator.isDate(formInfo.applicant_dob)) {
          let errorLst = []
@@ -145,15 +126,9 @@ export default function ProfilePage() {
          const converted = errorLst.toString()
          setErrorStr('Error - Invalid' + converted)
       } else {
-         (async () => {
-            await setUserInfo({
-               ...userInfo,
-               ...formInfo
-            });
-         })();
          setErrorStr('')
          setEditingInfo(false)
-         changeInfo()   
+         changeInfo()
       }
     };
 
@@ -169,20 +144,23 @@ export default function ProfilePage() {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-         name: userInfo.name,
-         email: userInfo.email,
-         phone: userInfo.phone,
-         street_name: userInfo.street_name,
-         city: userInfo.city,
-         province: userInfo.province,
-         applicant_dob: userInfo.applicant_dob
+         name: formInfo.name,
+         email: formInfo.email,
+         phone: formInfo.phone,
+         street_name: formInfo.street_name,
+         city: formInfo.city,
+         province: formInfo.province,
+         applicant_dob: formInfo.applicant_dob
       })
-   };  
+   };
 
    const changeInfo = () => {
       console.log(requestOptions)
       fetch('http://localhost:3000/updateCustomerProfile/11', requestOptions)
          .then(response => response.json());
+      setUserInfo({
+         ...formInfo
+      })
    }
 
    const [pwErrorStr, setPwErrorStr] = useState('');
@@ -191,9 +169,6 @@ export default function ProfilePage() {
    
    const handlePasswordInputChange = (event) => {
       const { id, value } = event.target;
-      console.log(id)
-      console.log(value)
-      console.log(passwords)
       setPasswords({
          ...passwords,
          [id]: value
@@ -203,7 +178,7 @@ export default function ProfilePage() {
    const handlePasswordSubmit = (event) => {
       setPwErrorStr('')
       event.preventDefault()
-      if (passwords.old !== 'old') {
+      if (passwords.old !== 'old-password') {
          // TODO - implement verifying password
          setPwErrorStr('Error: current password incorrect')
       } else if (passwords.new!== passwords.new2) {
@@ -211,6 +186,7 @@ export default function ProfilePage() {
       } else {
          setPwErrorStr('')
          changePassword()
+         // TODO: check for valid/strong password?
       }
    }
    
@@ -232,6 +208,7 @@ export default function ProfilePage() {
    }
 
    function cleanVal(str) {
+      // formatting/shortening the superlong date-time
       if (str[4] === '-' && str[7] === '-' && str[10] === 'T' && str[13] === ':' && str[16] === ':' && str.at(-1) === 'Z') {
          return str.slice(0, 10);
       }
@@ -263,7 +240,6 @@ export default function ProfilePage() {
                            label={cleanKey(row[0])}
                            defaultValue={cleanVal(row[1])}
                            value={userInfo[row[1]]}
-                           //value={userInfo[row[0]]}
                            onChange={handleInputChange}
                            size='standard'
                            variant='standard'
