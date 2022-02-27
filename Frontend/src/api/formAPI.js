@@ -27,7 +27,7 @@ export function fetchCustomFormsAPI(admin_id) {
 
 export function fetchFormByIdAPI(formId) {
     const url = `${host}/custom-form/get/${formId}`
-    // TODO check if form is owned by admin?
+    // TODO check if Form is owned by admin?
     return new Promise((resolve, reject) => {
         fetch(url)
             .then(r => resolve(r.json()))

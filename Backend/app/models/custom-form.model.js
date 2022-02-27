@@ -11,19 +11,19 @@ const CustomForm = function (body) {
 
     this.validateNew = function() {
         if (!this.admin_id || !this.title || !this.form_body) {
-            throw "invalid request, new form";
+            throw "invalid request, new Form";
         }
     }
 
     this.validateExisting = function() {
         if (!this.form_id) {
-            throw "invalid request, existing form";
+            throw "invalid request, existing Form";
         }
     }
 
 };
 
-// create form
+// create Form
 CustomForm.prototype.create = function() {
     this.validateNew();
     return new Promise((resolve, reject) => {
@@ -38,7 +38,7 @@ CustomForm.prototype.create = function() {
     });
 }
 
-// publish form
+// publish Form
 CustomForm.prototype.publish = function() {
     this.validateExisting();
     return new Promise((resolve, reject) => {
@@ -53,7 +53,7 @@ CustomForm.prototype.publish = function() {
     })
 }
 
-// update form
+// update Form
 CustomForm.prototype.update = function() {
     this.validateExisting();
     console.log("update model")
@@ -73,7 +73,7 @@ CustomForm.prototype.update = function() {
     })
 }
 
-// takes custom query and queries form CustomForm table
+// takes custom query and queries Form CustomForm table
 CustomForm.queryForm = function(query_params) {
     return new Promise(function(resolve, reject) {
 

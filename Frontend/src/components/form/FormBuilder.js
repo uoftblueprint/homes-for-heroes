@@ -1,5 +1,4 @@
 import AddIcon from "@mui/icons-material/Add";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import FormControl from "@mui/material/FormControl";
@@ -10,6 +9,7 @@ import { TextField } from "@mui/material";
 import {useState} from "react";
 import VisibilityCheckBox from "./VisibilityCheckBox";
 import {Prompt} from "react-router-dom";
+import FormBackButton from "./FormBackButton";
 
 export default function FormBuilder(props) {
     /**
@@ -23,12 +23,14 @@ export default function FormBuilder(props) {
     const [title, setTitle] = useState(props.title);
     const [level, setLevel] = useState(props.level);
     const [questions, setQuestions] = useState(props.questions);
+    const [formError, setFormError] = useState(props.err);
     const [blockNav, setBlockNav] = useState(false);
 
     const updateLevel = (name, checked) => {
         let l = {...level}
         l[name] = checked;
         setLevel(l);
+        setFormError(!Object.values(l).includes(true))
         setBlockNav(true);
     };
 
@@ -45,6 +47,7 @@ export default function FormBuilder(props) {
                 question: '',
                 required: false,
                 options: [],
+                rows: [],
             }
         ])
         setBlockNav(true);
@@ -64,6 +67,10 @@ export default function FormBuilder(props) {
         setBlockNav(true);
     }
 
+    const updateFormError = (err) => {
+        setFormError(err);
+    }
+
     const createQuestionUI = (question, i) => {
         return (
             <FormQuestion
@@ -72,11 +79,15 @@ export default function FormBuilder(props) {
                 question={question}
                 updateQuestion={updateQuestion}
                 removeQuestion={removeQuestion}
+                setFormError={updateFormError}
             />
         );
     }
 
     const save = () => {
+        if (formError) {
+            return;
+        }
         props.saveDraft({
             // TODO: admin_id
             admin_id: 1,
@@ -99,7 +110,7 @@ export default function FormBuilder(props) {
             >
                 <Grid container justifyContent="flex-start">
                     <Grid item>
-                        <Button variant="outlined" startIcon={<ArrowBackIcon/>}>BACK</Button>
+                        <FormBackButton/>
                     </Grid>
                 </Grid>
                 <Grid container direction="column" justifyContent="center" alignItems="center">
@@ -116,13 +127,16 @@ export default function FormBuilder(props) {
                         </FormControl>
                     </Grid>
                     <Grid item>
-                        <VisibilityCheckBox level={level} updateLevel={updateLevel} />
+                        <VisibilityCheckBox
+                            level={level}
+                            updateLevel={updateLevel}
+                        />
                     </Grid>
                 </Grid>
 
                 <Grid container justifyContent="flex-end" sx={{mb: 2}}>
                     <Grid item>
-                        <Button variant="outlined" onClick={save}>
+                        <Button variant="outlined" onClick={save} disabled={formError}>
                             SAVE
                         </Button>
                     </Grid>
