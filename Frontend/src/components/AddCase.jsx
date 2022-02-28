@@ -23,10 +23,9 @@ export default function AddCase () {
 
   const [dt, setDate] = useState(null);
   const [body, setBody] = useState("");
-  const [title, setTitle] = useState("");
   const [time, setTime] = useState(dt);
 
-  const [stat, setStat] = React.useState('');
+  const [stat, setStat] = React.useState(4);
   const history = useHistory();
 
   const request = {
@@ -89,7 +88,8 @@ export default function AddCase () {
     >
       <Prompt
         when={shouldBlockNavigation}
-        message='You have unsaved changes, are you sure you want to leave?'
+        title='Go Back?'
+        message='You have not submitted the case note. Going back without submitting will result in losing all the contents of the case note. To finish the case note, simply click cancel and submit.'
       />
       <Grid item xs={3}>
         <Button variant="outlined" onClick={() => history.goBack()}>
@@ -123,7 +123,7 @@ export default function AddCase () {
           <MenuItem value={2}>Retraining</MenuItem>
           <MenuItem value={3}>Thriving</MenuItem>
         </Select>
-      </FormControl>
+        </FormControl>
       </Grid>
       <Grid item xs={12} marginLeft={"150px"} marginRight={"150px"}>
         <TextField

@@ -41,4 +41,28 @@ CaseNote.getById = function (case_id) {
   });
 };
 
+CaseNote.updateNote = function (case_id, new_note) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'UPDATE cases SET notes = ? WHERE case_id = ?',
+      [new_note, case_id],
+      function (err, rows) {
+        if (err) reject(err);
+      }
+    );
+  });
+};
+
+CaseNote.deleteNote = function (case_id) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'DELETE FROM cases WHERE case_id = ?',
+      [case_id],
+      function (err, rows) {
+        if (err) reject(err);
+      }
+    );
+  });
+};
+
 module.exports = CaseNote;
