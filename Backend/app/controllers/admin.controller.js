@@ -11,6 +11,18 @@ const adminController = {
             res.send({ error: err });
         }
     },
+    
+    async getSearchAdmins(req, res) {
+      try {
+        const { name } = req.query;
+        const admins = await Admin.getSearchAdmins(name);
+        res.send({ admins: admins });
+      } catch (err) {
+        console.error(err);
+        res.status(500);
+        res.send({ error: err })
+      }
+    },
 
     async makeSupervisor(req, res) {
         try {

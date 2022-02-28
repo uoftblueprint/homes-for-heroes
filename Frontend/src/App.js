@@ -3,13 +3,13 @@ import * as React from 'react';
 import { Route, Switch } from "react-router-dom";
 import { Typography } from '@mui/material';
 import NavBar from './components/NavBar';
-import CaseList from './pages/UserCase/CaseList';
-import Login from './pages/Login/Login.js';
-import CRM from './pages/UserCrm/CRM.js';
-import Privileges from './pages/Admin/Privileges copy.js';
-import ProfilePage from './pages/ProfilePage/ProfilePage.js';
-import CaseDetail from './pages/CaseDetails/CaseDetail';
-import PartnerCRM from './pages/PartnerCrm/PartnerCRM.js';
+import CaseList from './pages/Admin/UserCase/CaseList';
+import Login from './pages/User/ProfilePage/Login/Login.js';
+import CRM from './pages/Admin/UserCrm/CRM.js';
+import Privileges from './pages/Admin/Privileges/Privileges.js';
+import ProfilePage from './pages/User/ProfilePage/ProfilePage.js';
+import CaseDetail from './pages/User/CaseDetails/CaseDetail';
+import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
 
 
 function App() { 
@@ -24,7 +24,7 @@ function App() {
           <Route exact path="/forms" render={props => <Typography color='black'>Forms</Typography>} />
           <Route exact path="/admin" render={props => <Privileges {...props} />} />
           <Route exact path="/casenotes/:id" render={props => <CaseDetail {...props} />} />
-          <Route exact path="/partnercrm" render={props => <PartnerCRM {...props} />} /> 
+          <Route exact path="/partnercrm" render={props => <ExternalRelations {...props} />} /> 
           {/* temp profile page: */}
           <Route exact path="/profile" render={props => <ProfilePage {...props} />} />
           <Route exact path='/login' render={props => <Login {...props} />} />

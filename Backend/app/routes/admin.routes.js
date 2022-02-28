@@ -2,6 +2,7 @@ module.exports = app => {
     const admin = require("../controllers/admin.controller");
 
     app.get('/admins/getAll', admin.listAll);
+    app.get('/admins/getSearchAdmins', admin.getSearchAdmins);
     app.put('/admins/:admin_id/makeSupervisor', admin.makeSupervisor);
     app.put('/admins/:admin_id/makeSuperadmin', admin.makeSuperadmin);
     app.put('/admins/:admin_id/unsetSupervisor', admin.unsetSupervisor);

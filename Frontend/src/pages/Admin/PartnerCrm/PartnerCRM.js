@@ -1,6 +1,13 @@
 import * as React from "react";
+
+import { useHistory } from "react-router-dom";
+
+import AddPartnerModal from './AddPartnerModal.js';
+
 import { DataGrid } from "@mui/x-data-grid";
+
 import { makeStyles } from "@mui/styles";
+
 import Grid from "@mui/material/Grid";
 import Pagination from "@mui/material/Pagination";
 import Card from "@mui/material/Card";
@@ -9,18 +16,18 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import TextField from "@mui/material/TextField";
-import SearchIcon from "@mui/icons-material/Search";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip"
-import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
-import LaunchIcon from "@mui/icons-material/Launch";
+
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import SearchIcon from "@mui/icons-material/Search";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import { useHistory } from "react-router-dom";
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+
 // import data from "./MOCK_DATA.json"
 
 const useStyles = makeStyles({
@@ -64,7 +71,6 @@ function loadServerRows(searchParams, page, pageSize) {
     url += `page=${page}`;
     url += `&page_size=${pageSize}`;
     searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
-    console.log(url);
 
     fetch(url, {
       headers: {
@@ -89,7 +95,6 @@ function exportCSV(searchParams) {
   let url = "http://localhost:3000/getUsersInfoCSV?";
 
   searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
-  console.log(url);
 
   fetch(url, {
     headers: {
@@ -120,9 +125,9 @@ export default function CRM() {
   const [loading, setLoading] = React.useState(false);
   const [searchCategory, setSearchCategory] = React.useState("name");
   const [searchParams, setSearchParams] = React.useState([]);
-  const [cellValue, setCellValue] = React.useState('')
-  const [cellChanges, setCellChanges] = React.useState([])
-  const [id, setID] = React.useState(20)
+  const [cellValue, setCellValue] = React.useState('');
+  const [cellChanges, setCellChanges] = React.useState([]);
+  const [dialog, toggleDialog] = React.useState(false);
 
   let pageCount = Math.ceil(rows.length / pageSize);
 
@@ -132,22 +137,17 @@ export default function CRM() {
   }
 
   const updateCell = (e) => {
-      console.log(e.value);
-      console.log(cellValue);
       if (e.value !== cellValue) {
         setCellChanges(prevArray => [...prevArray, e])
       }
   }
 
   const submitChanges = () => {
-    console.log(cellChanges)
     setCellChanges([]);
   }
 
-  const history = useHistory();
-
-  const viewProfile = (id) => {
-    history.push(`/casenotes/${id}`);
+  const handleOpenModal = () => {
+    toggleDialog(true); 
   }
 
   React.useEffect(() => {
@@ -174,14 +174,19 @@ export default function CRM() {
       display="flex"
       direction="column"
       sx={{ mt: '15px', boxShadow: 'None', minHeight: 1000, minWidth: 375, width: "100%", maxWidth: 1200 }}
-    >
+    > 
       <Grid
-      display="flex"
-      direction="row"
+        display='flex'
+        direction='row'
+        justifyContent='flex-end'
       >
-        <Typography sx={{ fontSize: 48, mb: '1px'}}>
-          External Relations 
+        <Typography sx={{ fontSize: 48, mb: '1px', marginRight: "auto" }}>
+          Partners CRM
         </Typography>
+        <Button sx={{ m: 1, height: '60px' }} variant="outlined" onClick={handleOpenModal}>
+        <AddOutlinedIcon />
+        Add Partner 
+      </Button>
       </Grid>
       <Grid 
       display="flex"
@@ -196,7 +201,7 @@ export default function CRM() {
             className={classes.SearchInputField}
             fullWidth 
             variant="outlined"
-            placeholder="Search Organizations"
+            placeholder="Search Partners"
             name="search"
             type="text"
             InputProps={{
@@ -300,7 +305,7 @@ export default function CRM() {
         getCellClassName={(params) => { 
           let bool = false;
           cellChanges.forEach((item, key) => { 
-            if (params.field == item.field && params.id == item.id){
+            if (params.field === item.field && params.id === item.id){
               bool = true;
             }
           })
@@ -308,55 +313,36 @@ export default function CRM() {
             return 'hot'
           } 
         }}
-        columns={[
-          {
-            editable: "true",
-            field: "city_and_village",
-            headerName: "CITY & VILLAGE",
-            flex: 1.5, 
-          },
-          {
-            editable: "true",
-            field: "date",
-            headerName: "DATE",
-            flex: 1.5,
-          },
-          {
+        columns={[{
             editable: "true",
             field: "name",
             headerName: "NAME",
-            flex: 1.5,
+            flex: 1,
           },
+          {
+            editable: "true",
+            field: "city",
+            headerName: "CITY",
+            flex: 1, 
+          },
+          {
+            editable: "true",
+            field: "village",
+            headerName: "VILLAGE",
+            flex: 1,
+          }, 
           {
             editable: "true",
             field: "address",
             headerName: "ADDRESS",
-            flex: 2,
+            flex: 1,
           },
           {
             editable: "true",
-            field: "contact_info",
-            headerName: "CONTACT INFORMATION",
-            flex: 2,
-          },
-          {
-            editable:"true",
-            field: "veteran_name",
-            headerName: "NAME OF REFERRED VETERAN",
-            flex: 3,
-          },
-          {
-            editable: "true",
-            field: "referral_reason",
-            headerName: "REASON FOR REFERRAL",
-            flex:2
-          },
-          {
-            editable: "true",
-            field: "case_notes",
-            headerName: "CASE NOTES",
-            flex: 2
-          }
+            field: "service_number",
+            headerName: "SERVICE NO.",
+            flex: 1 
+          } 
         ]}
       />
       </Box>
@@ -371,6 +357,7 @@ export default function CRM() {
           Apply Changes
           </Button>
       </Grid>
+      <AddPartnerModal dialog={dialog} toggleDialog={toggleDialog} />
     </Card>
   );
 }

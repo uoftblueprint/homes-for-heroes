@@ -8,7 +8,7 @@ const Superadmin = function (body) {
 
 Superadmin.listAll = function() {
     return new Promise(function (resolve, reject) {
-        sql.query('SELECT * FROM admin_users where role_id = 2', function (err, superadmins) {
+        sql.query('SELECT * FROM admin_users where role_id = 3', function (err, superadmins) {
             if (err) reject (err);
             else {
                 resolve(superadmins);

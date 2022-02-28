@@ -17,18 +17,18 @@ Admin.listAll = function() {
     });
 };
 
-Admin.makeSupervisor = function(admin_id) {
-    return new Promise(function (resolve, reject) {
-        sql.query('UPDATE admin_users SET role_id = 1 WHERE admin_id = ?',
-        [admin_id],
-        function (err, rows) {
-            if (err) reject (err);
-            else resolve(rows[0]);
-        });
-    });
+Admin.getSearchAdmins = function(name) {
+  return new Promise((resolve, reject) => {
+      sql.query('SELECT * FROM admin_users WHERE name LIKE ?', 
+      ['%' + name + '%'],
+      function(err, admins) {
+          if (err) reject(err);
+          resolve(admins);
+      });
+  });
 };
 
-Admin.makeSuperadmin = function(admin_id) {
+Admin.makeSupervisor = function(admin_id) {
     return new Promise(function (resolve, reject) {
         sql.query('UPDATE admin_users SET role_id = 2 WHERE admin_id = ?',
         [admin_id],
@@ -39,9 +39,20 @@ Admin.makeSuperadmin = function(admin_id) {
     });
 };
 
+Admin.makeSuperadmin = function(admin_id) {
+    return new Promise(function (resolve, reject) {
+        sql.query('UPDATE admin_users SET role_id = 3 WHERE admin_id = ?',
+        [admin_id],
+        function (err, rows) {
+            if (err) reject (err);
+            else resolve(rows[0]);
+        });
+    });
+};
+
 Admin.unsetSupervisor = function(admin_id) {
     return new Promise(function (resolve, reject) {
-        sql.query('UPDATE admin_users SET role_id = 0 WHERE admin_id = ?',
+        sql.query('UPDATE admin_users SET role_id = 1 WHERE admin_id = ?',
         [admin_id],
         function (err, rows) {
             if (err) reject (err);
@@ -52,7 +63,7 @@ Admin.unsetSupervisor = function(admin_id) {
 
 Admin.unsetSuperadmin = function(admin_id) {
     return new Promise(function (resolve, reject) {
-        sql.query('UPDATE admin_users SET role_id = 0 WHERE admin_id = ?',
+        sql.query('UPDATE admin_users SET role_id = 2 WHERE admin_id = ?',
         [admin_id],
         function (err, rows) {
             if (err) reject (err);

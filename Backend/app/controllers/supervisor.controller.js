@@ -27,10 +27,9 @@ const supervisorController = {
     },
 
     async assignChapter(req, res) {
-        try {
-            const chapter_name = req.body.name;
+        try { 
+            const chapter_id = req.body.id;
             const { admin_id } = req.params;
-            const chapter_id = await Chapter.getId(chapter_name);
             const results = await Supervisor.assignChapter(admin_id, chapter_id);
             res.send({ supervisor: results });
         } catch (err) {

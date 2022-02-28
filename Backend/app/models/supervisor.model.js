@@ -8,7 +8,7 @@ const Supervisor = function (body) {
 
 Supervisor.listAll = function() {
     return new Promise(function (resolve, reject) {
-        sql.query('SELECT * FROM admin_users where role_id = 1', function (err, supervisors) {
+        sql.query('SELECT * FROM admin_users where role_id = 2', function (err, supervisors) {
             if (err) reject (err);
             else {
                 resolve(supervisors);
@@ -31,7 +31,7 @@ Supervisor.assignChapter = function(admin_id, chapter_id) {
 
 Supervisor.listByChapter = function(chapter_id) {
     return new Promise(function (resolve, reject) {
-        sql.query('SELECT * FROM admin_users where role_id = 1 and chapter_id = ?', [chapter_id], function (err, supervisors) {
+        sql.query('SELECT * FROM admin_users where role_id = 2 and chapter_id = ?', [chapter_id], function (err, supervisors) {
             if (err) reject (err);
             else {
                 resolve(supervisors);

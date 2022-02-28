@@ -12,11 +12,7 @@ import validator from 'validator';
 export default function AddCaseButton() {
   const [open, setOpen] = React.useState(false);
   const [name, setName] = React.useState("");
-  const [email, setEmail] = React.useState('');
-  const [phone, setPhone] = React.useState(""); 
-  const [status, setStatus] = React.useState("");
-  const [demographic, setDemographic] = React.useState("");
-  const [income, setIncome] = React.useState(""); 
+  const [email, setEmail] = React.useState(''); 
   const [emailError, setEmailError] = React.useState(false);
 
   const handleOpen = () => {
@@ -43,7 +39,7 @@ export default function AddCaseButton() {
   return (
     <Grid sx={{ marginRight: "auto" }}>
       <Button endIcon={<AddIcon />} onClick={handleOpen}> 
-        Add Row
+        Add Veteran 
       </Button>
       <Dialog open={open} onClose={handleClose} PaperProps={{ sx: { width: "50%", height: "100%" } }}>
         <DialogTitle>Add Veteran</DialogTitle>
@@ -68,47 +64,7 @@ export default function AddCaseButton() {
             onChange={handleEmailChange}
             fullWidth
             variant="standard" 
-            />
-            <TextField
-            autoFocus
-            margin="dense"
-            id="applicant_phone"
-            label="Phone"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            fullWidth
-            variant="standard" 
-            />
-            <TextField
-            autoFocus
-            margin="dense"
-            id="curr_level"
-            label="Status"
-            value={status} 
-            onChange={(e) => setStatus(e.target.value)}
-            fullWidth
-            variant="standard" 
-            />
-            <TextField
-            autoFocus
-            margin="dense"
-            id="Demographic"
-            label="Demographic"
-            value={demographic}
-            onChange={(e) => setDemographic(e.target.value)}
-            fullWidth
-            variant="standard" 
-          />
-          <TextField
-            autoFocus
-            margin="dense"
-            id="income"
-            label="Income"
-            value={income}
-            onChange={(e) => setIncome(e.target.value)}
-            fullWidth
-            variant="standard" 
-            />
+            /> 
         </DialogContent>
         <DialogActions>
           <Button disabled={emailError} onClick={addRow}>Add Veteran</Button>
