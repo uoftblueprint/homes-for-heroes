@@ -1,34 +1,74 @@
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
+const Customer = require('../models/customer.model');
+const logger = require('../logger');
+const mailer = require('../mailer');
+const nodemailer = require('nodemailer');
+const {
+  issueUserJWT,
+  issueEmailJWT,
+  verifyEmailJWT,
+} = require('../auth/helpers');
 
 const authController = {
-  async signUp(req, res) {
-    // const { name, phone, email, password } = req.body;
-    if(req.user)
-      res.send('Success');
-    else
-      res.send('Unsuccessful')
+  async signUp(req, res, next) {
+    const { name, phone, email, password } = req.body;
+
+    try {
+      const user = await Customer.create(name, phone, email, password);
+      const verificationCode = issueEmailJWT(user);
+      // TODO: Grab correct hostname from env variables
+      // TODO: Use frontend `verify` endpoint rather than the api directly
+      const url = `http://${req.hostname}/api/verify/${verificationCode}`;
+      res.json({ success: true });
+      const mailTransporter = await mailer();
+      const info = await mailTransporter.sendMail({
+        from: '"Homes for Heroes" <foo@example.com>', // sender address
+        to: email, // list of receivers
+        subject: 'Your verification link for Homes for Heroes', // Subject line
+        html: `Here is your verification link: <a href="${url}">${url}</a>`, // html body
+      });
+      logger.info('Email sent to %s with id: %s', email, info.messageId);
+      // TODO: Remove in production
+      logger.info('Email preview URL: %s', nodemailer.getTestMessageUrl(info));
+    } catch (err) {
+      next(err);
+    }
   },
   async login(req, res, next) {
     const { email, password } = req.body;
-    passport.authenticate('login', async (err, customer, msg) => {
-      try {
-        if (err || !customer) return next(err || msg.message || new Error('An error occured.'))
 
-        req.login(customer, {session: false},
-          async (err) => {
-            if (err) return next(err);
+    try {
+      const user = await Customer.getByEmail(email);
 
-            const body = {id: customer.id, email: customer.email};
-            const token = jwt.sign({ user: body }, 'CHANGE_ME');
-
-            return res.json({ token })
-          });
-      } catch (err) {
-        return next(error);
+      if(!user.verified) {
+        next(new Error('User is not verified yet!'));
+      } else if (await user.isValidPassword(password)) {
+        const token = issueUserJWT(user);
+        res.json({ token });
+      } else {
+        next(new Error('Invalid password'));
       }
-    })(req, res, next);
-  }
-}
+    } catch (err) {
+      next(err);
+    }
+  },
+  async verify(req, res, next) {
+    const { verificationCode } = req.params;
+    try {
+      const { id } = verifyEmailJWT(verificationCode);
+      const verified = await Customer.verify(id);
+      res.json({ success: verified });
+    } catch (err) {
+      next(err);
+    }
+  },
+  async logout(req, res, next) {
+    try {
+      // TODO: Clear the localstorage of the token
+      res.redirect('/');
+    } catch (err) {
+      next(err);
+    }
+  },
+};
 
 module.exports = authController;
