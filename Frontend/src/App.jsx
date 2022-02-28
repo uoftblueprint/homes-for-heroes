@@ -1,17 +1,14 @@
 import './App.css';
 
-import { Route, Switch } from "react-router-dom";
-
-import { Typography } from '@mui/material';
-
 import NavBar from './components/NavBar';
-import CaseList from './pages/Admin/UserCase/CaseList';
-import Login from './pages/User/ProfilePage/Login/Login';
-import CRM from './pages/Admin/UserCrm/CRM';
-import Privileges from './pages/Admin/Privileges/Privileges';
-import ProfilePage from './pages/User/ProfilePage/ProfilePage';
-import CaseDetail from './pages/User/CaseDetails/CaseDetail';
-import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
+import CaseList from './components/CaseList';
+import { Route, Switch } from 'react-router-dom';
+import Login from './components/Login.jsx';
+import CRM from './components/CRM.jsx';
+import Privileges from './components/Privileges.jsx';
+import ProfilePage from './components/ProfilePage.jsx';
+import { Typography } from '@mui/material';
+import CaseDetail from './components/CaseDetail';
 
 function App() {
   return (
@@ -44,11 +41,6 @@ function App() {
             exact
             path="/casenotes/:id"
             render={(props) => <CaseDetail {...props} />}
-          />
-          <Route
-            exact
-            path="/external/"
-            render={(props) => <ExternalRelations {...props} />}
           />
           {/* temp profile page: */}
           <Route
