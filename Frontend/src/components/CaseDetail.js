@@ -54,13 +54,18 @@ export default function CaseCard() {
 
   const [view, setView] = useState(4);
 
+  const deleteOptions = {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' }
+  };
+
   const updateOptions = {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      notes: "temp",
-    }),
+    body: {}
   };
+
+  // I need help with this part, this is definitely not good
 
   useEffect(() => {
     fetch(
@@ -70,7 +75,7 @@ export default function CaseCard() {
       .then((res) => {
         setCaseNotes(res.cases);
       });
-  }, []);
+  },);
 
   useEffect(() => {
     fetch(`http://localhost:3000/getCustomerInfo/${id}/`)
@@ -84,7 +89,7 @@ export default function CaseCard() {
       .catch((err) => {
         console.error(err);
       });
-  }, []);
+  }, [id]);
 
   const handleChangeView = (event) => {
     setView(event.target.value);
@@ -122,8 +127,15 @@ export default function CaseCard() {
     setBody(e.target.value);
   };
 
+  const editCaseNote = (case_id) => {
+    const temp = todoList.concat(body);
+    setTodoList(temp);
+    editCase(case_id);
+    handleClose();
+  }
+
   const editCase = (case_id) => {
-    // fetch(`http://localhost:3000/caseNote/${case_id}/update`)
+    // fetch(`http://localhost:3000/casenote/${case_id}/update`, updateOptions)
     //   .then((response) => response.json())
     //   .then((res) => {
     //     console.log(res);
@@ -131,11 +143,11 @@ export default function CaseCard() {
   }
 
   const deleteCase = (case_id) => {
-    // fetch(`http://localhost:3001/casenote/${case_id}`)
-    //   .then((response) => response.json())
-    //   .then((res) => {
-    //     console.log(res);
-    //   });
+    fetch(`http://localhost:3000/casenote/${case_id}`, deleteOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        console.log(res);
+      });
   }
 
   return (
@@ -312,8 +324,31 @@ export default function CaseCard() {
               <Typography variant="subtitle2" sx={{ marginLeft: "10px" }}>ADMIN NAME</Typography>
               <DateRangeIcon sx={{ marginLeft: "10px" }}/>
               <Typography variant="subtitle2" sx={{ marginLeft: "10px" }}>{new Date(item.last_update).toISOString().slice(0, 10)}</Typography>
-              <Button onClick={editCase(item.case_id)} sx={{ marginLeft : "800px" }} startIcon={<CreateIcon />}>Edit Note</Button>
-              <Button onClick={deleteCase(item.case_id)} sx={{ float: "right" }} startIcon={<DeleteIcon />}>Delete Note</Button>
+              <Dialog
+              open={open}
+              onClose={handleClose}
+              PaperProps={{ sx: { width: '50%', height: '50%' } }}
+              >
+              <DialogContent>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  label="Edit Note"
+                  multiline
+                  minRows={15}
+                  maxRows={50}
+                  type="notes"
+                  fullWidth
+                  variant="standard"
+                  onChange={captureBody}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={addItem}>Submit Changes</Button>
+              </DialogActions>
+              </Dialog>
+              <Button onClick={() => editCaseNote(item.case_id)} sx={{ marginLeft : "800px" }} startIcon={<CreateIcon />}>Edit Note</Button>
+              <Button onClick={() => deleteCase(item.case_id)} sx={{ float: "right" }} startIcon={<DeleteIcon />}>Delete Note</Button>
             </AccordionSummary>
             <AccordionDetails>
               <Typography>{item.notes}</Typography>

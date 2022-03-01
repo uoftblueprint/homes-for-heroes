@@ -126,6 +126,38 @@ Customer.getCases = function(user_id, start_date, end_date) {
   });
 };
 
+Customer.getToDo = function(user_id) {
+  return new Promise((resolve, reject) => {
+      sql.query("SELECT todo FROM UserInfo WHERE user_id = ?", 
+      [user_id],
+      function(err, cases) {
+          if (err) reject(err);
+          resolve(cases);
+      });
+  });
+};
+
+// Customer.updateToDo = function(user_id, ) {
+//   return new Promise((resolve, reject) => {
+//       sql.query("SELECT * FROM cases WHERE user_id = ? AND date(last_update) between ? and ?", 
+//       [user_id, start_date, end_date],
+//       function(err, cases) {
+//           if (err) reject(err);
+//           resolve(cases);
+//       });
+//   });
+// };
+
+// Customer.deleteToDo = function(user_id) {
+//   return new Promise((resolve, reject) => {
+//       sql.query("SELECT * FROM cases WHERE user_id = ? AND date(last_update) between ? and ?", 
+//       [user_id, start_date, end_date],
+//       function(err, cases) {
+//           if (err) reject(err);
+//           resolve(cases);
+//       });
+//   });
+// };
 
 Customer.getUserInfoCSV = function(client_name, email, phone, street_name, kin_name) {
   return new Promise((resolve, reject) => {
