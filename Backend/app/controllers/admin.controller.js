@@ -12,26 +12,6 @@ const adminController = {
         }
     },
 
-    async makeSupervisor(req, res) {
-        try {
-            const { admin_id } = req.params;
-            const role_id = await Admin.getRole(admin_id);
-            // ensures supervisor status can only be set when admin is a regular admin
-            if (role_id == 0) {
-                const results = await Admin.makeSupervisor(admin_id);
-                res.send(results);
-            } else if (role_id == 1) {
-                res.send({ error: "already a supervisor" });
-            } else {
-                res.send({ error: "cannot set as supervisor" });
-            }
-        } catch (err) {
-            console.error(err);
-            res.status(500);
-            res.send({ error: err });
-        }
-    },
-
     async makeSuperadmin(req, res) {
         try {
             const { admin_id } = req.params;
@@ -69,22 +49,6 @@ const adminController = {
         }
     },
 
-    async unsetSupervisor(req, res) {
-        try {
-            const { admin_id } = req.params;
-            const role_id = await Admin.getRole(admin_id);
-            if (role_id == 1) {
-                const results = await Admin.unsetSupervisor(admin_id);
-                res.send(results);
-            } else {
-                res.send({ error: "not a supervisor; cannot unset supervisor status" });
-            }
-        } catch (err) {
-            console.error(err);
-            res.status(500);
-            res.send({ error: err });
-        }
-    },
 
     async getByChapter(req, res) {
         try {

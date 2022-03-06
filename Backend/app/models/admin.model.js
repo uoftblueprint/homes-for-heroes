@@ -63,7 +63,7 @@ Admin.assignChapter = function(admin_id, chapter_id) {
 
 Admin.listByChapter = function(chapter_id) {
     return new Promise(function (resolve, reject) {
-        sql.query('SELECT * FROM admin_users where role_id = 1 and chapter_id = ?', [chapter_id], function (err, supervisors) {
+        sql.query('SELECT * FROM admin_users where role_id = 0 and chapter_id = ?', [chapter_id], function (err, supervisors) {
             if (err) reject (err);
             else {
                 resolve(supervisors);
