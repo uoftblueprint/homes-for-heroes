@@ -85,6 +85,33 @@ const adminController = {
             res.send({ error: err });
         }
     },
+
+    async getByChapter(req, res) {
+        try {
+            const { chapter } = req.params;
+            const chapter_id = await Chapter.getId(chapter);
+            const results = await Supervisor.listByChapter(chapter_id);
+            res.send(results);
+        } catch (err) {
+            console.error(err);
+            res.status(500);
+            res.send({ error: err });
+        }
+    },
+
+    async assignChapter(req, res) {
+        try {
+            const chapter_name = req.body.name;
+            const { admin_id } = req.params;
+            const chapter_id = await Chapter.getId(chapter_name);
+            const results = await Supervisor.assignChapter(admin_id, chapter_id);
+            res.send(results);
+        } catch (err) {
+            console.error(err);
+            res.status(500);
+            res.send({ error: err });
+        }
+    }
 }
 
 module.exports = adminController;

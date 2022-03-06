@@ -27,31 +27,9 @@ Admin.getRole = function(admin_id) {
     });
 }
 
-Admin.makeSupervisor = function(admin_id) {
-    return new Promise(function (resolve, reject) {
-        sql.query('UPDATE admin_users SET role_id = 1 WHERE admin_id = ?',
-        [admin_id],
-        function (err, rows) {
-            if (err) reject (err);
-            else resolve(rows[0]);
-        });
-    });
-};
-
 Admin.makeSuperadmin = function(admin_id) {
     return new Promise(function (resolve, reject) {
-        sql.query('UPDATE admin_users SET role_id = 2 WHERE admin_id = ?',
-        [admin_id],
-        function (err, rows) {
-            if (err) reject (err);
-            else resolve(rows[0]);
-        });
-    });
-};
-
-Admin.unsetSupervisor = function(admin_id) {
-    return new Promise(function (resolve, reject) {
-        sql.query('UPDATE admin_users SET role_id = 0 WHERE admin_id = ?',
+        sql.query('UPDATE admin_users SET role_id = 1 WHERE admin_id = ?',
         [admin_id],
         function (err, rows) {
             if (err) reject (err);
@@ -67,6 +45,29 @@ Admin.unsetSuperadmin = function(admin_id) {
         function (err, rows) {
             if (err) reject (err);
             else resolve(rows[0]);
+        });
+    });
+}
+
+Admin.assignChapter = function(admin_id, chapter_id) {
+    return new Promise(function (resolve, reject) {
+        sql.query(`UPDATE admin_users SET chapter_id = ? WHERE admin_id = ?`, [chapter_id, admin_id], 
+        function(err, results) {
+            if (err) reject (err);
+            else {
+                resolve(admin_id);
+            }
+        });
+    });
+}
+
+Admin.listByChapter = function(chapter_id) {
+    return new Promise(function (resolve, reject) {
+        sql.query('SELECT * FROM admin_users where role_id = 1 and chapter_id = ?', [chapter_id], function (err, supervisors) {
+            if (err) reject (err);
+            else {
+                resolve(supervisors);
+            }
         });
     });
 }
