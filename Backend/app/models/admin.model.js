@@ -1,4 +1,5 @@
 const sql = require('./db.js');
+const logger = require('../logger');
 
 // constructor
 const Admin = function (body) {
@@ -50,6 +51,7 @@ Admin.unsetSuperadmin = function(admin_id) {
 }
 
 Admin.assignChapter = function(admin_id, chapter_id) {
+    logger.debug(admin_id);
     return new Promise(function (resolve, reject) {
         sql.query(`UPDATE admin_users SET chapter_id = ? WHERE admin_id = ?`, [chapter_id, admin_id], 
         function(err, results) {
