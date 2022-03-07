@@ -1,4 +1,5 @@
 const sql = require('./db.js');
+logger.debug(req.body);
 
 // constructor
 const Supporter = function (body) {

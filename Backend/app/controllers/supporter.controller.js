@@ -1,4 +1,5 @@
 const Supporter = require('../models/supporter.model');
+const logger = require('../logger');
 
 const supporterController = {
     async getAllSupporters(req, res) {
@@ -13,8 +14,10 @@ const supporterController = {
     },
     async create(req, res) {
         try {
+            logger.debug(req.body);
             const new_supporter = new Supporter(req.body);
             const supporter_id = await new_supporter.create();
+            logger.debug(supporter_id);
             res.json(supporter_id);
         } catch (err) {
             console.error(err);

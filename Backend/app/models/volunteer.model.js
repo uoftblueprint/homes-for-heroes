@@ -1,4 +1,5 @@
 const sql = require('./db.js');
+logger.debug(req.body);
 
 const Volunteer = function (body) {
     this.name = body.name;
