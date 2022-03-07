@@ -1,5 +1,5 @@
 const sql = require('./db.js');
-logger.debug(req.body);
+const logger = require('../logger');
 
 const Volunteer = function (body) {
     this.name = body.name;
