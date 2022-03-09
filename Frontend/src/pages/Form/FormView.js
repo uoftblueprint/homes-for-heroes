@@ -19,7 +19,7 @@ function FormView() {
 
     const [title, setTitle] = useState("");
     const [questions, setQuestions] = useState([]);
-    const [level, setLevel] = useState({});
+    const [level, setLevel] = useState([]);
 
     useEffect(() => {
         (async () => {
@@ -27,7 +27,7 @@ function FormView() {
             const form = await fetchFormByIdAPI(formId);
             setTitle(form[0].title);
             setQuestions(form[0].form_body.questions);
-            setLevel(JSON.parse(form[0].curr_level));
+            setLevel(form[0].curr_level.split(' '));
             setLoading(false);
         })();
     }, [formId])
@@ -37,11 +37,9 @@ function FormView() {
             <Box sx={{ display: 'flex', mb:5, p:2 }} justifyContent="center">
                 <Typography sx={{mr: 1}}>Visible to: </Typography>
                 {
-                    Object.keys(level)
-                        .filter(l => level[l] === true)
-                        .map((l, i) => (
-                            <Typography key={`level-text-${i}`} sx={{mr: 1}}>{l}</Typography>
-                        ))
+                    level.map((l, i) => (
+                        <Typography key={`level-text-${i}`} sx={{mr: 1}}>{l}</Typography>
+                    ))
                 }
             </Box>
         )

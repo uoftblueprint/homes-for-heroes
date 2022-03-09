@@ -14,8 +14,13 @@ function FormCreate() {
 
     const createDraft = (formBody) => {
         (async () => {
-            await createFormAPI(formBody)
-            history.push("/forms")
+            const res = await createFormAPI(formBody)
+            if (res.status !== 200) {
+                // TODO error handling
+                alert("Error!")
+            } else {
+                history.push("/forms")
+            }
         })();
     }
 

@@ -8,7 +8,6 @@ function FormEdit() {
     let { formId } = useParams();
 
     const [loading, setLoading] = useState(false);
-    const [refreshKey, setRefreshKey] = useState(0);
 
     const [title, setTitle] = useState("");
     const [questions, setQuestions] = useState([]);
@@ -20,10 +19,12 @@ function FormEdit() {
             const form = await fetchFormByIdAPI(formId);
             setTitle(form[0].title);
             setQuestions(form[0].form_body.questions);
-            setLevel(JSON.parse(form[0].curr_level));
+            let l = {l1: false, l2: false, l3: false, l4: false};
+            form[0].curr_level.split(' ').forEach((lv) => l[lv] = true);
+            setLevel(l)
             setLoading(false);
         })();
-    }, [formId, refreshKey])
+    }, [formId])
 
     if (loading) {
         return (
@@ -33,10 +34,14 @@ function FormEdit() {
 
     const updateForm = (formBody) => {
         (async () => {
-            await updateFormAPI(formId, formBody);
-            setRefreshKey(refreshKey => refreshKey + 1)
+            const res = await updateFormAPI(formId, formBody);
+            if (res.status !== 200) {
+                // TODO error handling
+                alert("Error!");
+            } else {
+                alert("Successfully updated!");
+            }
         })();
-        alert("Successfully updated!");
     }
 
     return (

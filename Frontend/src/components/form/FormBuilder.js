@@ -89,13 +89,13 @@ export default function FormBuilder(props) {
             return;
         }
         props.saveDraft({
-            // TODO: admin_id
+            // TODO: get admin_id
             admin_id: 1,
             title: title,
             form_body: {
                 questions: questions
             },
-            curr_level: level,
+            curr_level: Object.keys(level).filter(lv => level[lv] === true),
         })
         setBlockNav(false);
     }
