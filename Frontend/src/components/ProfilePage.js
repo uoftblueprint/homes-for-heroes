@@ -190,10 +190,24 @@ export default function ProfilePage() {
       }
    }
    
+   const passwordRequestOptions = {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json-patch+json' },
+      body: [
+         {"op":"replace", "path":"/password", "value":passwords[new]}
+      ]
+   };
+
    const changePassword = () => {
-      console.log(passwords)
+      console.log(passwordRequestOptions)
+      fetch('http://localhost:3000/changepassword', requestOptions)
+         .then(response => {
+            if (reponse.status !== 200) {
+               setPwErrorStr(reponse.error)
+            }
+         }
       // TODO - implement changing password
-   }
+   };
 
    //Edit User Info
    const [editingInfo, setEditingInfo] = useState(false);
