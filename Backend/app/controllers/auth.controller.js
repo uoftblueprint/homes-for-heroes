@@ -63,8 +63,13 @@ const authController = {
   },
   async logout(req, res, next) {
     try {
-      // TODO: Clear the localstorage of the token
-      res.redirect('/');
+      // Logout through passport api
+      await req.logout();
+      // Destroy the session on the redis store
+      req.session.destroy((err) => {
+        if (err) logger.error('%o', err);
+        else res.redirect('/');
+      });
     } catch (err) {
       next(err);
     }
