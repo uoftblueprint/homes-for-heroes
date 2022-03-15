@@ -29,10 +29,11 @@ Customer.create = function (name, phone, email, password) {
       (err) => {
         if (err) reject(err);
         else {
-          sql.query('SELECT LAST_INSERT_ID()', (err, rows) => {
+          sql.query('SELECT LAST_INSERT_ID() as user_id', (err, rows) => {
             if (err) reject(err);
             else {
-              const user_id = rows[0]['LAST_INSERT_ID()'];
+              // eslint-disable-next-line prefer-destructuring
+              const [ user_id ] = rows[0];
               resolve(
                 new Customer({
                   user_id: user_id,
@@ -59,10 +60,11 @@ Customer.createOAuth = function (name, email) {
       (err) => {
         if (err) reject(err);
         else {
-          sql.query('SELECT LAST_INSERT_ID()', (err, rows) => {
+          sql.query('SELECT LAST_INSERT_ID() as user_id', (err, rows) => {
             if (err) reject(err);
             else {
-              const user_id = rows[0]['LAST_INSERT_ID()'];
+              // eslint-disable-next-line prefer-destructuring
+              const [ user_id ] = rows[0];
               resolve(
                 new Customer({
                   user_id: user_id,
