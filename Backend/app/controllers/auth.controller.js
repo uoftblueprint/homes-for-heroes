@@ -3,7 +3,6 @@ const logger = require('../logger');
 const mailer = require('../mailer');
 const nodemailer = require('nodemailer');
 const {
-  issueUserJWT,
   issueEmailJWT,
   verifyEmailJWT,
 } = require('../auth/helpers');
@@ -33,23 +32,9 @@ const authController = {
       next(err);
     }
   },
-  async login(req, res, next) {
-    const { email, password } = req.body;
-
-    try {
-      const user = await Customer.getByEmail(email);
-
-      if(!user.verified) {
-        next(new Error('User is not verified yet!'));
-      } else if (await user.isValidPassword(password)) {
-        const token = issueUserJWT(user);
-        res.json({ token });
-      } else {
-        next(new Error('Invalid password'));
-      }
-    } catch (err) {
-      next(err);
-    }
+  async login(req, res) {
+    logger.info('User with id %s successfully logged in.', req.user.user_id);
+    res.redirect('/');
   },
   async verify(req, res, next) {
     const { verificationCode } = req.params;
