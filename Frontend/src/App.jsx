@@ -19,6 +19,8 @@ import ProfilePage from './pages/User/ProfilePage/ProfilePage';
 import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
 
 import CaseDetail from './pages/User/CaseDetails/CaseDetail';
+import Signup from './components/Signup.jsx';
+import Login from './components/Login.jsx';
 
 function App() {
   return (
@@ -40,7 +42,7 @@ function App() {
           <Route exact path="/forms" component={FormTop} />
             <Route exact path="/forms/create" component={FormCreate} />
             <Route exact path="/forms/view/:formId" component={FormView} />
-            <Route exact path="/forms/edit/:formId" component={FormEdit} /> 
+            <Route exact path="/forms/edit/:formId" component={FormEdit} />
           <Route
             exact
             path="/admin"
@@ -63,10 +65,9 @@ function App() {
             render={(props) => <ProfilePage {...props} />}
           />
           <Route exact path="/login" render={(props) => <Login {...props} />} />
-          {/* <Route path="/Home" component={Home} />
-        <Route path="/CaseDetails" component={CaseDetails} />
-        <Route path="/UserList" component={UserList} />
-        <Route path="Login" component={Login} /> */}
+
+          <Route exact path="/signup" render={(props) => <Signup {...props} />} />
+
         </Switch>
       </header>
     </div>
