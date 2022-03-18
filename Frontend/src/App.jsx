@@ -9,6 +9,7 @@ import Privileges from './components/Privileges.jsx';
 import ProfilePage from './components/ProfilePage.jsx';
 import { Typography } from '@mui/material';
 import CaseDetail from './components/CaseDetail';
+import Signup from './components/Signup.jsx';
 
 function App() {
   return (
@@ -49,10 +50,9 @@ function App() {
             render={(props) => <ProfilePage {...props} />}
           />
           <Route exact path="/login" render={(props) => <Login {...props} />} />
-          {/* <Route path="/Home" component={Home} />
-        <Route path="/CaseDetails" component={CaseDetails} />
-        <Route path="/UserList" component={UserList} />
-        <Route path="Login" component={Login} /> */}
+          
+          <Route exact path="/signup" render={(props) => <Signup {...props} />} />
+
         </Switch>
       </header>
     </div>

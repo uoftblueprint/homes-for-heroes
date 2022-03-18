@@ -95,6 +95,11 @@ const Header = (props) => {
                   <ListItem onClick={() => handleMenuClick('login')}>
                     Login
                   </ListItem>
+                  
+                  <ListItem onClick={() => handleMenuClick('signup')}>
+                    Signup
+                  </ListItem>
+
                 </List>
               </SwipeableDrawer>
             </>
@@ -152,6 +157,18 @@ const Header = (props) => {
                 >
                   Login
                 </Button>
+
+                <Button
+                  onClick={() => handleButtonClick('signup')}
+                  sx={{
+                    marginLeft: 'auto',
+                    color: 'white',
+                    fontSize: 16,
+                  }}
+                >
+                  Signup
+                </Button>
+
               </div>
             </>
           )}
