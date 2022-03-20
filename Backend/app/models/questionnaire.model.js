@@ -38,7 +38,7 @@ Questionnaire.prototype.create = function () {
 }
 
 // submit questionnaire
-CustomForm.prototype.publish = function () {
+Questionnaire.prototype.publish = function () {
     this.validateExisting();
     return new Promise((resolve, reject) => {
         sql.query(
@@ -68,7 +68,7 @@ Questionnaire.prototype.update = function () {
 }
 
 // query questionnaire
-CustomForm.queryForm = function (query_params) {
+Questionnaire.queryForm = function (query_params) {
     return new Promise(function (resolve, reject) {
 
         // construct query
