@@ -19,8 +19,8 @@ Customer.prototype.isValidPassword = async function(password) {
 
 Customer.create = function (name, phone, email, password) {
   return new Promise(function (resolve, reject) {
-    sql.query('INSERT INTO client_users (name, phone, email, password) VALUES (?, ?, ?, ?)',
-    [name, phone, email, bcrypt.hashSync(password, 15)],
+    sql.query('INSERT INTO client_users (name, phone, email, password, todo) VALUES (?, ?, ?, ?)',
+    [name, phone, email, bcrypt.hashSync(password, 15), {}],
     function(err) {
       if (err) reject(err);
       else {
@@ -128,7 +128,7 @@ Customer.getCases = function(user_id, start_date, end_date) {
 
 Customer.getToDo = function(user_id) {
   return new Promise((resolve, reject) => {
-      sql.query("SELECT todo FROM UserInfo WHERE user_id = ?", 
+      sql.query("SELECT todo FROM client_users WHERE user_id = ?", 
       [user_id],
       function(err, cases) {
           if (err) reject(err);
@@ -137,16 +137,16 @@ Customer.getToDo = function(user_id) {
   });
 };
 
-// Customer.updateToDo = function(user_id, ) {
-//   return new Promise((resolve, reject) => {
-//       sql.query("SELECT * FROM cases WHERE user_id = ? AND date(last_update) between ? and ?", 
-//       [user_id, start_date, end_date],
-//       function(err, cases) {
-//           if (err) reject(err);
-//           resolve(cases);
-//       });
-//   });
-// };
+Customer.updateToDo = function(user_id, todo) {
+  return new Promise((resolve, reject) => {
+      sql.query("UPDATE client_users SET todo = ? WHERE user_id = ?", 
+      [todo, user_id],
+      function(err, cases) {
+          if (err) reject(err);
+          resolve(cases);
+      });
+  });
+};
 
 // Customer.deleteToDo = function(user_id) {
 //   return new Promise((resolve, reject) => {

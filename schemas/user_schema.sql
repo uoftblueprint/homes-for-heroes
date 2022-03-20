@@ -15,7 +15,6 @@ CREATE TABLE UserInfo (
     city CHAR(255) NOT NULL,
     province CHAR(255) NOT NULL,
     referral CHAR(255),
-    todo JSON NOT NULL,
     CONSTRAINT FOREIGN KEY (user_id) REFERENCES client_users(user_id)
 );
 

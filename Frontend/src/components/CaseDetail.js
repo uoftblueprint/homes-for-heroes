@@ -51,21 +51,35 @@ export default function CaseCard() {
 
   const [open, setOpen] = useState(false);
   const [body, setBody] = useState('');
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [newNote, setNewNote] = useState('');
 
   const [view, setView] = useState(4);
+
+  const getOptions = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  };
 
   const deleteOptions = {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' }
   };
 
+  const createToDoInput = (new_item) => {
+    var lastKey = + Object.keys(todoList)[Object.keys(todoList).length - 1];
+    todoList[lastKey + 1] = new_item;
+  }
+
   const updateOptions = {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: {}
+    body: {
+      todo: createToDoInput(id, body)
+    }
   };
 
-  // I need help with this part, this is definitely not good
+  // this is definitely not good
 
   useEffect(() => {
     fetch(
@@ -127,19 +141,32 @@ export default function CaseCard() {
     setBody(e.target.value);
   };
 
-  const editCaseNote = (case_id) => {
-    const temp = todoList.concat(body);
-    setTodoList(temp);
+  const captureNote = (e) => {
+    e.preventDefault();
+    setNewNote(e.target.value);
+  };
+
+  const editCaseNote = (e, case_id) => {
+    e.stopPropagation();
+    setNoteOpen(true);
     editCase(case_id);
-    handleClose();
+  }
+
+  const getToDo = (case_id) => {
+    fetch(`http://localhost:3000/getToDo/${case_id}`, getOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        setTodoList(res);
+      });
   }
 
   const editCase = (case_id) => {
-    // fetch(`http://localhost:3000/casenote/${case_id}/update`, updateOptions)
-    //   .then((response) => response.json())
-    //   .then((res) => {
-    //     console.log(res);
-    //   });
+    fetch(`http://localhost:3000/updateToDo/${case_id}`, updateOptions)
+      .then((response) => response.json())
+      .then((res) => {
+        console.log(res);
+      });
+    setNoteOpen(false);
   }
 
   const deleteCase = (case_id) => {
@@ -310,6 +337,30 @@ export default function CaseCard() {
           </Select>
         </FormControl>
       </Grid>
+      <Dialog
+        open={noteOpen}
+        onClose={handleClose}
+        PaperProps={{ sx: { width: '50%', height: '50%' } }}
+        >
+          <DialogContent>
+          <TextField
+              autoFocus
+              margin="dense"
+              id="editeNotes"
+              label="Edit Notes"
+              multiline
+              minRows={15}
+              maxRows={50}
+              type="notes"
+              fullWidth
+              variant="standard"
+              onChange={captureNote}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={editCase}>Edit Case Note</Button>
+          </DialogActions>
+       </Dialog>
       <Grid item xs={12}>
         {caseNotes.map((item, index) => (
           <Accordion index={index}>
@@ -347,7 +398,7 @@ export default function CaseCard() {
                 <Button onClick={addItem}>Submit Changes</Button>
               </DialogActions>
               </Dialog>
-              <Button onClick={() => editCaseNote(item.case_id)} sx={{ marginLeft : "800px" }} startIcon={<CreateIcon />}>Edit Note</Button>
+              <Button onClick={(e) => {editCaseNote(e, item.case_id)}} sx={{ marginLeft : "800px" }} startIcon={<CreateIcon />}>Edit Note</Button>
               <Button onClick={() => deleteCase(item.case_id)} sx={{ float: "right" }} startIcon={<DeleteIcon />}>Delete Note</Button>
             </AccordionSummary>
             <AccordionDetails>

@@ -69,9 +69,16 @@ const customerController = {
       next(err);
     }
   },
-  // async updateToDo(req, res, next) {
-
-  // },
+  async updateToDo(req, res, next) {
+    try {
+      const { user_id } = req.params;
+      const { todo } = req.query;
+      await Customer.updateToDo(user_id, todo);
+      res.send('Updated');
+    } catch (err) {
+      next(err);
+    }
+  },
   // async deleteToDo(req, res, next) {
 
   // },

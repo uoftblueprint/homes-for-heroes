@@ -8,7 +8,7 @@ module.exports = app => {
   app.get('/customers/:user_id/alertCase', customers.getAlertCase);
   app.put('/customers/:user_id/alertCase', customers.setAlertCase);
   app.get('/getUsersInfoCSV', customers.getUserInfoCSV);
-  app.get('/getToDo', customers.getToDo);
-  // app.put('/updateToDo', customers.getUserInfoCSV);
+  app.get('/getToDo/:user_id', customers.getToDo);
+  app.put('/updateToDo/:user_id', customers.updateToDo);
   // app.delete('/deleteToDo', customers.getUserInfoCSV);
 };
