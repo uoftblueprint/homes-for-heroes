@@ -44,6 +44,7 @@ export default function CaseCard() {
       .then((response) => response.json())
       .then((res) => {
         setCaseNotes(res.cases);
+        console.log(res.cases);
       });
   }, []);
 

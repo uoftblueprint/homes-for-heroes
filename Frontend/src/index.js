@@ -4,14 +4,11 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
-import { SnackbarProvider } from 'notistack';
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <SnackbarProvider maxSnack={3}>
-        <App />
-      </SnackbarProvider>
+      <App />
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root'),

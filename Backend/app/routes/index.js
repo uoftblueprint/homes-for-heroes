@@ -15,5 +15,7 @@ require('./casenote.routes')(apiRouter);
 require('./auth.routes')(apiRouter);
 require('./oauth.routes')(apiRouter, passport);
 require('./custom-form.routes')(apiRouter);
+require('./admin.routes')(apiRouter);
+require('./chapter.routes')(apiRouter);
 
 module.exports = apiRouter;
