@@ -1,8 +1,28 @@
-const passport = require('passport');
+const authController = require('../controllers/auth.controller');
+const validationSchema = require('../validators/auth.validation');
+const validationErrorHandler = require('../middleware/validation-error-handler');
 
-module.exports = app => {
-  const authController = require('../controllers/auth.controller');
+module.exports = (app) => {
+  app.post(
+    '/signup',
+    validationSchema.signUpSchema,
+    validationErrorHandler,
+    authController.signUp,
+  );
 
-  app.post('/signup', passport.authenticate('signup', {session: false}), authController.signUp);
-  app.post('/login', authController.login);
-}
+  app.post(
+    '/login',
+    validationSchema.loginSchema,
+    validationErrorHandler,
+    authController.login,
+  );
+
+  app.get(
+    '/verify/:verificationCode',
+    validationSchema.verifySchema,
+    validationErrorHandler,
+    authController.verify,
+  );
+
+  app.get('/logout', authController.logout);
+};

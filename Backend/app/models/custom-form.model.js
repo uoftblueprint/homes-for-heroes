@@ -1,5 +1,6 @@
 const sql = require('./db.js');
-const CustomFormQueryData = require("./query-models/custom-form-query-data.model");
+const CustomFormQueryData = require('./query-models/custom-form-query-data.model');
+const logger = require('../logger');
 
 // constructor
 const CustomForm = function (body) {
@@ -24,19 +25,19 @@ const CustomForm = function (body) {
 };
 
 // create form
-CustomForm.prototype.create = function() {
-    this.validateNew();
-    return new Promise((resolve, reject) => {
-        sql.query(
-            'INSERT INTO CustomForm (admin_id, title, form_body, curr_level) VALUES (?)',
-            [[this.admin_id, this.title, this.form_body, this.curr_level]],
-            function (err, result) {
-                if (err) reject(err);
-                else resolve(result.insertId);
-            }
-        );
-    });
-}
+CustomForm.prototype.create = function () {
+  this.validate();
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'INSERT INTO CustomForm (admin_id, title, form_body) VALUES (?)',
+      [[this.admin_id, this.title, this.form_body]],
+      (err, result) => {
+        if (err) reject(err);
+        else resolve(result.insertId);
+      },
+    );
+  });
+};
 
 // publish form
 CustomForm.prototype.publish = function() {
@@ -74,25 +75,32 @@ CustomForm.prototype.update = function() {
 }
 
 // takes custom query and queries form CustomForm table
-CustomForm.queryForm = function(query_params) {
-    return new Promise(function(resolve, reject) {
+CustomForm.queryForm = function (query_params) {
+  return new Promise((resolve, reject) => {
 
         // construct query
         let q = new CustomFormQueryData(query_params);
         q.constructQuery();
 
         const data_query = `
-        SELECT * FROM CustomForm AS form
+        SELECT
+          form.form_id, form.admin_id, form.created_date, form.title, form.form_body
+        FROM CustomForm AS form
         ${q.query}
         ORDER BY form.created_date DESC
-        `
+        `;
+        logger.debug(data_query);
 
         sql.query(data_query, function(err, row) {
             if (err) reject(err);
             resolve(row);
         });
 
+    sql.query(data_query, (err, row) => {
+      if (err) reject(err);
+      resolve(row);
     });
-}
+  });
+};
 
 module.exports = CustomForm;
