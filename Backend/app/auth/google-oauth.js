@@ -1,5 +1,7 @@
 require('dotenv').config();
 const GoogleStrategy = require('passport-google-oauth20');
+const OAuth = require('../models/oauth.model');
+const Customer = require('../models/customer.model');
 
 const options = {
   clientID: process.env['GOOGLE_CLIENT_ID'],
@@ -13,18 +15,24 @@ module.exports = (passport) => {
     new GoogleStrategy(
       options,
       async (accessToken, refreshToken, profile, done) => {
-        done(null, profile);
+        try {
+          const user_id = await OAuth.getUserId(profile.provider, profile.id);
+          // If user doesn't exist, create a new client profile for them
+          if (user_id === -1) {
+            const user = await Customer.createOAuth(
+              profile.displayName,
+              profile.emails[0].value,
+            );
+            OAuth.create(user.user_id, profile.provider, profile.id);
+            done(null, user);
+          } else {
+            const user = await Customer.getById(user_id);
+            done(null, user);
+          }
+        } catch (err) {
+          done(err, null);
+        }
       },
     ),
   );
-
-  passport.serializeUser(async (user, done) => {
-    done(null, user.id);
-  });
-
-  // passport.deserializeUser(async (user_id, done) => {
-  //   logger.info('Deserializing user_id: %s', user_id);
-  //   const user = await Customer.getById(user_id);
-  //   done(null, user);
-  // });
 };
