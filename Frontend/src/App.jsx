@@ -1,14 +1,15 @@
 import './App.css';
 
 import NavBar from './components/NavBar';
-import CaseList from './components/CaseList';
-import { Route, Switch } from 'react-router-dom';
-import Login from './components/Login.jsx';
-import CRM from './components/CRM.jsx';
-import Privileges from './components/Privileges.jsx';
-import ProfilePage from './components/ProfilePage.jsx';
-import { Typography } from '@mui/material';
-import CaseDetail from './components/CaseDetail';
+
+import CaseList from './pages/Admin/UserCase/CaseList';
+import Login from './pages/User/Login/Login';
+import CRM from './pages/Admin/UserCrm/CRM';
+import Privileges from './pages/Admin/Privileges/Privileges';
+import ProfilePage from './pages/User/ProfilePage/ProfilePage';
+import CaseDetail from './pages/User/CaseDetails/CaseDetail';
+import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
+
 
 function App() {
   return (
