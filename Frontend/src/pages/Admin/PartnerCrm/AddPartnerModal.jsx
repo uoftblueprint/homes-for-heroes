@@ -15,6 +15,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import TextField from "@mui/material/TextField";
 
 import validator from 'validator';
+import settings from '../../../appsettings.json';
 
 export default function AddPartnerModal({ dialog, toggleDialog }) {
 
@@ -27,24 +28,24 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
   const [emailError, setEmailError] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-const handleAdd = () => {
+  const handleAdd = () => {
     let active = true;
     setLoading(true);
-    const url = ``;
+    const url = `https://account-d.docusign.com/oauth/auth?
+   response_type=code
+   &scope=signature
+   &client_id=${settings.dsClientId}
+   &redirect_uri=https://localhost:3001/`;
 
     fetch(url,{
       method: 'POST',
       headers:{
       'Content-Type':'application/json'
-      },
-      body: JSON.stringify({
-        name: name,
-        email: email
-      })
+      } 
     })
       .then((resp) => {
         setLoading(false);
-        toggleDialog(false);
+        console.log(resp)
       })
       .catch(e => {
         const action = key => (
@@ -69,8 +70,8 @@ const handleAdd = () => {
           action,
         })
       });
-  }
-
+  } 
+  
   const handleEmailChange = (e) => {
     setEmailError(!validator.isEmail(e.target.value));    
     setEmail(e.target.value);

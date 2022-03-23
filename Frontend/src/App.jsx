@@ -6,7 +6,7 @@ import { Typography } from '@mui/material';
 
 import NavBar from './components/NavBar';
 import CaseList from './pages/Admin/UserCase/CaseList';
-import Login from './pages/User/ProfilePage/Login/Login';
+import Login from './pages/User/Login/Login';
 import CRM from './pages/Admin/UserCrm/CRM';
 import Privileges from './pages/Admin/Privileges/Privileges';
 import ProfilePage from './pages/User/ProfilePage/ProfilePage';

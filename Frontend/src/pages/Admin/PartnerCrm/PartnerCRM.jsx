@@ -64,10 +64,10 @@ const useStyles = makeStyles({
 
 function loadServerRows(searchParams, page, pageSize) {
   return new Promise((resolve) => {
-    let url = "http://localhost:3000/getPartnerData?";
+    let url = "http://localhost:3000/api/partners";
 
-    url += `page=${page}`;
-    url += `&page_size=${pageSize}`;
+    // url += `page=${page}`;
+    // url += `&page_size=${pageSize}`;
     searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
 
     fetch(url, {
@@ -314,8 +314,8 @@ export default function CRM() {
         columns={[{
             editable: "true",
             field: "name",
-            headerName: "NAME",
-            flex: 1,
+            headerName: "ORGANIZATION NAME",
+            flex: 1.5,
           },
           {
             editable: "true",
@@ -337,8 +337,8 @@ export default function CRM() {
           },
           {
             editable: "true",
-            field: "service_number",
-            headerName: "SERVICE NO.",
+            field: "phone",
+            headerName: "PHONE",
             flex: 1 
           } 
         ]}

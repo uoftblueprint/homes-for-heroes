@@ -23,15 +23,18 @@ export default function AddVolunteerModal({ dialog, toggleDialog }) {
   const theme = useTheme();
   const fullscreen = useMediaQuery(theme.breakpoints.down("md"));
   const [isLoading, setLoading] = React.useState(false);
-  const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState(''); 
+  const [name, setName] = React.useState(''); 
+  const [village, setVillage] = React.useState('');
+  const [date_joined, setDate] = React.useState('');
+  const [role, setRole] = React.useState('');
+  const [phone, setPhone] = React.useState('');
   const [emailError, setEmailError] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 const handleAdd = () => {
     let active = true;
     setLoading(true);
-    const url = ``;
+    const url = `http://localhost:3000/api/volunteers/create?`;
 
     fetch(url,{
       method: 'POST',
@@ -40,7 +43,7 @@ const handleAdd = () => {
       },
       body: JSON.stringify({
         name: name,
-        email: email
+        village: village, 
       })
     })
       .then((resp) => {
@@ -74,7 +77,6 @@ const handleAdd = () => {
 
   const handleEmailChange = (e) => {
     setEmailError(!validator.isEmail(e.target.value));    
-    setEmail(e.target.value);
   }
 
   return (
@@ -94,11 +96,40 @@ const handleAdd = () => {
             <TextField
             autoFocus
             margin="dense"
-            id="email"
-            label="Email" 
-            value={email}
-            error={emailError}
-            onChange={handleEmailChange}
+            id="village"
+            label="Village" 
+            value={village}
+            onChange={(e) => setVillage(e.target.value)}
+            fullWidth
+            variant="standard" 
+            /> 
+            <TextField
+            autoFocus
+            margin="dense"
+            id="date_joined"
+            label="Date Joined" 
+            value={date_joined}
+            onChange={(e) => setDate(e.target.value)}
+            fullWidth
+            variant="standard" 
+            /> 
+            <TextField
+            autoFocus
+            margin="dense"
+            id="role"
+            label="Role" 
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            fullWidth
+            variant="standard" 
+            /> 
+            <TextField
+            autoFocus
+            margin="dense"
+            id="phone"
+            label="Phone" 
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
             fullWidth
             variant="standard" 
             /> 

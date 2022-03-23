@@ -62,10 +62,10 @@ const useStyles = makeStyles({
 
 function loadServerRows(searchParams, page, pageSize) {
   return new Promise((resolve) => {
-    let url = "http://localhost:3000/getSupporterData?";
+    let url = "http://localhost:3000/api/volunteers";
 
-    url += `page=${page}`;
-    url += `&page_size=${pageSize}`;
+    // url += `page=${page}`;
+    // url += `&page_size=${pageSize}`;
     searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
     console.log(url);
 
@@ -322,26 +322,26 @@ export default function CRM() {
           },
           {
             editable: "true",
-            field: "city",
-            headerName: "CITY",
-            flex: 1,
-          },
-          {
-            editable: "true",
             field: "village",
             headerName: "VILLAGE",
             flex: 1,
           },
           {
             editable: "true",
-            field: "contact",
-            headerName: "CONTACT INFO",
+            field: "date_joined",
+            headerName: "DATE JOINED",
             flex: 1,
           },
           {
             editable: "true",
-            field: "notes",
-            headerName: "NOTES",
+            field: "role",
+            headerName: "ROLE",
+            flex: 1,
+          },
+          {
+            editable: "true",
+            field: "phone",
+            headerName: "PHONE",
             flex: 1
           }
           ]}
