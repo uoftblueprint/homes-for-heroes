@@ -32,6 +32,9 @@ require("./app/routes/admin.routes")(app);
 require("./app/routes/chapter.routes")(app);
 require("./app/routes/supervisor.routes")(app);
 require("./app/routes/superadmin.routes")(app);
+require("./supporter.routes")(app);
+require("./partner.routes")(app);
+require("./volunteer.routes")(app);
 // Serve the React files if in prod mode
 if (process.env.NODE_ENV === 'production') app.use(express.static('public'));
 
