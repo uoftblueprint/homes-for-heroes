@@ -36,5 +36,4 @@ Chapter.getId = function(chapter_name) {
     });
 }
 
-
 module.exports = Chapter;

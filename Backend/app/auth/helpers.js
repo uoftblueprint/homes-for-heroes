@@ -2,17 +2,6 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 const helpers = {
-  issueUserJWT(user) {
-    const payload = {
-      id: user.user_id,
-      role: 1, // TODO: Change role based on type of user (client: 1, admin: 2, superadmin: 3)
-    };
-
-    return jwt.sign(payload, process.env.JWT_USER_SECRET, { expiresIn: '1d' });
-  },
-  verifyUserJWT(token) {
-    return jwt.verify(token, process.env.JWT_USER_SECRET);
-  },
   issueEmailJWT(user) {
     const payload = {
       id: user.user_id,
@@ -23,6 +12,12 @@ const helpers = {
   verifyEmailJWT(token) {
     return jwt.verify(token, process.env.JWT_EMAIL_SECRET);
   },
+  async isAuthenticated(req, res, next) {
+    if(req.user)
+      next();
+    else
+      next(new Error('User not authenticated'));
+  }
 };
 
 module.exports = helpers;
