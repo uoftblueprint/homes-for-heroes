@@ -24,14 +24,16 @@ export default function AddSupporterModal({ dialog, toggleDialog }) {
   const fullscreen = useMediaQuery(theme.breakpoints.down("md"));
   const [isLoading, setLoading] = React.useState(false);
   const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState(''); 
+  const [date_gifted, setDate] = React.useState(''); 
+  const [gift_provided, setProvided] = React.useState('');
+  const [phone, setPhone] = React.useState('');
   const [emailError, setEmailError] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 const handleAdd = () => {
     let active = true;
     setLoading(true);
-    const url = ``;
+    const url = `http://localhost:3000/api/supporters/create?`;
 
     fetch(url,{
       method: 'POST',
@@ -40,7 +42,9 @@ const handleAdd = () => {
       },
       body: JSON.stringify({
         name: name,
-        email: email
+        date_gifted: date_gifted,
+        gift_provided: gift_provided,
+        phone: phone
       })
     })
       .then((resp) => {
@@ -72,11 +76,6 @@ const handleAdd = () => {
       });
   }
 
-  const handleEmailChange = (e) => {
-    setEmailError(!validator.isEmail(e.target.value));    
-    setEmail(e.target.value);
-  }
-
   return (
       <Dialog open={dialog} onClose={() => toggleDialog(false)} PaperProps={{ sx: { width: "50%", height: "100%" } }}>
         <DialogTitle>Add Veteran</DialogTitle>
@@ -90,15 +89,34 @@ const handleAdd = () => {
             onChange={(e) => setName(e.target.value)}
             fullWidth
             variant="standard" 
-            />
+            />  
             <TextField
             autoFocus
             margin="dense"
-            id="email"
-            label="Email" 
-            value={email}
-            error={emailError}
-            onChange={handleEmailChange}
+            id="date_gifted"
+            label="Date Gifted" 
+            value={date_gifted}
+            onChange={(e) => setDate(e.target.value)}
+            fullWidth
+            variant="standard" 
+            /> 
+            <TextField
+            autoFocus
+            margin="dense"
+            id="gift_provided"
+            label="Gift Provided" 
+            value={gift_provided}
+            onChange={(e) => setProvided(e.target.value)}
+            fullWidth
+            variant="standard" 
+            />  
+            <TextField
+            autoFocus
+            margin="dense"
+            id="phone"
+            label="Phone" 
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
             fullWidth
             variant="standard" 
             /> 

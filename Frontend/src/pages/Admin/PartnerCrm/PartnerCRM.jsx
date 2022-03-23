@@ -78,8 +78,8 @@ function loadServerRows(searchParams, page, pageSize) {
     })
       .then((resp) => resp.json())
       .then((resp) => {
-        if (resp.constructor === Array){
-          resolve(resp);
+        if (resp.partners.constructor === Array){
+          resolve(resp.partners);
         }
         {
           resolve([])
@@ -165,7 +165,7 @@ export default function CRM() {
     return () => {
       active = false;
     };
-  }, [searchParams, page, pageSize]);
+  }, [searchParams, page, pageSize, dialog]);
 
   return (
     <Card
@@ -295,7 +295,7 @@ export default function CRM() {
         direction="row"
         className={classes.root}
         pageSize={pageSize}
-        getRowId={row => row.user_id}
+        getRowId={row => row.partner_id}
         rows={rows}
         loading={loading}
         onCellEditStart={(event) => setCellValue(event.formattedValue)}
@@ -313,7 +313,7 @@ export default function CRM() {
         }}
         columns={[{
             editable: "true",
-            field: "name",
+            field: "org_name",
             headerName: "ORGANIZATION NAME",
             flex: 1.5,
           },

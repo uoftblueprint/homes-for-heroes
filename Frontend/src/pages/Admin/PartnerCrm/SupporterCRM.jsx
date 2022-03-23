@@ -66,8 +66,7 @@ function loadServerRows(searchParams, page, pageSize) {
 
     // url += `page=${page}`;
     // url += `&page_size=${pageSize}`;
-    searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
-    console.log(url);
+    // searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
 
     fetch(url, {
       headers: {
@@ -77,8 +76,8 @@ function loadServerRows(searchParams, page, pageSize) {
     })
       .then((resp) => resp.json())
       .then((resp) => {
-        if (resp.constructor === Array){
-          resolve(resp);
+        if (resp.supporters.constructor === Array){
+          resolve(resp.supporters);
         }
         {
           resolve([])
@@ -168,7 +167,7 @@ export default function CRM() {
     return () => {
       active = false;
     };
-  }, [searchParams, page, pageSize]);
+  }, [searchParams, page, pageSize, dialog]);
 
   return (
     <Card
@@ -298,7 +297,7 @@ export default function CRM() {
         direction="row"
         className={classes.root}
         pageSize={pageSize}
-        getRowId={row => row.user_id}
+        getRowId={row => row.supporter_id}
         rows={rows}
         loading={loading}
         onCellEditStart={(event) => setCellValue(event.formattedValue)}

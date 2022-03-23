@@ -66,7 +66,7 @@ function loadServerRows(searchParams, page, pageSize) {
 
     // url += `page=${page}`;
     // url += `&page_size=${pageSize}`;
-    searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
+    // searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
     console.log(url);
 
     fetch(url, {
@@ -77,8 +77,8 @@ function loadServerRows(searchParams, page, pageSize) {
     })
       .then((resp) => resp.json())
       .then((resp) => {
-        if (resp.constructor === Array){
-          resolve(resp);
+        if (resp.volunteers.constructor === Array){
+          resolve(resp.volunteers);
         }
         {
           resolve([])
@@ -168,7 +168,7 @@ export default function CRM() {
     return () => {
       active = false;
     };
-  }, [searchParams, page, pageSize]);
+  }, [searchParams, page, pageSize, dialog]);
 
   return (
     <Card
@@ -298,7 +298,7 @@ export default function CRM() {
           direction="row"
           className={classes.root}
           pageSize={pageSize}
-          getRowId={row => row.user_id}
+          getRowId={row => row.volunteer_id}
           rows={rows}
           loading={loading}
           onCellEditStart={(event) => setCellValue(event.formattedValue)}

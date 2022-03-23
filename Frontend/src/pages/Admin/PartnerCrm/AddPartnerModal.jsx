@@ -15,7 +15,6 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import TextField from "@mui/material/TextField";
 
 import validator from 'validator';
-import settings from '../../../appsettings.json';
 
 export default function AddPartnerModal({ dialog, toggleDialog }) {
 
@@ -23,29 +22,34 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
   const theme = useTheme();
   const fullscreen = useMediaQuery(theme.breakpoints.down("md"));
   const [isLoading, setLoading] = React.useState(false);
-  const [name, setName] = React.useState('');
-  const [email, setEmail] = React.useState(''); 
+  const [org_name, setName] = React.useState('');
+  const [city, setCity] = React.useState('');
+  const [village, setVillage] = React.useState('');
+  const [address, setAddress] = React.useState('');
+  const [phone, setPhone] = React.useState('');
   const [emailError, setEmailError] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const handleAdd = () => {
     let active = true;
     setLoading(true);
-    const url = `https://account-d.docusign.com/oauth/auth?
-   response_type=code
-   &scope=signature
-   &client_id=${settings.dsClientId}
-   &redirect_uri=https://localhost:3001/`;
+    const url = `http://localhost:3000/api/partners/create?`;
 
     fetch(url,{
       method: 'POST',
       headers:{
       'Content-Type':'application/json'
-      } 
+      },
+      body: JSON.stringify({
+        name: org_name,
+        city: city, 
+        village: village,
+        address: address,
+        phone: phone
+      }) 
     })
       .then((resp) => {
         setLoading(false);
-        console.log(resp)
       })
       .catch(e => {
         const action = key => (
@@ -72,21 +76,16 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
       });
   } 
   
-  const handleEmailChange = (e) => {
-    setEmailError(!validator.isEmail(e.target.value));    
-    setEmail(e.target.value);
-  }
-
   return (
       <Dialog open={dialog} onClose={() => toggleDialog(false)} PaperProps={{ sx: { width: "50%", height: "100%" } }}>
         <DialogTitle>Add Veteran</DialogTitle>
         <DialogContent> 
-          <TextField
+        <TextField
             autoFocus
             margin="dense"
-            id="name"
-            label="Name"
-            value={name}
+            id="org_name"
+            label="Organization Name"
+            value={org_name}
             onChange={(e) => setName(e.target.value)}
             fullWidth
             variant="standard" 
@@ -94,14 +93,43 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
             <TextField
             autoFocus
             margin="dense"
-            id="email"
-            label="Email" 
-            value={email}
-            error={emailError}
-            onChange={handleEmailChange}
+            id="city"
+            label="City" 
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
             fullWidth
             variant="standard" 
             /> 
+            <TextField
+            autoFocus
+            margin="dense"
+            id="village"
+            label="Village" 
+            value={village}
+            onChange={(e) => setVillage(e.target.value)}
+            fullWidth
+            variant="standard" 
+            />  
+            <TextField
+            autoFocus
+            margin="dense"
+            id="address"
+            label="Address" 
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            fullWidth
+            variant="standard" 
+            /> 
+            <TextField
+            autoFocus
+            margin="dense"
+            id="phone"
+            label="Phone" 
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            fullWidth
+            variant="standard" 
+            />  
         </DialogContent>
         <DialogActions>
           <Button disabled={emailError} onClick={handleAdd}>Add Partner</Button>
