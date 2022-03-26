@@ -92,6 +92,10 @@ const Header = (props) => {
                       </ListItem>
                     );
                   })}
+                  <ListItem onClick={() => handleMenuClick('profile')}>
+                    Profile
+                  </ListItem>
+                  
                   <ListItem onClick={() => handleMenuClick('login')}>
                     Login
                   </ListItem>
@@ -99,7 +103,7 @@ const Header = (props) => {
                   <ListItem onClick={() => handleMenuClick('signup')}>
                     Signup
                   </ListItem>
-
+                  
                 </List>
               </SwipeableDrawer>
             </>
