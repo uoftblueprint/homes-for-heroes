@@ -34,4 +34,18 @@ Volunteer.listAll = function () {
     });
 };
 
+// search for and list a specific volunteer
+Volunteer.getVolunteer = function (volunteer_name) {
+    return new Promise((resolve, reject) => {
+        sql.query('SELECT * FROM volunteers WHERE name = ? LIMIT 1',
+        [volunteer_name],
+        (err, rows) => {
+            if (err) reject(err);
+            else if (!rows[0]) reject(new Error('Volunteer not found'));
+            else resolve(rows[0]);
+        },
+        );
+    });
+};
+
 module.exports = Volunteer;

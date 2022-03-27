@@ -26,7 +26,20 @@ const volunteerController = {
             res.status(500);
             res.send({ error: err });
         }
-    }
+    },
+
+    async getVolunteer(req, res) {
+        try {
+            const { name } = req.params;
+            logger.debug(req.params);
+            const volunteer_info = await Volunteer.getVolunteer(name);
+            res.send({ volunteerInfo: volunteer_info });
+        } catch (err) {
+            console.error(err);
+            res.status(500);
+            res.send({ error: err });
+        }
+    },
 };
 
 module.exports = volunteerController;
