@@ -19,6 +19,7 @@ const partnerController = {
             const new_partner = new Partner(req.body);
             const partner_id = await new_partner.create();
             logger.debug(partner_id);
+            logger.info("Partner organization named %s added with id: %i", new_partner.name, partner_id);
             res.json(partner_id);
         } catch (err) {
             console.error(err);

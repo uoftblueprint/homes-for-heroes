@@ -18,6 +18,7 @@ const supporterController = {
             const new_supporter = new Supporter(req.body);
             const supporter_id = await new_supporter.create();
             logger.debug(supporter_id);
+            logger.info("Supporter named %s added with id: %i", new_supporter.name, supporter_id);
             res.json(supporter_id);
         } catch (err) {
             console.error(err);

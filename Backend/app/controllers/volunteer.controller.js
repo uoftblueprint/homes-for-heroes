@@ -19,6 +19,7 @@ const volunteerController = {
             const new_volunteer = new Volunteer(req.body);
             const volunteer_id = await new_volunteer.create();
             logger.debug(volunteer_id);
+            logger.info("Volunteer named %s added with id: %i", new_volunteer.name, volunteer_id);
             res.json(volunteer_id);
         } catch (err) {
             console.error(err);
