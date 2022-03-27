@@ -4,6 +4,9 @@ const validationSchema = {
     createPartnerSchema: [
         body('name').trim().notEmpty(),
     ],
+    getPartnerSchema: [
+        param('name').trim().notEmpty(),
+    ]
 };
 
 module.exports = validationSchema;
