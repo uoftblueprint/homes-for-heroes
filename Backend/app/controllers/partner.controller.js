@@ -26,7 +26,19 @@ const partnerController = {
             res.status(500);
             res.send({ error: err });
         }
-    }
+    }, 
+    async getPartner(req, res) {
+        try {
+            const { name } = req.params;
+            logger.debug(req.params);
+            const partner_info = await Partner.getPartner(name);
+            res.send({ partnerInfo: partner_info });
+        } catch (err) {
+            console.error(err);
+            res.status(500);
+            res.send({ error: err });
+        }
+    },
 };
 
 module.exports = partnerController;

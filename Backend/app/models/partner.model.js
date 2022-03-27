@@ -35,4 +35,18 @@ Partner.listAll = function () {
     });
 };
 
+// search for and list a specific partner
+Partner.getPartner = function (partner_name) {
+    return new Promise((resolve, reject) => {
+        sql.query('SELECT * FROM partners WHERE org_name = ? LIMIT 1',
+        [partner_name],
+        (err, rows) => {
+            if (err) reject(err);
+            else if (!rows[0]) reject(new Error('Partner not found'));
+            else resolve(rows[0]);
+        },
+        );
+    });
+};
+
 module.exports = Partner;
