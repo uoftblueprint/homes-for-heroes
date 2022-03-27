@@ -7,6 +7,12 @@ const validationSchema = {
     body('phone').isMobilePhone(),
     body('password').isStrongPassword(),
   ],
+  createVeteranSchema: [
+    body('name').trim().notEmpty().escape(),
+    body('email').isEmail().normalizeEmail(),
+    body('password').isStrongPassword(),
+  ],
+
   loginSchema: [body('email').notEmpty(), body('password').notEmpty()],
   verifySchema: [param('verificationCode').isJWT()],
 };

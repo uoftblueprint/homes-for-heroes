@@ -7,10 +7,10 @@ const catchAllErrorHandler = require('./app/middleware/catch-all-error-handler')
 const requestLoggingHandler = require('./app/middleware/request-logging-handler');
 const apiRouter = require('./app/routes');
 const db = require('./app/models/db');
-const redisClient = require('./app/redis');
-const session = require('express-session');
-const redisStore = require('connect-redis')(session);
-
+// const redisClient = require('./app/redis');
+// const session = require('express-session');
+// const redisStore = require('connect-redis')(session);
+const passport = require('passport');
 const app = express();
 
 // TODO: set a fixed origin
@@ -23,22 +23,22 @@ app.use(cors(corsOptions));
 // Decodes cookies for other middleware
 app.use(cookieParser(process.env.SESSION_SECRET));
 
-// Use Redis for session storage
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    store: new redisStore({
-      host: 'localhost',
-      port: 6379,
-      client: redisClient,
-      ttl: 260,
-    }),
-    saveUninitialized: false,
-    resave: false,
-    cookie: { secure: /* process.env.NODE_ENV !== 'development' */false, maxAge: 86400 },
-    name: 'sid'
-  }),
-);
+// // Use Redis for session storage
+// app.use(
+//   session({
+//     secret: process.env.SESSION_SECRET,
+//     store: new redisStore({
+//       host: 'localhost',
+//       port: 6379,
+//       client: redisClient,
+//       ttl: 260,
+//     }),
+//     saveUninitialized: false,
+//     resave: false,
+//     cookie: { secure: /* process.env.NODE_ENV !== 'development' */false, maxAge: 86400 },
+//     name: 'sid'
+//   }),
+// );
 
 // parse requests of content-type - application/json
 app.use(express.json());
@@ -51,15 +51,15 @@ app.use('/api', apiRouter);
 
 require("./app/routes/customer.routes")(app);
 require("./app/routes/casenote.routes")(app);
-require("./app/routes/auth.routes")(app);
+require("./app/routes/auth.routes")(app, passport);
 require("./app/routes/custom-form.routes")(app);
 require("./app/routes/admin.routes")(app);
 require("./app/routes/chapter.routes")(app);
 require("./app/routes/supervisor.routes")(app);
 require("./app/routes/superadmin.routes")(app);
-require("./supporter.routes")(app);
-require("./partner.routes")(app);
-require("./volunteer.routes")(app);
+require("./app/routes/supporter.routes")(app);
+require("./app/routes/partner.routes")(app);
+require("./app/routes/volunteer.routes")(app);
 // Serve the React files if in prod mode
 if (process.env.NODE_ENV === 'production') app.use(express.static('public'));
 

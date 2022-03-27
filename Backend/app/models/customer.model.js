@@ -258,7 +258,7 @@ Customer.queryUserData = function (query_params) {
     logger.debug(q);
     const data_query = `
     SELECT
-      client.user_id, client.name, client.email,
+      client.user_id, client.name, client.email, client.verified,
       info.gender, info.applicant_phone, info.applicant_dob, info.curr_level, info.city, info.province,
       kin.kin_name, kin.relationship, kin.kin_phone, kin.kin_email
     FROM client_users AS client

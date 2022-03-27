@@ -59,6 +59,45 @@ const authController = {
       next(err);
     }
   },
+  async createVeteran(req, res, next) {
+    const { name, email, password } = req.body;
+
+    const generatePassword = () => {
+    var length = 8,
+        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        retVal = "";
+    for (var i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    return retVal;
+    }
+
+    try {
+      //TODO: Add auth to send this request.
+      const password = generatePassword()
+      const user = await Customer.create(name, null, email, password);
+      const verificationCode = issueEmailJWT(user);
+      // TODO: Grab correct hostname from env variables
+      // TODO: Use frontend `verify` endpoint rather than the api directly
+      const url = `http://${req.hostname}/api/verify/${verificationCode}`;
+      res.json({ success: true });
+      const mailTransporter = await mailer();
+      const info = await mailTransporter.sendMail({
+        from: '"Homes for Heroes" <foo@example.com>', // sender address
+        to: email, // list of receivers
+        subject: 'Your verification link for Homes for Heroes', // Subject line
+        html: 
+        `Here is your verification link: <a href="${url}">${url}</a>
+         Your temporary password is ${password}. You may change it after login.
+        `, // html body
+      });
+      logger.info('Email sent to %s with id: %s', email, info.messageId);
+      // TODO: Remove in production
+      logger.info('Email preview URL: %s', nodemailer.getTestMessageUrl(info));
+    } catch (err) {
+      next(err);
+    }
+  }, 
 };
 
 module.exports = authController;

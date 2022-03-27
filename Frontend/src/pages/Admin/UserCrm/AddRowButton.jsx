@@ -28,11 +28,7 @@ export default function AddRowButton() {
     setEmail(e.target.value);
   }
 
-  const addRow = () => {
-    // let dt = new Date().toLocaleDateString();
-    // setDate(dt);
-    // fetch('http://localhost:3000/casenote', normRequestOptions)
-    //   .then(response => response.json());
+  const addRow = () => { 
     handleClose();
   }
 
