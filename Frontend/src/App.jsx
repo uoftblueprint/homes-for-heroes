@@ -1,6 +1,8 @@
 import './App.css';
 
 import NavBar from './components/NavBar';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import Typography from "@mui/material/Typography";
 
 import CaseList from './pages/Admin/UserCase/CaseList';
 import Login from './pages/User/Login/Login';
@@ -9,7 +11,6 @@ import Privileges from './pages/Admin/Privileges/Privileges';
 import ProfilePage from './pages/User/ProfilePage/ProfilePage';
 import CaseDetail from './pages/User/CaseDetails/CaseDetail';
 import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
-
 
 function App() {
   return (
@@ -42,6 +43,11 @@ function App() {
             exact
             path="/casenotes/:id"
             render={(props) => <CaseDetail {...props} />}
+          />
+          <Route
+            exact
+            path="/external/"
+            render={(props) => <ExternalRelations {...props} />}
           />
           {/* temp profile page: */}
           <Route
