@@ -7,11 +7,4 @@ module.exports = (app, passport) => {
     passport.authenticate('google'),
     oauth.googleRedirect,
   );
-
-  app.get('/oauth2/facebook', passport.authenticate('facebook'));
-  app.get(
-    '/redirect/facebook',
-    passport.authenticate('facebook'),
-    oauth.facebookRedirect,
-  );
 };
