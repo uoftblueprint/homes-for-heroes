@@ -28,8 +28,8 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     store: new redisStore({
-      host: 'localhost',
-      port: 6379,
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
       client: redisClient,
       ttl: 260,
     }),
@@ -49,17 +49,6 @@ app.use(requestLoggingHandler);
 // Set the api endpoint
 app.use('/api', apiRouter);
 
-require("./app/routes/customer.routes")(app);
-require("./app/routes/casenote.routes")(app);
-require("./app/routes/auth.routes")(app);
-require("./app/routes/custom-form.routes")(app);
-require("./app/routes/admin.routes")(app);
-require("./app/routes/chapter.routes")(app);
-require("./app/routes/supervisor.routes")(app);
-require("./app/routes/superadmin.routes")(app);
-require("./supporter.routes")(app);
-require("./partner.routes")(app);
-require("./volunteer.routes")(app);
 // Serve the React files if in prod mode
 if (process.env.NODE_ENV === 'production') app.use(express.static('public'));
 
