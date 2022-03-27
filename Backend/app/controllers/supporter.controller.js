@@ -25,7 +25,19 @@ const supporterController = {
             res.status(500);
             res.send({ error: err });
         }
-    }
+    },
+    async getSupporter(req, res) {
+        try {
+            const { name } = req.params;
+            logger.debug(req.params);
+            const supporter_info = await Supporter.getSupporter(name);
+            res.send({ supporterInfo: supporter_info });
+        } catch (err) {
+            console.error(err);
+            res.status(500);
+            res.send({ error: err });
+        }
+    },
 };
 
 module.exports = supporterController;

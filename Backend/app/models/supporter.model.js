@@ -34,4 +34,18 @@ Supporter.listAll = function () {
     });
 };
 
+// search for and list a specific supporter
+Supporter.getSupporter = function (supporter_name) {
+    return new Promise((resolve, reject) => {
+        sql.query('SELECT * FROM supporters WHERE name = ? LIMIT 1',
+        [supporter_name],
+        (err, rows) => {
+            if (err) reject(err);
+            else if (!rows[0]) reject(new Error('Supporter not found'));
+            else resolve(rows[0]);
+        },
+        );
+    });
+};
+
 module.exports = Supporter;
