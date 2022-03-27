@@ -12,6 +12,31 @@ const adminController = {
             res.send({ error: err });
         }
     },
+    
+    async getSearchAdmins(req, res) {
+      try {
+        const { name } = req.query;
+        const admins = await Admin.getSearchAdmins(name);
+        res.send({ admins: admins });
+      } catch (err) {
+        console.error(err);
+        res.status(500);
+        res.send({ error: err })
+      }
+    },
+
+    async makeSupervisor(req, res) {
+        try {
+            const { admin_id } = req.params;
+            console.log(admin_id);
+            const results = await Admin.makeSupervisor(admin_id);
+            res.send(results);
+        } catch (err) {
+            console.error(err);
+            res.status(500);
+            res.send({ error: err });
+        }
+    },
 
     async makeSuperadmin(req, res) {
         try {

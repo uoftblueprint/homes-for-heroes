@@ -18,17 +18,40 @@ Admin.listAll = function() {
     });
 };
 
-Admin.getRole = function(admin_id) {
+Admin.getSearchAdmins = function(name) {
+  return new Promise((resolve, reject) => {
+      sql.query('SELECT * FROM admin_users WHERE name LIKE ?', 
+      ['%' + name + '%'],
+      function(err, admins) {
+          if (err) reject(err);
+          resolve(admins);
+      });
+  });
+};
+
+Admin.makeSupervisor = function(admin_id) {
     return new Promise(function (resolve, reject) {
-        sql.query('SELECT role_id FROM admin_users WHERE admin_id = ?', [admin_id], 
-        function (err, results) {
+        sql.query('UPDATE admin_users SET role_id = 2 WHERE admin_id = ?',
+        [admin_id],
+        function (err, rows) {
             if (err) reject (err);
-            else resolve(JSON.parse(JSON.stringify(results[0])).role_id);
+            else resolve(rows[0]);
         });
     });
-}
+};
 
 Admin.makeSuperadmin = function(admin_id) {
+    return new Promise(function (resolve, reject) {
+        sql.query('UPDATE admin_users SET role_id = 3 WHERE admin_id = ?',
+        [admin_id],
+        function (err, rows) {
+            if (err) reject (err);
+            else resolve(rows[0]);
+        });
+    });
+};
+
+Admin.unsetSupervisor = function(admin_id) {
     return new Promise(function (resolve, reject) {
         sql.query('UPDATE admin_users SET role_id = 1 WHERE admin_id = ?',
         [admin_id],

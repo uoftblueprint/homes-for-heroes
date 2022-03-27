@@ -28,8 +28,8 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     store: new redisStore({
-      host: 'localhost',
-      port: 6379,
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
       client: redisClient,
       ttl: 260,
     }),

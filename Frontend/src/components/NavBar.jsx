@@ -58,6 +58,10 @@ const Header = (props) => {
       menuTitle: 'Admin Privileges',
       pageURL: '/admin',
     },
+    {
+      menuTitle: 'External Relations',
+      pageURL: '/external'
+    }
   ];
 
   return (
