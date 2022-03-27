@@ -1,12 +1,10 @@
 const CustomForm = require('../models/custom-form.model');
-const logger = require('../logger');
 
 const customFormController = {
 
   async getCustomForm(req, res, next) {
     try {
       const { form_id } = req.params;
-      logger.debug(`get custom form id ${form_id}`);
       const resForm = await CustomForm.queryForm({ form_id: form_id });
       res.send(resForm);
     } catch (err) {
@@ -18,8 +16,6 @@ const customFormController = {
     try {
       const { form_id } = req.params;
       const form = new CustomForm({ form_id: form_id, ...req.body });
-      logger.debug('update controller');
-      logger.debug(JSON.stringify(form));
       await form.update();
       res.send({
         'message': 'success!'

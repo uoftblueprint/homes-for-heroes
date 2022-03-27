@@ -1,6 +1,5 @@
 const sql = require('./db.js');
 const CustomFormQueryData = require('./query-models/custom-form-query-data.model');
-const logger = require('../logger');
 
 // constructor
 const CustomForm = function (body) {
@@ -68,7 +67,6 @@ CustomForm.queryForm = function(query_params) {
     // construct query
     const q = new CustomFormQueryData(query_params);
     q.constructQuery();
-    logger.debug(JSON.stringify(q));
 
     const data_query = `
             SELECT *

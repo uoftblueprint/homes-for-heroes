@@ -1,14 +1,14 @@
 import './App.css';
 
 import NavBar from './components/NavBar';
-import CaseList from './components/CaseList';
+import CaseList from './pages/UserCase/CaseList';
 import { Route, Switch } from 'react-router-dom';
-import Login from './components/Login.jsx';
-import CRM from './components/CRM.jsx';
+import Login from './pages/Login/Login';
+import CRM from './pages/UserCrm/CRM';
 import Privileges from './components/Privileges.jsx';
-import ProfilePage from './components/ProfilePage.jsx';
+import ProfilePage from './pages/ProfilePage/ProfilePage';
 import { Typography } from '@mui/material';
-import CaseDetail from './components/CaseDetail';
+import CaseDetail from './pages/CaseDetails/CaseDetail';
 
 function App() {
   return (

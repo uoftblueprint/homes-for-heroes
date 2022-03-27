@@ -1,7 +1,6 @@
 const sql = require('./db.js');
 const CustomerQueryData = require('./query-models/customer-query-data.model.js');
 const bcrypt = require('bcrypt');
-const logger = require('../logger');
 
 // constructor
 const Customer = function (customer) {
@@ -253,7 +252,6 @@ Customer.queryUserData = function (query_params) {
   return new Promise((resolve, reject) => {
     const q = new CustomerQueryData(query_params);
     q.constructQuery();
-    logger.debug(q);
     const data_query = `
     SELECT
       client.user_id, client.name, client.email,
@@ -266,7 +264,6 @@ Customer.queryUserData = function (query_params) {
     ORDER BY client.name
     LIMIT ${q.offset}, ${q.limit}
     `;
-    logger.debug(data_query);
 
     sql.query(data_query, (err, row) => {
       if (err) reject(err);
