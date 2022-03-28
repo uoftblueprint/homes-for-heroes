@@ -56,10 +56,10 @@ CREATE TABLE IF NOT EXISTS cases (
     last_update DATETIME NOT NULL DEFAULT NOW(),
     case_id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (case_id),
-    -- FOREIGN KEY (user_id)
-	-- REFERENCES client_users (user_id)
-    --     ON UPDATE CASCADE
-    --     ON DELETE CASCADE,
+    FOREIGN KEY (user_id)
+	REFERENCES client_users (user_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
     FOREIGN KEY (admin_id)
 	REFERENCES admin_users (admin_id)
         ON UPDATE CASCADE

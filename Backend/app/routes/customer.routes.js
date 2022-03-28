@@ -41,6 +41,14 @@ module.exports = (app) => {
     customers.setAlertCase,
   );
 
+  app.put(
+    '/userinfo',
+    isAuthenticated,
+    validationSchema.putUserInfoSchema,
+    validationErrorHandler,
+    customers.putUserInfo,
+  );
+
   app.get(
     '/getUsersInfoCSV',
     validationSchema.getUserInfoCSVSchema,

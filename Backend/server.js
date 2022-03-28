@@ -28,14 +28,18 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     store: new redisStore({
-      host: 'localhost',
-      port: 6379,
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
       client: redisClient,
-      ttl: 260,
+      ttl: 24 * 60 * 60, // hours * minutes * seconds
     }),
     saveUninitialized: false,
     resave: false,
-    cookie: { secure: /* process.env.NODE_ENV !== 'development' */false, maxAge: 86400 },
+    cookie: {
+      secure: Boolean(process.env.SSL) || false,
+      maxAge: 24 * 60 * 60 * 1000, // hours * minutes * seconds * ms
+      httpOnly: true,
+    },
     name: 'sid'
   }),
 );
@@ -74,12 +78,16 @@ app.listen(PORT, () => {
   );
 });
 
-process.on('SIGINT', async () => {
-  // Close the database connection gracefully on signal interrupt
-  db.end((err) => {
-    if (err) logger.error(err);
-    else logger.info('Exiting gracefully.');
-    process.exit(err ? 1 : 0);
+process
+  .on('SIGINT', async () => {
+    // Close the database connection gracefully on signal interrupt
+    db.end((err) => {
+      if (err) logger.error(err);
+      else logger.info('Exiting gracefully.');
+      process.exit(err ? 1 : 0);
+    });
+    await redisClient.quit();
+  })
+  .on('unhandledRejection', (reason, p) => {
+    logger.error('%s : Unhandled Rejection at Promise %o', reason, p);
   });
-  await redisClient.quit();
-});

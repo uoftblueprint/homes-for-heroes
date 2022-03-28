@@ -102,7 +102,7 @@ React.useEffect(() => {
         })
     });
 
-}, [currChapter, svDialog]);
+}, [currChapter, svDialog, caDialog]);
 
 
  const handleUnsetSupervisor = (admin_id) => {
