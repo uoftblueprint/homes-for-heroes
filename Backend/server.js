@@ -31,11 +31,15 @@ app.use(
       host: process.env.REDIS_HOST,
       port: process.env.REDIS_PORT,
       client: redisClient,
-      ttl: 260,
+      ttl: 24 * 60 * 60, // hours * minutes * seconds
     }),
     saveUninitialized: false,
     resave: false,
-    cookie: { secure: /* process.env.NODE_ENV !== 'development' */false, maxAge: 86400 },
+    cookie: {
+      secure: Boolean(process.env.SSL) || false,
+      maxAge: 24 * 60 * 60 * 1000, // hours * minutes * seconds * ms
+      httpOnly: true,
+    },
     name: 'sid'
   }),
 );
