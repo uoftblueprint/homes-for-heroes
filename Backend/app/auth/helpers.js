@@ -17,7 +17,25 @@ const helpers = {
       next();
     else
       next(new Error('User not authenticated'));
-  }
+  },
+  async isSuperAdmin(req, res, next) {
+    if(req.user && req.user.role_id === 3)
+      next();
+    else
+      next(new Error('Insufficient Permissions'));
+  },
+  async isSupervisor(req, res, next) {
+    if(req.user && req.user.role_id === 2)
+      next();
+    else
+      next(new Error('Insufficient Permissions'));
+  },
+  async isPrivileged(req, res, next) {
+    if(req.user && req.user.role_id >= 2)
+      next();
+    else
+      next(new Error('Insufficient Permissions'));
+  },
 };
 
 module.exports = helpers;
