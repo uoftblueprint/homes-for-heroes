@@ -15,6 +15,7 @@ module.exports = app => {
         validationSchema.createSupporterSchema,
         validationErrorHandler,
         supporter.create);
+  
     app.get(
         '/supporters/:name',
         validationSchema.getSupporterSchema,

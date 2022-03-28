@@ -7,7 +7,7 @@ const validationSchema = {
     ],
     getVolunteerSchema: [
         param('name').trim().notEmpty(),
-    ]
+    ],
 };
 
 module.exports = validationSchema;

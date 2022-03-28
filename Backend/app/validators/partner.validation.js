@@ -6,7 +6,7 @@ const validationSchema = {
     ],
     getPartnerSchema: [
         param('name').trim().notEmpty(),
-    ]
+    ],
 };
 
 module.exports = validationSchema;

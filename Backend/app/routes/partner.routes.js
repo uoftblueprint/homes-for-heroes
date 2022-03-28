@@ -20,5 +20,6 @@ module.exports = app => {
         validationSchema.getPartnerSchema,
         validationErrorHandler,
         partner.getPartner);
+
   };
   

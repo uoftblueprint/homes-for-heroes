@@ -8,7 +8,7 @@ const validationSchema = {
     ],
     getSupporterSchema: [
         param('name').trim().notEmpty(),
-    ]
+    ],
 };
 
 module.exports = validationSchema;
