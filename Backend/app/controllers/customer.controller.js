@@ -51,7 +51,7 @@ const customerController = {
       next(err);
     }
   },
-
+  
   async getUserData(req, res, next) {
     try {
       const user_data = await Customer.queryUserData(req.query);

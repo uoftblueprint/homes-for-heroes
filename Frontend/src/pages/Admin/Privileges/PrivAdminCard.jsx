@@ -190,7 +190,7 @@ export default function PrivAdminCard() {
         ) : (
           <List>
             {superadmins
-              .filter((el) => el.role_id === 3)
+              .filter((el) => el.role_id === 2)
               .map((superadmin) => {
                 return (
                   <ListItem
