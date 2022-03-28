@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS client_users (
     email VARCHAR(255) NOT NULL UNIQUE,
     phone VARCHAR(255),
     password VARCHAR(255),
+    incoming_referral VARCHAR(255),
+    outgoing_referral VARCHAR(255),
     verified BOOLEAN NOT NULL,
     oauth BOOLEAN NOT NULL,
     alert_case_id INT UNIQUE,
@@ -54,10 +56,10 @@ CREATE TABLE IF NOT EXISTS cases (
     last_update DATETIME NOT NULL DEFAULT NOW(),
     case_id INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (case_id),
-    FOREIGN KEY (user_id)
-	REFERENCES client_users (user_id)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
+    -- FOREIGN KEY (user_id)
+	-- REFERENCES client_users (user_id)
+    --     ON UPDATE CASCADE
+    --     ON DELETE CASCADE,
     FOREIGN KEY (admin_id)
 	REFERENCES admin_users (admin_id)
         ON UPDATE CASCADE

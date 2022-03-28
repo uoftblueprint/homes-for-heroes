@@ -1,6 +1,6 @@
 const rateLimit = require('express-rate-limit');
-// const RedisStore = require('rate-limit-redis');
-// const redisClient = require('../redis');
+const RedisStore = require('rate-limit-redis');
+const redisClient = require('../redis');
 const logger = require('../logger');
 
 
@@ -19,7 +19,7 @@ module.exports = rateLimit({
     );
     res.status(options.statusCode).send(options.message);
   },
-  // store: new RedisStore({
-  //   sendCommand: (...args) => redisClient.v4.sendCommand(args),
-  // }),
+  store: new RedisStore({
+    sendCommand: (...args) => redisClient.v4.sendCommand(args),
+  }),
 });

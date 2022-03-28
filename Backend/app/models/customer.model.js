@@ -33,7 +33,7 @@ Customer.create = function (name, phone, email, password) {
             if (err) reject(err);
             else {
               // eslint-disable-next-line prefer-destructuring
-              const [ user_id ] = rows[0];
+              const [ user_id ] = rows;
               resolve(
                 new Customer({
                   user_id: user_id,

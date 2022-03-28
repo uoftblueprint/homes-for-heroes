@@ -2,6 +2,17 @@ const Admin = require('../models/admin.model');
 const logger = require('../logger');
 
 const adminController = {
+    async createAdmin(req, res) {
+        const { name, phone, email, password, address, chapter_id } = req.body; 
+        try {
+            const admin = await Admin.create(name, phone, email, password, address, chapter_id);
+            res.json({ success: true });
+        } catch (err) {
+            console.error(err);
+            res.status(500);
+            res.send({ error: err });
+        }
+    },  
     async listAll(req, res) {
         try {
             const admins = await Admin.listAll();
@@ -37,6 +48,18 @@ const adminController = {
             res.send({ error: err });
         }
     },
+    async unsetSupervisor(req, res) {
+        try {
+            const { admin_id } = req.params;
+            console.log(admin_id);
+            const results = await Admin.unsetSupervisor(admin_id);
+            res.send(results);
+        } catch (err) {
+            console.error(err);
+            res.status(500);
+            res.send({ error: err });
+        }
+    },
 
     async makeSuperadmin(req, res) {
         try {
@@ -44,10 +67,10 @@ const adminController = {
             const role_id = await Admin.getRole(admin_id);
             logger.debug(role_id);
             // ensures superadmin status can only be set when admin is already a supervisor
-            if (role_id == 0) {
-                const results = await Admin.makeSuperadmin(admin_id);
+            if (role_id == 1) {
+                const results = await Admin.makeSuperadmin(admin_id); 
                 res.send(results);
-            } else if (role_id == 1) {
+            } else if (role_id == 2) {
                 res.send({ error: "already a superadmin" });
             } else {
                 res.send({ error: "cannot set as superadmin" });

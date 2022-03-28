@@ -10,7 +10,6 @@ const validationSchema = {
   createVeteranSchema: [
     body('name').trim().notEmpty().escape(),
     body('email').isEmail().normalizeEmail(),
-    body('password').isStrongPassword(),
   ],
 
   loginSchema: [body('email').notEmpty(), body('password').notEmpty()],

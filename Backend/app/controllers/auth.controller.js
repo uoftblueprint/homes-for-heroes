@@ -60,7 +60,7 @@ const authController = {
     }
   },
   async createVeteran(req, res, next) {
-    const { name, email, password } = req.body;
+    const { name, email } = req.body;
 
     const generatePassword = () => {
     var length = 8,
@@ -79,21 +79,30 @@ const authController = {
       const verificationCode = issueEmailJWT(user);
       // TODO: Grab correct hostname from env variables
       // TODO: Use frontend `verify` endpoint rather than the api directly
-      const url = `http://${req.hostname}/api/verify/${verificationCode}`;
+      // TODO: remove :3000 for localhost
+      const url = `http://${req.hostname}:3000/api/verify/${verificationCode}`;
+      const login_url = `http://${req.hostname}:3001/profile`;
       res.json({ success: true });
       const mailTransporter = await mailer();
       const info = await mailTransporter.sendMail({
         from: '"Homes for Heroes" <foo@example.com>', // sender address
         to: email, // list of receivers
         subject: 'Your verification link for Homes for Heroes', // Subject line
+        html: `Here is your verification link: <a href="${url}">${url}</a>`, // html body
+      });
+      const login_info = await mailTransporter.sendMail({
+        from: '"Homes for Heroes" <foo@example.com>', // sender address
+        to: email, // list of receivers
+        subject: 'Your verification link for Homes for Heroes', // Subject line
         html: 
-        `Here is your verification link: <a href="${url}">${url}</a>
-         Your temporary password is ${password}. You may change it after login.
+        `<a href="${login_url}">${login_url}</a> Your temporary password is <b>${password}</b>. You may change it after login.
         `, // html body
       });
       logger.info('Email sent to %s with id: %s', email, info.messageId);
+      logger.info('Email sent to %s with id: %s', email, login_info.messageId);
       // TODO: Remove in production
       logger.info('Email preview URL: %s', nodemailer.getTestMessageUrl(info));
+      logger.info('Email preview URL: %s', nodemailer.getTestMessageUrl(login_info));
     } catch (err) {
       next(err);
     }

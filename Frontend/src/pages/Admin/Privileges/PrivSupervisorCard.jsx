@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import PrivSupervisorModal from "./PrivSupervisorModal";
+import PrivCreateAdmin from "./PrivCreateAdmin";
 import PrivChapterModal from './PrivChapterModal';
 import { useSnackbar } from "notistack";
 
@@ -55,6 +56,7 @@ function stringAvatar(name) {
 
 export default function PrivSupervisorCard({ chapters, chapterDialog, toggleChapterDialog }) {
   const [svDialog, toggleSvDialog] = React.useState(false);
+  const [caDialog, toggleCaDialog] = React.useState(false);
   const [supervisors, setSupervisors] = React.useState([]);
   const [currChapter, setChapter] = React.useState(chapters[0]);
   const [isLoading, setLoading] = React.useState(false);
@@ -109,7 +111,7 @@ React.useEffect(() => {
         if (user.admin_id === admin_id) {
           return {
             ...user,
-            role_id: 1 
+            role_id: 0 
           };
         }
         return user;
@@ -161,6 +163,14 @@ React.useEffect(() => {
           <CardContent> 
             <Grid container display="flex" direction="row" justify="space-evenly">
             <Typography>Chapter Supervisors</Typography> 
+           <Button
+              size="small"
+              onClick={() => toggleCaDialog(true)}
+              startIcon={<AddIcon />}
+              sx={{ marginLeft: "auto" }}
+            >
+              Create Admin
+            </Button>
             <Button
               size="small"
               onClick={() => toggleChapterDialog(true)}
@@ -209,7 +219,7 @@ React.useEffect(() => {
            </div>
             : <List>
               {supervisors
-                .filter((el) => el.role_id === 2 && el.chapter_id === currChapter.chapter_id)
+                .filter((el) => el.role_id === 1 && el.chapter_id === currChapter.chapter_id)
                 .map((supervisor) => {
                   return (
                     <ListItem
@@ -240,8 +250,9 @@ React.useEffect(() => {
                 })}
             </List>  
             }
-          </CardContent> 
+          </CardContent>
           <PrivSupervisorModal svDialog={svDialog} toggleSvDialog={toggleSvDialog} currChapter={currChapter} />
+          <PrivCreateAdmin caDialog={caDialog} toggleCaDialog={toggleCaDialog} chapters={chapters} />
           <PrivChapterModal chapterDialog={chapterDialog} toggleChapterDialog={toggleChapterDialog} />
         </Card> 
         ) 

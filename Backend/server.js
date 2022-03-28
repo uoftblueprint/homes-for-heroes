@@ -7,9 +7,9 @@ const catchAllErrorHandler = require('./app/middleware/catch-all-error-handler')
 const requestLoggingHandler = require('./app/middleware/request-logging-handler');
 const apiRouter = require('./app/routes');
 const db = require('./app/models/db');
-// const redisClient = require('./app/redis');
-// const session = require('express-session');
-// const redisStore = require('connect-redis')(session);
+const redisClient = require('./app/redis');
+const session = require('express-session');
+const redisStore = require('connect-redis')(session);
 const passport = require('passport');
 const app = express();
 
@@ -24,21 +24,21 @@ app.use(cors(corsOptions));
 app.use(cookieParser(process.env.SESSION_SECRET));
 
 // // Use Redis for session storage
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET,
-//     store: new redisStore({
-//       host: 'localhost',
-//       port: 6379,
-//       client: redisClient,
-//       ttl: 260,
-//     }),
-//     saveUninitialized: false,
-//     resave: false,
-//     cookie: { secure: /* process.env.NODE_ENV !== 'development' */false, maxAge: 86400 },
-//     name: 'sid'
-//   }),
-// );
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    store: new redisStore({
+      host: 'localhost',
+      port: 6379,
+      client: redisClient,
+      ttl: 260,
+    }),
+    saveUninitialized: false,
+    resave: false,
+    cookie: { secure: /* process.env.NODE_ENV !== 'development' */false, maxAge: 86400 },
+    name: 'sid'
+  }),
+);
 
 // parse requests of content-type - application/json
 app.use(express.json());

@@ -1,20 +1,26 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
+import Button from "@mui/material/Button";
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+
 import AddIcon from '@mui/icons-material/Add';
 import validator from 'validator';
 
+import { useSnackbar } from "notistack";
+
 export default function AddRowButton() {
   const [open, setOpen] = React.useState(false);
+  const [isLoading, setLoading] = React.useState(false); 
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState(''); 
   const [emailError, setEmailError] = React.useState(false);
-
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const handleOpen = () => {
     setOpen(true);
   };
@@ -28,8 +34,49 @@ export default function AddRowButton() {
     setEmail(e.target.value);
   }
 
-  const addRow = () => { 
-    handleClose();
+  const addRow = () => {
+    let active = true;
+    setLoading(true);
+    const url = `http://localhost:3000/createveteran`;
+
+    fetch(url,{
+      method: 'POST',
+      headers:{
+      'Content-Type':'application/json'
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+      })
+    })
+      .then((resp) => {
+        console.log(resp);
+        setLoading(false);
+        handleClose();
+      })
+      .catch(e => {
+        const action = key => (
+          <Grid>
+            <Button onClick={() => { window.location.reload(); }}>
+              Refresh
+            </Button>
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => { closeSnackbar(key) }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          </Grid>
+        );
+        enqueueSnackbar(
+          'Something went wrong', {
+          variant: 'error',
+          autoHideDuration: 15000,
+          action,
+        })
+      });
   }
 
   return (

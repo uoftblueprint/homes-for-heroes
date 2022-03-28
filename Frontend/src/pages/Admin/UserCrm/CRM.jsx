@@ -65,7 +65,7 @@ const useStyles = makeStyles({
 
 function loadServerRows(searchParams, page, pageSize) {
   return new Promise((resolve) => {
-    let url = "http://localhost:3000/getUserData?";
+    let url = "http://localhost:3000/api/getUserData?";
 
     url += `page=${page}`;
     url += `&page_size=${pageSize}`;
@@ -245,6 +245,8 @@ export default function CRM() {
             <MenuItem value={"status"}>Status</MenuItem>
             <MenuItem value={"demographic"}>Demographic</MenuItem>
             <MenuItem value={"income"}>Income</MenuItem>
+            <MenuItem value={"incoming_referral"}>Incoming Referral</MenuItem>
+            <MenuItem value={"outgoing_referral"}>Outgoing Referral</MenuItem>
           </Select>
         <TextField
             className={classes.SearchInputField}
@@ -433,7 +435,19 @@ export default function CRM() {
             field: "income",
             headerName: "INCOME",
             flex: 1,
-          } 
+          },
+          {
+            editable:"true",
+            field: "incoming_referrals",
+            headerName: "INCOMING REFERRALS",
+            flex: 1.5,
+          }, 
+          {
+            editable:"true",
+            field: "outgoing_referrals",
+            headerName: "OUTGOING REFERRALS",
+            flex: 1.5,
+          },
         ]}
       />
       </Box>

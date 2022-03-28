@@ -28,7 +28,7 @@ module.exports = (app, passport) => {
   app.get('/logout', authController.logout);
 
   app.post(
-    '/createVeteran',
+    '/createveteran',
     validationSchema.createVeteranSchema,
     validationErrorHandler,
     authController.createVeteran,
