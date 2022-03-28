@@ -67,12 +67,16 @@ app.listen(PORT, () => {
   );
 });
 
-process.on('SIGINT', async () => {
-  // Close the database connection gracefully on signal interrupt
-  db.end((err) => {
-    if (err) logger.error(err);
-    else logger.info('Exiting gracefully.');
-    process.exit(err ? 1 : 0);
+process
+  .on('SIGINT', async () => {
+    // Close the database connection gracefully on signal interrupt
+    db.end((err) => {
+      if (err) logger.error(err);
+      else logger.info('Exiting gracefully.');
+      process.exit(err ? 1 : 0);
+    });
+    await redisClient.quit();
+  })
+  .on('unhandledRejection', (reason, p) => {
+    logger.error('%s : Unhandled Rejection at Promise %o', reason, p);
   });
-  await redisClient.quit();
-});
