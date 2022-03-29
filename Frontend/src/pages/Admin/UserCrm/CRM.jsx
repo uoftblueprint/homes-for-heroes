@@ -415,7 +415,7 @@ export default function CRM() {
             editable: "true",
             field: "applicant_phone",
             headerName: "PHONE",
-            flex: 1.5,
+            flex: 1,
           },
           {
             editable: "true",
@@ -439,13 +439,13 @@ export default function CRM() {
           {
             editable:"true",
             field: "incoming_referrals",
-            headerName: "INCOMING REFERRALS",
+            headerName: "INC. REFERRALS",
             flex: 1.5,
           }, 
           {
             editable:"true",
             field: "outgoing_referrals",
-            headerName: "OUTGOING REFERRALS",
+            headerName: "OUT. REFERRALS",
             flex: 1.5,
           },
         ]}

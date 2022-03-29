@@ -69,7 +69,7 @@ const adminController = {
             // ensures superadmin status can only be set when admin is already a supervisor
             // if (role_id == 1) {
                 const results = await Admin.makeSuperadmin(admin_id); 
-            //     res.send(results);
+                res.send(results);
             //     j
             // } else {
             //     res.send({ error: "cannot set as superadmin" });
@@ -88,7 +88,7 @@ const adminController = {
             // logger.debug(role_id);
             // if (role_id == 1) {
                 const results = await Admin.unsetSuperadmin(admin_id);
-            //     res.send(results);
+                res.send(results);
             // } else {
             //     res.send({ error: "not a superadmin; cannot unset superadmin status" });
             // }

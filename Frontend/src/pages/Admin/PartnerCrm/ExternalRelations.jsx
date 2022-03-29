@@ -45,8 +45,8 @@ return(
         index={value}
         onChangeIndex={handleChangeIndex}
         enableMouseEvents
-        overScanSlideAfter={1}
-        overScanSlideBefore={1}
+        overScanSlideAfter={0}
+        overScanSlideBefore={0}
       >
 
           <PartnerCrm /> 
