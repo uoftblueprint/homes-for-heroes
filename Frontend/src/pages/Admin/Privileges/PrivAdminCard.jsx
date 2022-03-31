@@ -113,7 +113,7 @@ export default function PrivAdminCard() {
         if (user.admin_id === admin_id) {
           return {
             ...user,
-            role_id: 2,
+            role_id: 0,
           };
         }
         return user;

@@ -2,7 +2,6 @@ import * as React from "react";
 
 import { useSnackbar } from "notistack";
 
-
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -10,6 +9,10 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from '@mui/material/IconButton';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+import MobileDatePicker from '@mui/lab/MobileDatePicker';
 import { useTheme } from "@mui/material/styles";
 import CloseIcon from '@mui/icons-material/Close';
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -21,7 +24,7 @@ export default function AddVolunteerModal({ dialog, toggleDialog }) {
 
 
   const theme = useTheme();
-  const fullscreen = useMediaQuery(theme.breakpoints.down("md"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [isLoading, setLoading] = React.useState(false);
   const [name, setName] = React.useState(''); 
   const [village, setVillage] = React.useState('');
@@ -44,6 +47,9 @@ const handleAdd = () => {
       body: JSON.stringify({
         name: name,
         village: village, 
+        date_joined: JSON.stringify(date_joined).slice(1,11),
+        role: role,
+        phone: phone
       })
     })
       .then((resp) => {
@@ -102,17 +108,7 @@ const handleAdd = () => {
             onChange={(e) => setVillage(e.target.value)}
             fullWidth
             variant="standard" 
-            /> 
-            <TextField
-            autoFocus
-            margin="dense"
-            id="date_joined"
-            label="Date Joined" 
-            value={date_joined}
-            onChange={(e) => setDate(e.target.value)}
-            fullWidth
-            variant="standard" 
-            /> 
+            />  
             <TextField
             autoFocus
             margin="dense"
@@ -132,7 +128,28 @@ const handleAdd = () => {
             onChange={(e) => setPhone(e.target.value)}
             fullWidth
             variant="standard" 
+            sx={{ mb: 3 }} 
             /> 
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              {isMobile ?  
+              <MobileDatePicker 
+              label="Date Joined"
+              inputFormat="yyyy-MM-dd"
+              value={date_joined}
+              onChange={(v) => setDate(v)}
+              renderInput={(params) => <TextField {...params} />}
+              />
+              :
+              <DesktopDatePicker 
+              label="Date Joined"
+              inputFormat="yyyy-MM-dd"
+              mask="____-__-__"
+              value={date_joined}
+              onChange={(v) => setDate(v)}
+              renderInput={(params) => <TextField {...params} />}
+              />
+              }
+            </LocalizationProvider>
         </DialogContent>
         <DialogActions>
           <Button disabled={emailError} onClick={handleAdd}>Add Volunteer</Button>

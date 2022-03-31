@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS client_users (
     email VARCHAR(255) NOT NULL UNIQUE,
     phone VARCHAR(255),
     password VARCHAR(255),
+    incoming_referral VARCHAR(255),
+    outgoing_referral VARCHAR(255),
     verified BOOLEAN NOT NULL,
     oauth BOOLEAN NOT NULL,
     alert_case_id INT UNIQUE,

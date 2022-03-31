@@ -70,9 +70,9 @@ CustomForm.queryForm = function(query_params) {
 
     const data_query = `
             SELECT *
-            FROM CustomForm AS Form
+            FROM CustomForm AS form
                 ${q.query}
-            ORDER BY Form.created_date DESC
+            ORDER BY form.created_date DESC
         `;
 
     sql.query(data_query, (err, row) => {

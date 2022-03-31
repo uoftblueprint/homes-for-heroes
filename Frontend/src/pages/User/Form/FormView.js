@@ -1,15 +1,15 @@
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Divider from "@mui/material/Divider";
-import {fetchFormByIdAPI} from "../../api/formAPI";
+import {fetchFormByIdAPI} from "../../../api/formAPI";
 import FormControl from "@mui/material/FormControl";
-import FormBackButton from "../../components/form/FormBackButton";
+import FormBackButton from "../../../components/form/FormBackButton";
 import {FormControlLabel, Typography} from "@mui/material";
-import FormGridOptionView from "../../components/form/FormGridOptionView";
+import FormGridOptionView from "../../../components/form/FormGridOptionView";
 import Grid from "@mui/material/Grid";
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import QuestionType from "../../components/form/QuestionType";
+import QuestionType from "../../../components/form/QuestionType";
 
 function FormView() {
 

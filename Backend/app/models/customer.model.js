@@ -43,7 +43,7 @@ Customer.create = function (name, phone, email, password) {
             if (err) reject(err);
             else {
               // eslint-disable-next-line prefer-destructuring
-              const [ user_id ] = rows[0];
+              const [ user_id ] = rows;
               resolve(
                 new Customer({
                   user_id: user_id,
@@ -267,7 +267,7 @@ Customer.queryUserData = function (query_params) {
     q.constructQuery();
     const data_query = `
     SELECT
-      client.user_id, client.name, client.email,
+      client.user_id, client.name, client.email, client.verified,
       info.gender, info.applicant_phone, info.applicant_dob, info.curr_level, info.city, info.province,
       kin.kin_name, kin.relationship, kin.kin_phone, kin.kin_email
     FROM client_users AS client

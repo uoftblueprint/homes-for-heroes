@@ -1,7 +1,7 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {fetchFormByIdAPI, updateFormAPI} from "../../api/formAPI";
-import FormBuilder from "../../components/form/FormBuilder";
+import {fetchFormByIdAPI, updateFormAPI} from "../../../api/formAPI";
+import FormBuilder from "../../../components/form/FormBuilder";
 
 function FormEdit() {
 

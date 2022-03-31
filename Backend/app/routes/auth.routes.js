@@ -26,4 +26,11 @@ module.exports = (app, passport) => {
   );
 
   app.get('/logout', authController.logout);
+
+  app.post(
+    '/createveteran',
+    validationSchema.createVeteranSchema,
+    validationErrorHandler,
+    authController.createVeteran,
+  );
 };

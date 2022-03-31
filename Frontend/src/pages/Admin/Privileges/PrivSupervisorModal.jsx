@@ -68,7 +68,7 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
   React.useEffect(() => {
     if (searchParams !== ''){
     setLoading(true);
-    const url = `http://localhost:3000/admins/getSearchAdmins?name=${searchParams}`;
+    const url = `http://localhost:3000/api/admins/getSearchAdmins?name=${searchParams}`;
   
     fetch(url, {
       headers: {
@@ -113,7 +113,7 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
         if (user.admin_id === admin_id) {
           return {
             ...user,
-            role_id: 2,
+            role_id: 1,
             chapter_id: currChapter.chapter_id 
           };
         }
@@ -215,7 +215,7 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
                   <ListItem
                     key={admin.admin_id}
                     secondaryAction={
-                      admin.role_id === 2 && admin.chapter_id === currChapter.chapter_id ? (
+                      admin.role_id === 1 && admin.chapter_id === currChapter.chapter_id ? (
                         <Button
                           disabled
                           size="small"

@@ -1,6 +1,6 @@
 import { useHistory } from "react-router-dom";
-import { createFormAPI } from "../../api/formAPI";
-import FormBuilder from "../../components/form/FormBuilder";
+import { createFormAPI } from "../../../api/formAPI";
+import FormBuilder from "../../../components/form/FormBuilder";
 
 function FormCreate() {
     const history = useHistory();
