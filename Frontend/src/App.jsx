@@ -1,7 +1,6 @@
 import './App.css';
 
 import NavBar from './components/NavBar';
-import Signup from './components/Signup.jsx';
 
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import Typography from "@mui/material/Typography";
@@ -13,6 +12,9 @@ import Privileges from './pages/Admin/Privileges/Privileges';
 import ProfilePage from './pages/User/ProfilePage/ProfilePage';
 import CaseDetail from './pages/User/CaseDetails/CaseDetail';
 import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
+import Signup from './components/Signup.jsx';
+import VerifyEmail from './components/VerifyEmail.jsx';
+import SignupForm from './components/SignupForm.jsx'
 
 function App() {
   return (
@@ -36,6 +38,10 @@ function App() {
             path="/forms"
             render={(props) => <Typography color="black">Forms</Typography>}
           />
+
+
+
+
           <Route
             exact
             path="/admin"
@@ -60,7 +66,8 @@ function App() {
           <Route exact path="/login" render={(props) => <Login {...props} />} />
           
           <Route exact path="/signup" render={(props) => <Signup {...props} />} />
-
+            <Route exact path="/signup/verify" render={(props) => <VerifyEmail {...props} />} />
+            <Route exact path="/signup/form" render={(props) => <SignupForm {...props} />} />
         </Switch>
       </header>
     </div>

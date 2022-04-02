@@ -45,22 +45,42 @@ export default function Signup() {
     setNewPassword2(e.target.value);
   }
 
-  const handleSubmit = async (event) => {
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+  //   try {
+  //     const res = await fetch('http://localhost:3000/api/signup', {
+  //       method: 'POST',
+  //       headers: {
+  //         Accept: 'application/json',
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ email, newPassword1 }),
+  //     });
+  //     const { token } = await res.json();
+  //     console.log(token);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
+  const history = useHistory();
+
+  const handleSubmit = (event) => {
     event.preventDefault();
-    try {
-      const res = await fetch('http://localhost:3000/api/signup', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, newPassword1 }),
+    fetch('http://localhost:3000/api/signup', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, newPassword1 }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === 200) {
+          history.push('/verify');
+        }
       });
-      const { token } = await res.json();
-      console.log(token);
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   const [showNewPassword1, setShowNewPassword1] = useState(false);
@@ -77,11 +97,9 @@ export default function Signup() {
     event.preventDefault();
   };
 
-  const history = useHistory()
-
   const handleButtonClick = (endpoint) => {
-    history.push(`/api/oauth2/${endpoint}`)
-  }
+    history.push(`/api/oauth2/${endpoint}`);
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -184,9 +202,7 @@ export default function Signup() {
               Sign Up
             </Button>
 
-            <Typography sx={{mt:3}}>
-              Or, sign in with...
-            </Typography>
+            <Typography sx={{ mt: 3 }}>Or, sign in with...</Typography>
 
             <Box>
               <Button onClick={() => handleButtonClick('google')}>
