@@ -1,14 +1,14 @@
 import './App.css';
 
-import { Route, Switch } from 'react-router-dom';
-
-import Typography from '@mui/material/Typography';
-
 import NavBar from './components/NavBar';
+import Signup from './components/Signup.jsx';
 import FormTop from './pages/User/Form/FormTop.js';
 import FormCreate from "./pages/User/Form/FormCreate";
 import FormView from "./pages/User/Form/FormView";
 import FormEdit from "./pages/User/Form/FormEdit";
+
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import Typography from "@mui/material/Typography";
 
 import CaseList from './pages/Admin/UserCase/CaseList';
 import Login from './pages/User/Login/Login';
@@ -20,7 +20,8 @@ import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
 
 import CaseDetail from './pages/User/CaseDetails/CaseDetail';
 import Signup from './components/Signup.jsx';
-import Login from './components/Login.jsx';
+import VerifyEmail from './components/VerifyEmail.jsx';
+import SignupForm from './components/SignupForm.jsx'
 
 function App() {
   return (
@@ -67,7 +68,8 @@ function App() {
           <Route exact path="/login" render={(props) => <Login {...props} />} />
 
           <Route exact path="/signup" render={(props) => <Signup {...props} />} />
-
+            <Route exact path="/signup/verify" render={(props) => <VerifyEmail {...props} />} />
+            <Route exact path="/signup/form" render={(props) => <SignupForm {...props} />} />
         </Switch>
       </header>
     </div>
