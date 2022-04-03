@@ -53,6 +53,7 @@ export default function CaseCard() {
   const [body, setBody] = useState('');
   const [noteOpen, setNoteOpen] = useState(false);
   const [newNote, setNewNote] = useState('');
+  const [currCaseId, setCurrCaseId] = useState(0);
 
   const [view, setView] = useState(4);
 
@@ -67,16 +68,13 @@ export default function CaseCard() {
   };
 
   const createToDoInput = (new_item) => {
-    var lastKey = + Object.keys(todoList)[Object.keys(todoList).length - 1];
+    var lastKey = Object.keys(todoList)[Object.keys(todoList).length - 1];
     todoList[lastKey + 1] = new_item;
   }
 
   const updateOptions = {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: {
-      todo: createToDoInput(id, body)
-    }
+    headers: { 'Content-Type': 'application/json' }
   };
 
   // this is definitely not good
@@ -141,27 +139,26 @@ export default function CaseCard() {
     setBody(e.target.value);
   };
 
+  // const getToDo = (case_id) => {
+  //   fetch(`http://localhost:3000/getToDo/${case_id}`, getOptions)
+  //     .then((response) => response.json())
+  //     .then((res) => {
+  //       setTodoList(res);
+  //     });
+  // }
+
   const captureNote = (e) => {
     e.preventDefault();
     setNewNote(e.target.value);
   };
 
-  const editCaseNote = (e, case_id) => {
-    e.stopPropagation();
+  const editCaseNote = (case_id) => {
     setNoteOpen(true);
-    editCase(case_id);
+    setCurrCaseId(case_id);
   }
 
-  const getToDo = (case_id) => {
-    fetch(`http://localhost:3000/getToDo/${case_id}`, getOptions)
-      .then((response) => response.json())
-      .then((res) => {
-        setTodoList(res);
-      });
-  }
-
-  const editCase = (case_id) => {
-    fetch(`http://localhost:3000/updateToDo/${case_id}`, updateOptions)
+  const updateCaseNote = () => {
+    fetch(`http://localhost:3000/casenote/${currCaseId}/update?new_note=${newNote}`, updateOptions)
       .then((response) => response.json())
       .then((res) => {
         console.log(res);
@@ -358,7 +355,7 @@ export default function CaseCard() {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={editCase}>Edit Case Note</Button>
+            <Button onClick={updateCaseNote}>Edit Case Note</Button>
           </DialogActions>
        </Dialog>
       <Grid item xs={12}>
@@ -368,7 +365,6 @@ export default function CaseCard() {
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
-              
             >
               <Typography>Case Note {index}</Typography>
               <PersonIcon sx={{marginLeft: "10px"}}/>
@@ -398,7 +394,7 @@ export default function CaseCard() {
                 <Button onClick={addItem}>Submit Changes</Button>
               </DialogActions>
               </Dialog>
-              <Button onClick={(e) => {editCaseNote(e, item.case_id)}} sx={{ marginLeft : "800px" }} startIcon={<CreateIcon />}>Edit Note</Button>
+              <Button onClick={() => editCaseNote(item.case_id)} sx={{ marginLeft : "800px" }} startIcon={<CreateIcon />}>Edit Note</Button>
               <Button onClick={() => deleteCase(item.case_id)} sx={{ float: "right" }} startIcon={<DeleteIcon />}>Delete Note</Button>
             </AccordionSummary>
             <AccordionDetails>
