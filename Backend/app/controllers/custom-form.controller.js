@@ -1,7 +1,7 @@
 const CustomForm = require('../models/custom-form.model');
-const logger = require('../logger');
 
 const customFormController = {
+
   async getCustomForm(req, res, next) {
     try {
       const { form_id } = req.params;
@@ -11,9 +11,22 @@ const customFormController = {
       next(err);
     }
   },
+
+  async updateCustomForm(req, res, next) {
+    try {
+      const { form_id } = req.params;
+      const form = new CustomForm({ form_id: form_id, ...req.body });
+      await form.update();
+      res.send({
+        'message': 'success!'
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   async createCustomForm(req, res, next) {
     try {
-      logger.debug(req.body);
       const form = new CustomForm(req.body);
       const form_id = await form.create();
       res.json(form_id);
@@ -21,10 +34,28 @@ const customFormController = {
       next(err);
     }
   },
-  async queryCustomForms(req, res, next) {
+
+  async queryAllAdminForms(req, res, next) {
     try {
-      const resForm = await CustomForm.queryForm(req.query);
-      res.send(resForm);
+      const [completedForms, drafts] = await Promise.all([
+        await CustomForm.queryForm({ is_final: true }),
+        await CustomForm.queryForm({ is_final: false })
+      ]);
+      res.send({
+        'completed': completedForms,
+        'drafts': drafts
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  async publishForm(req, res, next){
+    try {
+      await CustomForm.publish(req.body.form_id);
+      res.send({
+        'message': 'success!'
+      });
     } catch (err) {
       next(err);
     }
