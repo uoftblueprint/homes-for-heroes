@@ -60,34 +60,6 @@ const useStyles = makeStyles({
   },
 });
 
-function loadServerRows(searchParams, page, pageSize) {
-  return new Promise((resolve) => {
-    let url = "http://localhost:3000/api/volunteers";
-
-    // url += `page=${page}`;
-    // url += `&page_size=${pageSize}`;
-    // searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
-    console.log(url);
-
-    fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then((resp) => resp.json())
-      .then((resp) => {
-        if (resp.volunteers.constructor === Array){
-          resolve(resp.volunteers);
-        }
-        {
-          resolve([])
-        }
-      });
-    // resolve(data.slice((page-1) * pageSize, page * pageSize * 5))
-  });
-}
-
 function exportCSV(searchParams) {
   let url = "http://localhost:3000/getUsersInfoCSV?";
 
@@ -114,12 +86,13 @@ function exportCSV(searchParams) {
     });
 }
 
-export default function CRM() {
+export default function VolunteerCRM({ tab }) {
   const classes = useStyles();
 
   const [pageSize, setPageSize] = React.useState(5);
   const [page, setPage] = React.useState(1);
   const [rows, setRows] = React.useState([]);
+  const [pageCount, setPageCount] = React.useState(1);
   const [loading, setLoading] = React.useState(false);
   const [searchCategory, setSearchCategory] = React.useState("name");
   const [searchParams, setSearchParams] = React.useState([]);
@@ -127,7 +100,36 @@ export default function CRM() {
   const [cellChanges, setCellChanges] = React.useState([])
   const [dialog, toggleDialog] = React.useState(false);
 
-  let pageCount = Math.ceil(rows.length / pageSize);
+  function loadServerRows(searchParams, page, pageSize) {
+    if (tab === 1){
+  return new Promise((resolve) => {
+    let url = "http://localhost:3000/api/volunteers/getData?";
+
+    url += `page=${page}`;
+    url += `&page_size=${pageSize}`;
+    console.log(pageSize)
+    searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
+    console.log(url);
+
+    fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    })
+      .then((resp) => resp.json())
+      .then((resp) => {
+        if (resp.constructor === Array){
+          resolve(resp);
+        }
+        {
+          resolve([])
+        }
+      });
+    // resolve(data.slice((page-1) * pageSize, page * pageSize * 5))
+  });
+}
+}
 
   function handlePageSizeChange(value) {
     setPage(1);
@@ -152,23 +154,25 @@ export default function CRM() {
   }
 
     React.useEffect(() => {
-    let active = true;
 
-    (async () => {
-      setLoading(true);
-      const newRows = await loadServerRows(searchParams, page, pageSize);
-      if (!active) {
-        return;
-      }
-      setRows(newRows);
-      setCellChanges([]);
-      setLoading(false);
-    })();
+        let active = true;
 
-    return () => {
-      active = false;
-    };
-  }, [searchParams, page, pageSize, dialog]);
+        (async () => {
+          setLoading(true);
+          const newRows = await loadServerRows(searchParams, page, pageSize);
+          if (!active) {
+            return;
+          }
+          setRows(newRows[1]);
+          setPageCount(Math.ceil(newRows[0].count / pageSize))
+          setCellChanges([]);
+          setLoading(false);
+        })();
+
+        return () => {
+          active = false;
+        }; 
+  }, [searchParams, page, pageSize, dialog, tab]);
 
   return (
     <Card
@@ -197,7 +201,12 @@ export default function CRM() {
           value={searchCategory}
           onChange={(e) => setSearchCategory(e.target.value)}
         >
-        </Select>
+          <MenuItem value={"name"}>Name</MenuItem>
+          <MenuItem value={"village"}>Village</MenuItem> 
+          <MenuItem value={"date_joined"}>Date Joined</MenuItem>
+          <MenuItem value={"role"}>Role</MenuItem>
+          <MenuItem value={"phone"}>Phone</MenuItem>
+      </Select>           
         <TextField
           className={classes.SearchInputField}
           fullWidth

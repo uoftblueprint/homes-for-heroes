@@ -44,7 +44,7 @@ const Header = (props) => {
   const menuItems = [
     {
       menuTitle: 'User CRM',
-      pageURL: '/usercrm',
+      pageURL: '/',
     },
     {
       menuTitle: 'User Case',

@@ -24,7 +24,7 @@ const supervisorController = {
             res.status(500);
             res.send({ error: err });
         }
-    },
+    }, 
 
     async assignChapter(req, res) {
         try { 

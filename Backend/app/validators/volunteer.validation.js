@@ -5,6 +5,15 @@ const validationSchema = {
         body('name').trim().notEmpty(),
         body('date_joined').isDate({ format: 'YYYY-MM-DD' }).withMessage('date_joined must be in format YYYY-MM-DD'),
     ],
+    getDataSchema: [
+    query('name').optional(),
+    query('village').optional(),
+    query('date_joined').optional(),
+    query('role').optional(),
+    query('phone').optional(),
+    query('page').isInt({ min: 0 }),
+    query('page_size').isInt({ min: 0 }),
+  ],
 };
 
 module.exports = validationSchema;

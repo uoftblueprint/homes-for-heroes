@@ -15,5 +15,11 @@ module.exports = app => {
         validationSchema.createVolunteerSchema,
         validationErrorHandler,
         volunteer.create);
-  };
+
+    app.get(
+        '/volunteers/getData',
+        validationSchema.getDataSchema,
+        validationErrorHandler,
+        volunteer.getData);
+};
   

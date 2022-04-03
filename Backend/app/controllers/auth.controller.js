@@ -81,7 +81,7 @@ const authController = {
       // TODO: Use frontend `verify` endpoint rather than the api directly
       // TODO: remove :3000 for localhost
       const url = `http://${req.hostname}:3000/api/verify/${verificationCode}`;
-      const login_url = `http://${req.hostname}:3001/profile`;
+      const login_url = `http://${req.hostname}:3001/signup`;
       res.json({ success: true });
       const mailTransporter = await mailer();
       const info = await mailTransporter.sendMail({

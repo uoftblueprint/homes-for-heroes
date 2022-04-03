@@ -1,9 +1,6 @@
 import './App.css';
 
 import { Route, Switch } from 'react-router-dom';
-
-import Typography from '@mui/material/Typography';
-
 import NavBar from './components/NavBar';
 import FormTop from './pages/User/Form/FormTop.js';
 import FormCreate from "./pages/User/Form/FormCreate";
@@ -25,13 +22,8 @@ function App() {
     <div className="App">
       <header className="App-header">
         <NavBar />
-        <Switch>
-          <Route
-            exact
-            from="/"
-            render={(props) => <Typography color="black">Home</Typography>}
-          />
-          <Route exact path="/usercrm" render={(props) => <CRM {...props} />} />
+        <Switch> 
+          <Route exact path="/" render={(props) => <CRM {...props} />} />
           <Route
             exact
             path="/usercase"

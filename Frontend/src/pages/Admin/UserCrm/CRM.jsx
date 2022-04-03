@@ -5,7 +5,6 @@ import { makeStyles } from "@mui/styles";
 import Grid from "@mui/material/Grid";
 import Pagination from "@mui/material/Pagination";
 import Card from "@mui/material/Card";
-import PaginationItem from "@mui/material/PaginationItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -21,11 +20,13 @@ import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
 import LaunchIcon from "@mui/icons-material/Launch";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import AddIcon from '@mui/icons-material/Add';
 import { useHistory } from "react-router-dom";
 import validator from 'validator';
 
-import AddRowButton from './AddRowButton.jsx';
+import AddRowDialog from './AddRowDialog.jsx';
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { CollectionsBookmarkOutlined } from "@mui/icons-material";
 
 // import data from "./MOCK_DATA.json"
 
@@ -70,7 +71,6 @@ function loadServerRows(searchParams, page, pageSize) {
     url += `page=${page}`;
     url += `&page_size=${pageSize}`;
     searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
-    console.log(url);
     try{ 
     fetch(url, {
       headers: {
@@ -142,9 +142,11 @@ export default function CRM() {
     }
   });
 
+  const [dialog, setDialog] = React.useState(false);
   const [pageSize, setPageSize] = React.useState(5);
   const [page, setPage] = React.useState(1);
   const [rows, setRows] = React.useState([]);
+  const [pageCount, setPageCount] = React.useState(1);
   const [loading, setLoading] = React.useState(false);
   const [searchCategory, setSearchCategory] = React.useState("name");
   const [searchParams, setSearchParams] = React.useState([]);
@@ -157,7 +159,7 @@ export default function CRM() {
       setLight(false);
     }
   }, [cellChanges])
-  let pageCount = Math.ceil(rows.length / pageSize);
+
 
   function handlePageSizeChange(value) {
     setPage(1);
@@ -203,7 +205,8 @@ export default function CRM() {
       if (!active) {
         return;
       }
-      setRows(newRows);
+      setRows(newRows[1]);
+      setPageCount(Math.ceil(newRows[0].count / pageSize))
       setCellChanges([]);
       setLoading(false);
     })();
@@ -211,7 +214,7 @@ export default function CRM() {
     return () => {
       active = false;
     };
-  }, [searchParams, page, pageSize]);
+  }, [searchParams, page, pageSize, dialog]);
 
   return (
     <Card
@@ -247,8 +250,8 @@ export default function CRM() {
             <MenuItem value={"income"}>Income</MenuItem>
             <MenuItem value={"incoming_referral"}>Incoming Referral</MenuItem>
             <MenuItem value={"outgoing_referral"}>Outgoing Referral</MenuItem>
-          </Select>
-        <TextField
+          </Select>           
+          <TextField
             className={classes.SearchInputField}
             fullWidth 
             variant="outlined"
@@ -289,7 +292,9 @@ export default function CRM() {
         justifyContent="flex-end"
         sx={{ minWidth: 562 }}
       >
-        <AddRowButton sx={{ marginRight: "auto" }} /> 
+        <Button sx={{ marginRight: "auto" }} endIcon={<AddIcon />} onClick={() => setDialog(true)}> 
+        Add Veteran 
+        </Button> 
         <FormControl
           variant="standard"
           sx={{ textAlign: "left", m: 1, width: 200 }}
@@ -315,7 +320,6 @@ export default function CRM() {
           boundaryCount={1}
           page={page}
           count={pageCount}
-          renderItem={(props2) => <PaginationItem {...props2} />}
           onChange={(event, value) => setPage(value)}
         />
         <IconButton onClick={page === 1 ? null : (e) => setPage(page - 1)}>
@@ -461,8 +465,9 @@ export default function CRM() {
         disabled={cellChanges.length === 0}
         >
           Apply Changes
-          </Button>
+          </Button> 
       </Grid>
+      <AddRowDialog dialog={dialog} setDialog={setDialog} /> 
     </Card>
   );
 }

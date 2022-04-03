@@ -1,4 +1,5 @@
 const sql = require('./db.js');
+const PartnerQueryData = require('./query-models/partner-query-data.model.js');
 const logger = require('../logger');
 
 // constructor for partners 
@@ -33,6 +34,32 @@ Partner.listAll = function () {
             }
         });
     });
+};
+
+Partner.queryData = function (query_params) {
+  return new Promise((resolve, reject) => {
+    const q = new PartnerQueryData(query_params);
+    q.constructQuery();
+    const page_query =`SELECT COUNT(*) AS count FROM partners ${q.query}`
+    const data_query = ` 
+    SELECT
+      partners.partner_id, partners.org_name, partners.city, partners.village, partners.address, partners.phone
+    FROM partners 
+      ${q.query}
+    LIMIT ${q.offset}, ${q.limit}
+    `;
+    sql.query(data_query, (err, row) => {
+      if (err) reject(err);
+      page_count = row
+    }); 
+    sql.query(page_query, (error, page) => { 
+      if (error) reject(error);
+      sql.query(data_query, (err, row) => {
+        if (err) reject(err);
+          resolve([page[0],row])
+      }); 
+    });
+  });
 };
 
 module.exports = Partner;

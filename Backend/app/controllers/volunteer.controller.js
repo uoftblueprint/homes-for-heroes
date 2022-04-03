@@ -13,6 +13,15 @@ const volunteerController = {
         }
     },
 
+    async getData(req, res, next) {
+        try {
+            const data = await Volunteer.queryData(req.query);
+            res.send(data);
+        } catch (err) {
+            next(err);
+        }
+    },
+
     async create(req, res) {
         try {
             logger.debug(req.body);

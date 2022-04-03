@@ -45,10 +45,10 @@ export default function PrivCreateAdmin({ caDialog, toggleCaDialog, chapters }) 
       body: JSON.stringify({
         name: name,
         email: email,
-        phone: phone,
-        password: password,
-        address: address,
-        chapter_id: currChapter.chapter_id
+        // phone: phone,
+        // password: password,
+        // address: address,
+        // chapter_id: currChapter.chapter_id
       })
     })
       .then((resp) => {
@@ -114,7 +114,7 @@ export default function PrivCreateAdmin({ caDialog, toggleCaDialog, chapters }) 
             fullWidth
             variant="standard" 
             /> 
-            <TextField
+            {/* <TextField
             autoFocus
             margin="dense"
             id="phone"
@@ -158,7 +158,7 @@ export default function PrivCreateAdmin({ caDialog, toggleCaDialog, chapters }) 
                 setChapter(value) 
                 }
             }} 
-            />
+            /> */}
           </DialogContent>
           <DialogActions>
             <Button onClick={createAdmin} autoFocus>

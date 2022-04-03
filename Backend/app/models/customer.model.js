@@ -265,7 +265,8 @@ Customer.queryUserData = function (query_params) {
   return new Promise((resolve, reject) => {
     const q = new CustomerQueryData(query_params);
     q.constructQuery();
-    const data_query = `
+    const page_query =`SELECT COUNT(*) AS count FROM client_users AS client ${q.query}`
+    const data_query = ` 
     SELECT
       client.user_id, client.name, client.email, client.verified,
       info.gender, info.applicant_phone, info.applicant_dob, info.curr_level, info.city, info.province,
@@ -277,10 +278,16 @@ Customer.queryUserData = function (query_params) {
     ORDER BY client.name
     LIMIT ${q.offset}, ${q.limit}
     `;
-
     sql.query(data_query, (err, row) => {
       if (err) reject(err);
-      resolve(row);
+      page_count = row
+    }); 
+    sql.query(page_query, (error, page) => { 
+      if (error) reject(error);
+      sql.query(data_query, (err, row) => {
+        if (err) reject(err);
+          resolve([page[0],row])
+      }); 
     });
   });
 };

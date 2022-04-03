@@ -12,6 +12,16 @@ const supporterController = {
             res.send({ error: err });
         }
     },
+
+    async getData(req, res, next) {
+        try {
+            const data = await Supporter.queryData(req.query);
+            res.send(data);
+        } catch (err) {
+            next(err);
+        }
+    },
+
     async create(req, res) {
         try {
             logger.debug(req.body);
