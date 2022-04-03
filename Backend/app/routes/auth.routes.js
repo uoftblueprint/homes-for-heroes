@@ -2,7 +2,7 @@ const authController = require('../controllers/auth.controller');
 const validationSchema = require('../validators/auth.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
 
-module.exports = (app) => {
+module.exports = (app, passport) => {
   app.post(
     '/signup',
     validationSchema.signUpSchema,
@@ -14,6 +14,7 @@ module.exports = (app) => {
     '/login',
     validationSchema.loginSchema,
     validationErrorHandler,
+    passport.authenticate('local', { failureRedirect: '/login' }),
     authController.login,
   );
 
@@ -25,4 +26,11 @@ module.exports = (app) => {
   );
 
   app.get('/logout', authController.logout);
+
+  app.post(
+    '/createveteran',
+    validationSchema.createVeteranSchema,
+    validationErrorHandler,
+    authController.createVeteran,
+  );
 };

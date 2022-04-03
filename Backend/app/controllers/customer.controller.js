@@ -51,26 +51,27 @@ const customerController = {
       next(err);
     }
   },
-  async getUserData(req, res) {
+  
+  async getUserData(req, res, next) {
     try {
       const user_data = await Customer.queryUserData(req.query);
-      res.send(user_data)
+      res.send(user_data);
     } catch (err) {
-      console.error(err);
-      res.send({'error': err});
+      next(err);
     }
   },
-  async updateProfile(req, res) {
+
+  async putUserInfo(req, res, next) {
     try {
-      const { user_id } = req.params;
-      const profile = await Customer.updateProfile(user_id, req.body);
-      res.send(profile);
+      const user_info = req.body;
+      await req.user.updateUserInfo(user_info);
+      res.send({ success: true });
     } catch (err) {
-      console.error(err);
-      res.send({"error": err});
-    };
+      next(err);
+    }
   },
-  async getUserInfoCSV(req, res) {
+
+  async getUserInfoCSV(req, res, next) {
     try {
       const { name, email, phone, address, kin_name } = req.query;
       const info = await Customer.getUserInfoCSV(

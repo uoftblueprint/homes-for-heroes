@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
+import { SnackbarProvider } from 'notistack';
 
 import { Provider } from 'react-redux';
 import store from "./redux/store";
@@ -11,9 +12,11 @@ import store from "./redux/store";
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Provider store={store}>
-        <App />
-      </Provider>
+      <SnackbarProvider maxSnack={3}>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </SnackbarProvider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root'),

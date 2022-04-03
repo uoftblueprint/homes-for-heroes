@@ -3,7 +3,6 @@ const sql = require('./db.js');
 const CustomerProfile = require('./customer-profile.model');
 const CustomerQueryData = require('./query-models/customer-query-data.model.js');
 const bcrypt = require('bcrypt');
-const logger = require('../logger');
 
 // constructor
 const Customer = function (customer) {
@@ -22,6 +21,17 @@ Customer.prototype.isValidPassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
+Customer.prototype.updateUserInfo = function(user_info) {
+  return new Promise((resolve, reject) => {
+    // Don't allow the user to change these params through this API
+    user_info.user_id = this.user_id;
+    user_info.email = this.email;
+    user_info.applicant_phone = this.phone;
+    const userInfo = new UserInfo(user_info);
+    userInfo.update().then(resolve).catch(reject);
+  });
+};
+
 Customer.create = function (name, phone, email, password) {
   return new Promise((resolve, reject) => {
     const hashedPassword = bcrypt.hashSync(password, 15);
@@ -31,10 +41,11 @@ Customer.create = function (name, phone, email, password) {
       (err) => {
         if (err) reject(err);
         else {
-          sql.query('SELECT LAST_INSERT_ID()', (err, rows) => {
+          sql.query('SELECT LAST_INSERT_ID() as user_id', (err, rows) => {
             if (err) reject(err);
             else {
-              const user_id = rows[0]['LAST_INSERT_ID()'];
+              // eslint-disable-next-line prefer-destructuring
+              const [ user_id ] = rows;
               resolve(
                 new Customer({
                   user_id: user_id,
@@ -61,10 +72,11 @@ Customer.createOAuth = function (name, email) {
       (err) => {
         if (err) reject(err);
         else {
-          sql.query('SELECT LAST_INSERT_ID()', (err, rows) => {
+          sql.query('SELECT LAST_INSERT_ID() as user_id', (err, rows) => {
             if (err) reject(err);
             else {
-              const user_id = rows[0]['LAST_INSERT_ID()'];
+              // eslint-disable-next-line prefer-destructuring
+              const [ user_id ] = rows[0];
               resolve(
                 new Customer({
                   user_id: user_id,
@@ -125,13 +137,13 @@ Customer.getById = function (user_id) {
 
 Customer.getCustomerInfo = function (user_id) {
   return new Promise((resolve, reject) => {
-    const query = `select c.name, c.email, c.phone, u.street_name, 
+    const query = `SELECT c.name, c.email, c.phone, u.street_name, 
     u.city, u.province, u.applicant_dob 
-    from client_users as c inner join UserInfo as u 
-    on c.user_id = u.user_id where c.user_id = ?`;
+    FROM client_users AS c INNER JOIN UserInfo AS u 
+    ON c.user_id = u.user_id WHERE c.user_id = ?`;
     sql.query(query, [user_id], (err, userInfo) => {
       if (err) reject(err);
-      resolve(userInfo);
+      else resolve(userInfo);
     });
   });
 };
@@ -196,7 +208,7 @@ Customer.setAlertCaseId = function (user_id, case_id) {
 Customer.getCases = function (user_id, start_date, end_date) {
   return new Promise((resolve, reject) => {
     sql.query(
-      'SELECT * FROM cases WHERE user_id = ? AND date(last_update) between ? and ?',
+      'SELECT * FROM cases WHERE user_id = ? AND date(last_update) BETWEEN ? AND ?',
       [user_id, start_date, end_date],
       (err, cases) => {
         if (err) reject(err);
@@ -255,10 +267,9 @@ Customer.queryUserData = function (query_params) {
   return new Promise((resolve, reject) => {
     const q = new CustomerQueryData(query_params);
     q.constructQuery();
-    logger.debug(q);
     const data_query = `
     SELECT
-      client.user_id, client.name, client.email,
+      client.user_id, client.name, client.email, client.verified,
       info.gender, info.applicant_phone, info.applicant_dob, info.curr_level, info.city, info.province,
       kin.kin_name, kin.relationship, kin.kin_phone, kin.kin_email
     FROM client_users AS client
@@ -268,7 +279,6 @@ Customer.queryUserData = function (query_params) {
     ORDER BY client.name
     LIMIT ${q.offset}, ${q.limit}
     `;
-    logger.debug(data_query);
 
     sql.query(data_query, (err, row) => {
       if (err) reject(err);

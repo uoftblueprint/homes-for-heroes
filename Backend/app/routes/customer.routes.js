@@ -1,10 +1,11 @@
 const customers = require('../controllers/customer.controller');
 const validationSchema = require('../validators/customer.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
-const passport = require('passport');
+const { isAuthenticated } = require('../auth/helpers');
 
 module.exports = (app) => {
   app.get('/customers', customers.getAllUsers);
+
   app.get(
     '/getCases',
     validationSchema.getCasesSchema,
@@ -14,7 +15,6 @@ module.exports = (app) => {
 
   app.get(
     '/getUserData',
-    passport.authenticate('jwt', { failureRedirect: '/login', session: false }),
     validationSchema.getUserDataSchema,
     validationErrorHandler,
     customers.getUserData,
@@ -42,10 +42,12 @@ module.exports = (app) => {
   );
 
   app.put(
-    '/updateCustomerProfile/:user_id', 
-    validationSchema.updateCustomerProfileSchema,
+    '/userinfo',
+    isAuthenticated,
+    validationSchema.putUserInfoSchema,
     validationErrorHandler,
-    customers.updateProfile);
+    customers.putUserInfo,
+  );
 
   app.get(
     '/getUsersInfoCSV',
