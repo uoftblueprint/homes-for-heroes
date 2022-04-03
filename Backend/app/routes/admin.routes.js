@@ -8,17 +8,6 @@ module.exports = app => {
   app.get('/admins/getSearchAdmins', admin.getSearchAdmins);
 
   app.put(
-    '/admins/:admin_id/makeSupervisor', 
-    validationSchema.makeSupervisorSchema,
-    validationErrorHandler,
-    admin.makeSupervisor);
-
-  app.put(
-    '/admins/:admin_id/unsetSupervisor', 
-    validationSchema.unsetSupervisorSchema,
-    validationErrorHandler,
-    admin.unsetSupervisor);
-  app.put(
     '/admins/:admin_id/makeSuperadmin', 
     validationSchema.makeSuperadminSchema,
     validationErrorHandler,

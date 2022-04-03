@@ -36,44 +36,18 @@ const adminController = {
       }
     },
 
-    async makeSupervisor(req, res) {
-        try {
-            const { admin_id } = req.params;
-            console.log(admin_id);
-            const results = await Admin.makeSupervisor(admin_id);
-            res.send(results);
-        } catch (err) {
-            console.error(err);
-            res.status(500);
-            res.send({ error: err });
-        }
-    },
-    async unsetSupervisor(req, res) {
-        try {
-            const { admin_id } = req.params;
-            console.log(admin_id);
-            const results = await Admin.unsetSupervisor(admin_id);
-            res.send(results);
-        } catch (err) {
-            console.error(err);
-            res.status(500);
-            res.send({ error: err });
-        }
-    },
-
+    
     async makeSuperadmin(req, res) {
         try {
             const { admin_id } = req.params;
-            // const role_id = await Admin.getRole(admin_id);
-            // logger.debug(role_id);
-            // ensures superadmin status can only be set when admin is already a supervisor
-            // if (role_id == 1) {
+            const role_id = await Admin.getRole(admin_id);
+            logger.debug(role_id);
+            if (role_id == 1) {
                 const results = await Admin.makeSuperadmin(admin_id); 
                 res.send(results);
-            //     j
-            // } else {
-            //     res.send({ error: "cannot set as superadmin" });
-            // }
+            } else {
+                res.send({ error: "cannot set as superadmin" });
+            }
         } catch (err) {
             console.error(err);
             res.status(500);
@@ -84,14 +58,14 @@ const adminController = {
     async unsetSuperadmin(req, res) {
         try {
             const { admin_id } = req.params;
-            // const role_id = await Admin.getRole(admin_id);
-            // logger.debug(role_id);
-            // if (role_id == 1) {
+            const role_id = await Admin.getRole(admin_id);
+            logger.debug(role_id);
+            if (role_id == 1) {
                 const results = await Admin.unsetSuperadmin(admin_id);
                 res.send(results);
-            // } else {
-            //     res.send({ error: "not a superadmin; cannot unset superadmin status" });
-            // }
+            } else {
+                res.send({ error: "not a superadmin; cannot unset superadmin status" });
+            }
         } catch (err) {
             console.error(err);
             res.status(500);

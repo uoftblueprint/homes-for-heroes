@@ -12,8 +12,6 @@ const chapter_id = [
 const validationSchema = {
   makeSuperadminSchema: [...admin_id],
   unsetSuperadminSchema: [...admin_id],
-  makeSupervisorSchema: [...admin_id],
-  unsetSupervisorSchema: [...admin_id],
   assignChapterSchema: [
     ...admin_id,
     body('name').trim().notEmpty(),
