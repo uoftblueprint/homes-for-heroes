@@ -6,14 +6,14 @@ USE homes_for_heroes;
 DROP TABLE IF EXISTS UserInfo;
 CREATE TABLE UserInfo (
     user_id INT PRIMARY KEY,
-    gender CHAR(255) NOT NULL,
+    gender CHAR(1) NOT NULL,
     email CHAR(255) NOT NULL,
-    applicant_phone INT NOT NULL,
+    applicant_phone CHAR(255) NOT NULL,
     applicant_dob DATE ,
     street_name CHAR(255),
     curr_level  CHAR(255),
     city CHAR(255) NOT NULL,
-    province CHAR(255) NOT NULL,
+    province CHAR(3) NOT NULL,
     referral CHAR(255),
     CONSTRAINT FOREIGN KEY (user_id) REFERENCES client_users(user_id)
 );

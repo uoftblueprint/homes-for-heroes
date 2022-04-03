@@ -51,7 +51,7 @@ const customerController = {
       next(err);
     }
   },
-
+  
   async getUserData(req, res, next) {
     try {
       const user_data = await Customer.queryUserData(req.query);
@@ -60,6 +60,17 @@ const customerController = {
       next(err);
     }
   },
+
+  async putUserInfo(req, res, next) {
+    try {
+      const user_info = req.body;
+      await req.user.updateUserInfo(user_info);
+      res.send({ success: true });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   async getUserInfoCSV(req, res, next) {
     try {
       const { name, email, phone, address, kin_name } = req.query;

@@ -68,7 +68,7 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
  React.useEffect(() => {
     if (searchParams !== ''){
     setLoading(true);
-    const url = `http://localhost:3000/admins/getSearchAdmins?name=${searchParams}`;
+    const url = `http://localhost:3000/api/admins/getSearchAdmins?name=${searchParams}`;
   
     fetch(url, {
       headers: {
@@ -120,14 +120,14 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
         if (user.admin_id === admin_id) {
           return {
             ...user,
-            role_id: 3
+            role_id: 2 
           };
         }
         return user;
       })
     )
     setLoading(true);
-    const url = `http://localhost:3000/admins/${admin_id}/makeSupervisor`;
+    const url = `http://localhost:3000/api/admins/${admin_id}/makeSuperadmin`;
 
     fetch(url,{
       method: 'PUT',
@@ -203,7 +203,7 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
                 <ListItem
                   key={admin.admin_id}
                   secondaryAction={
-                    admin.role_id === 3 ? (
+                    admin.role_id === 2 ? (
                       <Button
                         disabled
                         size="small"

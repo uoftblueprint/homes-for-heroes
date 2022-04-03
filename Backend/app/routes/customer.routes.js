@@ -15,7 +15,6 @@ module.exports = (app) => {
 
   app.get(
     '/getUserData',
-    isAuthenticated,
     validationSchema.getUserDataSchema,
     validationErrorHandler,
     customers.getUserData,
@@ -40,6 +39,14 @@ module.exports = (app) => {
     validationSchema.setAlertCaseSchema,
     validationErrorHandler,
     customers.setAlertCase,
+  );
+
+  app.put(
+    '/userinfo',
+    isAuthenticated,
+    validationSchema.putUserInfoSchema,
+    validationErrorHandler,
+    customers.putUserInfo,
   );
 
   app.get(

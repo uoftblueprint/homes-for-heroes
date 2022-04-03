@@ -33,18 +33,43 @@ export default function SignupForm() {
   });
 
   const [partners, setPartners] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleFormChange = (event) => {
-    const { id, value } = event.target;
+    const { name, value } = event.target;
     setFormInfo({
       ...formInfo,
-      [id]: value,
+      [name]: value,
     });
   };
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    pushInfo()
   };
+
+  const requestOptions = {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: formInfo.name,
+      email: formInfo.email,
+      phone: formInfo.phone,
+      street_name: formInfo.street_name,
+      city: formInfo.city,
+      province: formInfo.province,
+      applicant_dob: formInfo.applicant_dob,
+    }),
+  };
+
+  const pushInfo = () = {
+    // fetch(
+    //   'http://localhost:3000/updateCustomerProfile/11',
+    //   requestOptions,
+    // ).then((response) => response.json());
+    // setUserInfo({
+    //   ...formInfo,
+    // });
+  }
 
   function fetchPartners() {
     return new Promise((resolve) => {
@@ -56,11 +81,17 @@ export default function SignupForm() {
 
   React.useEffect(() => {
     (async () => {
+      setIsLoading(true);
       const data = await fetchPartners();
-      setPartners(data);
+      setPartners(data['partners']);
+
+      setIsLoading(false);
     })();
   }, []);
 
+  if (isLoading) {
+    return <Typography>Loading...</Typography>;
+  }
   return (
     <Box
       component="form"
@@ -84,7 +115,7 @@ export default function SignupForm() {
       <TextField
         required
         label="Name"
-        id="name"
+        name="name"
         value={formInfo.name}
         onChange={handleFormChange}
       />
@@ -106,7 +137,7 @@ export default function SignupForm() {
           row
           aria-labelledby="demo-radio-buttons-group-label"
           required
-          id="gender"
+          name="gender"
           value={formInfo.gender}
           onChange={handleFormChange}
         >
@@ -119,7 +150,7 @@ export default function SignupForm() {
       <TextField
         required
         label="Email"
-        id="email"
+        name="email"
         value={formInfo.email}
         onChange={handleFormChange}
         sx={{
@@ -130,7 +161,7 @@ export default function SignupForm() {
       <TextField
         required
         label="Phone Number"
-        id="phone"
+        name="phone"
         value={formInfo.phone}
         onChange={handleFormChange}
         sx={{
@@ -141,7 +172,7 @@ export default function SignupForm() {
       <TextField
         required
         label="Date of Birth"
-        id="applicant_dob"
+        name="applicant_dob"
         value={formInfo.applicant_dob}
         onChange={handleFormChange}
         sx={{
@@ -153,7 +184,7 @@ export default function SignupForm() {
         <TextField
           required
           label="Street Name"
-          id="street_name"
+          name="street_name"
           value={formInfo.street_name}
           onChange={handleFormChange}
           sx={{
@@ -164,7 +195,7 @@ export default function SignupForm() {
         <TextField
           required
           label="City"
-          id="city"
+          name="city"
           value={formInfo.city}
           onChange={handleFormChange}
           sx={{
@@ -182,7 +213,7 @@ export default function SignupForm() {
           <Select
             required
             label="Province"
-            id="province"
+            name="province"
             value={formInfo.province}
             onChange={handleFormChange}
           >
@@ -208,18 +239,20 @@ export default function SignupForm() {
           mt: '25px',
         }}
       >
-        <InputLabel>Incoming Referral *</InputLabel>
-        <Select
-          required
-          label="Incoming Referral"
-          id="referral"
-          value={formInfo.referral}
-          onChange={handleFormChange}
-        >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
+        <>
+          <InputLabel>Incoming Referral *</InputLabel>
+          <Select
+            required
+            label="Incoming Referral"
+            name="referral"
+            value={formInfo.referral}
+            onChange={handleFormChange}
+          >
+            {partners.map(({ org_name }) => (
+              <MenuItem value={org_name}>{org_name}</MenuItem>
+            ))}
+          </Select>
+        </>
       </FormControl>
       <Button
         variant="outlined"
