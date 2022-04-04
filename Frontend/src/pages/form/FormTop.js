@@ -1,44 +1,16 @@
-import { useEffect, useState } from "react";
-import { Link, useRouteMatch } from "react-router-dom";
+import AddIcon from '@mui/icons-material/Add';
+import Alert from '@mui/material/Alert';
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
-import { DataGrid } from "@mui/x-data-grid";
-import Typography from "@mui/material/Typography";
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import PublishFormConfirmation from "./ConfirmationModal";
-import {Alert} from "@mui/lab";
 import Grid from "@mui/material/Grid";
-
-function fetchCustomForms(host, admin_id) {
-    const url = `${host}/custom-form/queryAllAdminForms/${admin_id}`
-
-    return new Promise((resolve) => {
-        fetch(url)
-            .then(r => {
-                resolve(r.json())
-            })
-            .catch(error => {
-                console.error("error!: " + error);
-            })
-    })
-}
-
-function publishForm(host, form) {
-    const url = `${host}/custom-form/publish`
-
-    return new Promise((resolve, reject) => {
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(form)
-        };
-        fetch(url, requestOptions)
-            .then(response => console.log(response))
-            .catch(err => reject(err));
-    })
-}
+import EditIcon from '@mui/icons-material/Edit';
+import { DataGrid } from "@mui/x-data-grid";
+import { Link, useRouteMatch } from "react-router-dom";
+import {fetchCustomFormsAPI, publishFormAPI} from "../../api/formAPI";
+import PublishFormConfirmation from "../../components/form/PublishConfirmationModal";
+import Typography from "@mui/material/Typography";
+import { useEffect, useState } from "react";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 function FormTop() {
 
@@ -47,7 +19,6 @@ function FormTop() {
     const [loading, setLoading] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
 
-    const host = 'http://localhost:3000'
     const admin_id = 1;
 
     let { url }= useRouteMatch();
@@ -98,7 +69,7 @@ function FormTop() {
                 const onClick = (e) => {
                     // e.stopPropagation(); // don't select this row after clicking
                     (async () => {
-                        await publishForm(host, params.row)
+                        await publishFormAPI(params.row)
                     })();
                     setRefreshKey(refreshKey => refreshKey + 1)
                 };
@@ -108,22 +79,13 @@ function FormTop() {
     ];
 
     useEffect(() => {
-        let active = true;
-
         (async () => {
             setLoading(true);
-            const forms = await fetchCustomForms(host, admin_id);
-            if (!active) {
-                return;
-            }
+            const forms = await fetchCustomFormsAPI(admin_id);
             setCompleted(forms.completed.map((element, index) => ({ ...element, "id": index })));
             setDrafts(forms.drafts.map((element, index) => ({ ...element, "id": index })));
             setLoading(false);
         })();
-
-        return () => {
-            active = false;
-        };
     }, [refreshKey])
 
     return (
@@ -146,19 +108,24 @@ function FormTop() {
                 </Grid>
             </Grid>
 
-            <Typography sx={{ fontSize: 40, mb: '1px'}} align="left">
-                Completed Forms
-            </Typography>
-            <DataGrid container autoHeight hideFooter={true} headerHeight={0}
-                      rows={completed} columns={[...displayDataColumns, ...completedOptions]} loading={loading}
-            />
-
-            <Typography sx={{ fontSize: 40, mb: '1px'}} align="left">
-                Drafts
-            </Typography>
-            <DataGrid container autoHeight hideFooter={true} headerHeight={0}
-                      rows={drafts} columns={[...displayDataColumns, ...draftOptions]} loading={loading}
-            />
+            <Grid container direction="column">
+                <Grid item sx={{mb: 3}}>
+                    <Typography sx={{ fontSize: 40, mb: 1}} align="left">
+                        Completed Forms
+                    </Typography>
+                    <DataGrid container autoHeight hideFooter={true} headerHeight={0}
+                              rows={completed} columns={[...displayDataColumns, ...completedOptions]} loading={loading}
+                    />
+                </Grid>
+                <Grid item>
+                    <Typography sx={{ fontSize: 40, mb: 1}} align="left">
+                        Drafts
+                    </Typography>
+                    <DataGrid container autoHeight hideFooter={true} headerHeight={0}
+                              rows={drafts} columns={[...displayDataColumns, ...draftOptions]} loading={loading}
+                    />
+                </Grid>
+            </Grid>
 
         </Card>
     )
