@@ -1,6 +1,6 @@
 const sql = require('./db.js');
 const CustomerQueryData = require('./query-models/customer-query-data.model.js');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
 
 // constructor
 const Customer = function (customer) {
@@ -17,21 +17,102 @@ Customer.prototype.isValidPassword = async function(password) {
   return await bcrypt.compare(password, this.password);
 }
 
-Customer.create = function (name, phone, email, password) {
-  return new Promise(function (resolve, reject) {
-    sql.query('INSERT INTO client_users (name, phone, email, password, todo) VALUES (?, ?, ?, ?)',
-    [name, phone, email, bcrypt.hashSync(password, 15), {}],
-    function(err) {
-      if (err) reject(err);
-      else {
-        sql.query('SELECT LAST_INSERT_ID()', function(err, rows) {
-          if (err) reject(err);
-          else resolve(new Customer({user_id: rows[0], name: name, email: email, phone: phone}));
-        });
-      }
-    });
+Customer.prototype.updateUserInfo = function(user_info) {
+  return new Promise((resolve, reject) => {
+    // Don't allow the user to change these params through this API
+    user_info.user_id = this.user_id;
+    user_info.email = this.email;
+    user_info.applicant_phone = this.phone;
+    const userInfo = new UserInfo(user_info);
+    userInfo.update().then(resolve).catch(reject);
   });
-}
+};
+
+Customer.prototype.updateUserInfo = function(user_info) {
+  return new Promise((resolve, reject) => {
+    // Don't allow the user to change these params through this API
+    user_info.user_id = this.user_id;
+    user_info.email = this.email;
+    user_info.applicant_phone = this.phone;
+    const userInfo = new UserInfo(user_info);
+    userInfo.update().then(resolve).catch(reject);
+  });
+};
+
+Customer.create = function (name, phone, email, password) {
+  return new Promise((resolve, reject) => {
+    const hashedPassword = bcrypt.hashSync(password, 15);
+    sql.query(
+      'INSERT INTO client_users (name, phone, email, password, verified, oauth) VALUES (?, ?, ?, ?, FALSE, FALSE)',
+      [name, phone, email, hashedPassword],
+      (err) => {
+        if (err) reject(err);
+        else {
+          sql.query('SELECT LAST_INSERT_ID() as user_id', (err, rows) => {
+            if (err) reject(err);
+            else {
+              // eslint-disable-next-line prefer-destructuring
+              const [ user_id ] = rows;
+              resolve(
+                new Customer({
+                  user_id: user_id,
+                  name: name,
+                  email: email,
+                  phone: phone,
+                  verified: false,
+                  oauth: false,
+                }),
+              );
+            }
+          });
+        }
+      },
+    );
+  });
+};
+
+Customer.createOAuth = function (name, email) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'INSERT INTO client_users (name, email, verified, oauth) VALUES (?, ?, TRUE, TRUE)',
+      [name, email],
+      (err) => {
+        if (err) reject(err);
+        else {
+          sql.query('SELECT LAST_INSERT_ID() as user_id', (err, rows) => {
+            if (err) reject(err);
+            else {
+              // eslint-disable-next-line prefer-destructuring
+              const [ user_id ] = rows[0];
+              resolve(
+                new Customer({
+                  user_id: user_id,
+                  name: name,
+                  email: email,
+                  verified: true,
+                  oauth: true,
+                }),
+              );
+            }
+          });
+        }
+      },
+    );
+  });
+};
+
+Customer.verify = function (user_id) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'UPDATE client_users SET verified = TRUE WHERE user_id = ?',
+      [user_id],
+      (err) => {
+        if (err) reject(err);
+        else resolve(true);
+      },
+    );
+  });
+};
 
 Customer.getByEmail = function (email) {
   return new Promise(function (resolve, reject) {
@@ -44,6 +125,21 @@ Customer.getByEmail = function (email) {
     });
   });
 }
+
+Customer.getById = function (user_id) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'SELECT * FROM client_users WHERE user_id = ? LIMIT 1',
+      [user_id],
+      (err, rows) => {
+        if (err) reject(err);
+        else if (!rows[0]) reject(new Error('User not found'));
+        else resolve(new Customer(rows[0]));
+      },
+    );
+  });
+};
+
 Customer.getCustomerInfo = function(user_id) {
   return new Promise((resolve, reject) => {
     const query = 
@@ -117,7 +213,8 @@ Customer.setAlertCaseId = function (user_id, case_id) {
 
 Customer.getCases = function(user_id, start_date, end_date) {
   return new Promise((resolve, reject) => {
-      sql.query("SELECT * FROM cases WHERE user_id = ? AND date(last_update) between ? and ?", 
+    sql.query(
+      'SELECT * FROM cases WHERE user_id = ? AND date(last_update) BETWEEN ? AND ?',
       [user_id, start_date, end_date],
       function(err, cases) {
           if (err) reject(err);
@@ -159,76 +256,73 @@ Customer.updateToDo = function(user_id, todo) {
 //   });
 // };
 
-Customer.getUserInfoCSV = function(client_name, email, phone, street_name, kin_name) {
+Customer.getUserInfoCSV = function (
+  client_name,
+  email,
+  phone,
+  street_name,
+  kin_name,
+) {
   return new Promise((resolve, reject) => {
-    var conditions = [];
-    var fields = [];
-    if (client_name) { conditions.push(`c.name = ?`); fields.push(client_name); }
-    if (email) { conditions.push(`c.email = ?`); fields.push(email); }
-    if (phone) { conditions.push(`u.applicant_phone = ?`); fields.push(phone); }
-    if (street_name) { conditions.push(`u.street_name = ?`); fields.push(street_name); }
-    if (kin_name) { conditions.push(`k.kin_name = ?`); fields.push(kin_name); }
-    var sql_query = `SELECT c.name, c.email,
+    const conditions = [];
+    const fields = [];
+    if (client_name) {
+      conditions.push('c.name = ?');
+      fields.push(client_name);
+    }
+    if (email) {
+      conditions.push('c.email = ?');
+      fields.push(email);
+    }
+    if (phone) {
+      conditions.push('u.applicant_phone = ?');
+      fields.push(phone);
+    }
+    if (street_name) {
+      conditions.push('u.street_name = ?');
+      fields.push(street_name);
+    }
+    if (kin_name) {
+      conditions.push('k.kin_name = ?');
+      fields.push(kin_name);
+    }
+    const sql_query = `SELECT c.name, c.email,
       u.gender, u.applicant_phone, u.applicant_dob, u.curr_level, u.city, u.province,
       k.kin_name, k.relationship, k.kin_phone, k.kin_email
     FROM client_users AS c
       LEFT JOIN UserInfo AS u ON u.user_id = c.user_id
-      LEFT JOIN NextKin AS k ON k.user_id = c.user_id ` + (conditions.length ? ("WHERE " + conditions.join( "AND ")) : "");
-    sql.query(sql_query, fields, function(err, info) {
-        if (err) reject(err);
-        resolve(info);
-
-      });
+      LEFT JOIN NextKin AS k ON k.user_id = c.user_id ${
+  conditions.length ? `WHERE ${conditions.join('AND ')}` : ''
+}`;
+    sql.query(sql_query, fields, (err, info) => {
+      if (err) reject(err);
+      resolve(info);
+    });
   });
 };
 
-Customer.queryUserData = function(query_params) {
-  return new Promise(function(resolve, reject) {
-    let q = new CustomerQueryData(query_params);
+Customer.queryUserData = function (query_params) {
+  return new Promise((resolve, reject) => {
+    const q = new CustomerQueryData(query_params);
     q.constructQuery();
-    console.log(q);
     const data_query = `
     SELECT
-      client.user_id, client.name, client.email,
+      client.user_id, client.name, client.email, client.verified,
       info.gender, info.applicant_phone, info.applicant_dob, info.curr_level, info.city, info.province,
       kin.kin_name, kin.relationship, kin.kin_phone, kin.kin_email
     FROM client_users AS client
       LEFT JOIN UserInfo AS info ON info.user_id = client.user_id
-      LEFT JOIN NextKinInfo AS kin ON kin.user_id = client.user_id
+      LEFT JOIN NextKin AS kin ON kin.user_id = client.user_id
       ${q.query}
     ORDER BY client.name
     LIMIT ${q.offset}, ${q.limit}
-    `
-    console.log(data_query)
+    `;
 
-    sql.query(data_query, function(err, row) {
+    sql.query(data_query, (err, row) => {
       if (err) reject(err);
       resolve(row);
-    })
-  })
-}
-
-Customer.getUserInfoCSV = function(client_name, email, phone, street_name, kin_name) {
-  return new Promise((resolve, reject) => {
-    var conditions = [];
-    var fields = [];
-    if (client_name) { conditions.push(`c.name = ?`); fields.push(client_name); }
-    if (email) { conditions.push(`c.email = ?`); fields.push(email); }
-    if (phone) { conditions.push(`u.applicant_phone = ?`); fields.push(phone); }
-    if (street_name) { conditions.push(`u.street_name = ?`); fields.push(street_name); }
-    if (kin_name) { conditions.push(`k.kin_name = ?`); fields.push(kin_name); }
-    var sql_query = `SELECT c.name, c.email,
-      u.gender, u.applicant_phone, u.applicant_dob, u.curr_level, u.city, u.province,
-      k.kin_name, k.relationship, k.kin_phone, k.kin_email
-    FROM client_users AS c
-      LEFT JOIN UserInfo AS u ON u.user_id = c.user_id
-      LEFT JOIN NextKinInfo AS k ON k.user_id = c.user_id ` + (conditions.length ? ("WHERE " + conditions.join( "AND ")) : "");
-    sql.query(sql_query, fields, function(err, info) {
-        if (err) reject(err);
-        resolve(info);
-      });
+    });
   });
 };
 
 module.exports = Customer;
-

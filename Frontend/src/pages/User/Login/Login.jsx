@@ -1,7 +1,16 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Button, Checkbox, Container, CssBaseline, FormControlLabel, Typography, TextField, Box, InputAdornment, IconButton } from '@mui/material';
-import { Visibility, VisibilityOff } from "@mui/icons-material"
+import {
+  Button,
+  Container,
+  CssBaseline,
+  Typography,
+  TextField,
+  Box,
+  InputAdornment,
+  IconButton,
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme({
@@ -15,25 +24,37 @@ const theme = createTheme({
     secondary: {
       main: '#2196F3',
     },
-  }
+  },
 });
 
-const INITIAL_USER = {
-  email: '',
-  password: ''
-};  
-
-
 export default function Login() {
-  const [user, setUser] = React.useState(INITIAL_USER);
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
-  // function handleChange(event) {
-  //   const { name, value } = event.target;
-  //   setUser(prevState => ({ ...prevState, [name]: value }));
-  // }
+  function handleEmailChange(e) {
+    setEmail(e.target.value);
+  }
 
-  const handleSubmit = (event) => {
+  function handlePasswordChange(e) {
+    setPassword(e.target.value);
+  }
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    try {
+      const res = await fetch('http://localhost:3000/api/login', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const { token } = await res.json();
+      console.log(token);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const [showPassword, setShowPassword] = useState(false);
@@ -59,7 +80,12 @@ export default function Login() {
           <Typography component="h1" variant="h5">
             Sign in to access system
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
+          >
             <TextField
               required
               fullWidth
@@ -68,6 +94,8 @@ export default function Login() {
               label="Email"
               name="Email"
               autoComplete="Email"
+              onChange={handleEmailChange}
+              value={email}
             />
             <TextField
               required
@@ -76,9 +104,10 @@ export default function Login() {
               id="password"
               label="Password"
               name="password"
+              value={password}
               autoComplete="current-password"
-
-              type={showPassword ? "text": "password"}
+              type={showPassword ? 'text' : 'password'}
+              onChange={handlePasswordChange}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -90,7 +119,7 @@ export default function Login() {
                       {showPassword ? <Visibility /> : <VisibilityOff />}
                     </IconButton>
                   </InputAdornment>
-                )
+                ),
               }}
             />
             {/* <FormControlLabel
@@ -101,18 +130,23 @@ export default function Login() {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2, textTransform: 'none', fontSize: 16 }}
+              sx={{
+                mt: 3,
+                mb: 2,
+                textTransform: 'none',
+                fontSize: 16,
+              }}
             >
               Sign In
             </Button>
 
             <Typography sx={{ fontSize: 14, color: 'grey' }}>
-              If you don't have credentials, please contact your team's supervisor for access
+              If you don&apos;t have credentials, please contact your
+              team&apos;s supervisor for access
             </Typography>
-
           </Box>
         </Box>
       </Container>
     </ThemeProvider>
-  )
+  );
 }
