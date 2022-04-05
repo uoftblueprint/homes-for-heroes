@@ -52,7 +52,7 @@ function stringAvatar(name) {
     sx: {
       bgcolor: stringToColor(name),
     },
-    children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+    children: `${name.split(" ")?.[0]?.[0] || ''}${name.split(" ")?.[1]?.[0] || ''}`,
   };
 }
 
@@ -117,7 +117,7 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
   const handleSetSuperadmin = (admin_id) => {
     setAdmins((prevState) =>
       prevState.map((user) => {
-        if (user.admin_id === admin_id) {
+        if (user.user_id === admin_id) {
           return {
             ...user,
             role_id: 2 
@@ -201,7 +201,7 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
               admins.map((admin) => {
               return (
                 <ListItem
-                  key={admin.admin_id}
+                  key={admin.user_id}
                   secondaryAction={
                     admin.role_id === 2 ? (
                       <Button
