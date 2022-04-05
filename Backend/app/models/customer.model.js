@@ -10,22 +10,13 @@ const Customer = function (customer) {
   this.password = customer.password;
   this.phone = customer.phone;
   this.alert_case_id = customer.alert_case_id;
+  this.verified = customer.verified;
+  this.oauth = customer.oauth;
 };
 
-Customer.prototype.isValidPassword = async function(password) {
-  if(!this.password) return false;
+Customer.prototype.isValidPassword = async function (password) {
+  if (!this.password) return false;
   return await bcrypt.compare(password, this.password);
-}
-
-Customer.prototype.updateUserInfo = function(user_info) {
-  return new Promise((resolve, reject) => {
-    // Don't allow the user to change these params through this API
-    user_info.user_id = this.user_id;
-    user_info.email = this.email;
-    user_info.applicant_phone = this.phone;
-    const userInfo = new UserInfo(user_info);
-    userInfo.update().then(resolve).catch(reject);
-  });
 };
 
 Customer.prototype.updateUserInfo = function(user_info) {
@@ -115,16 +106,18 @@ Customer.verify = function (user_id) {
 };
 
 Customer.getByEmail = function (email) {
-  return new Promise(function (resolve, reject) {
-    sql.query('SELECT * FROM client_users WHERE email = ? LIMIT 1',
-    [email],
-    function(err, rows) {
-      if (err) reject(err);
-      else if(!rows[0]) resolve(undefined);
-      else resolve(new Customer(rows[0]));
-    });
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'SELECT * FROM client_users WHERE email = ? LIMIT 1',
+      [email],
+      (err, rows) => {
+        if (err) reject(err);
+        else if (!rows[0]) reject(new Error('User not found'));
+        else resolve(new Customer(rows[0]));
+      },
+    );
   });
-}
+};
 
 Customer.getById = function (user_id) {
   return new Promise((resolve, reject) => {
@@ -140,27 +133,26 @@ Customer.getById = function (user_id) {
   });
 };
 
-Customer.getCustomerInfo = function(user_id) {
+Customer.getCustomerInfo = function (user_id) {
   return new Promise((resolve, reject) => {
-    const query = 
-    `select c.name, c.email, c.phone, u.street_name, 
+    const query = `SELECT c.name, c.email, c.phone, u.street_name, 
     u.city, u.province, u.applicant_dob 
-    from client_users as c inner join UserInfo as u 
-    on c.user_id = u.user_id where c.user_id = ?`
-      sql.query(query, [user_id], function(err, userInfo) {
-          if (err) reject(err);
-          resolve(userInfo);
-      });
+    FROM client_users AS c INNER JOIN UserInfo AS u 
+    ON c.user_id = u.user_id WHERE c.user_id = ?`;
+    sql.query(query, [user_id], (err, userInfo) => {
+      if (err) reject(err);
+      else resolve(userInfo);
+    });
   });
 };
 
 Customer.retrieveAll = function () {
-  return new Promise(function (resolve, reject) {
-    sql.query('SELECT * FROM client_users', function (err, rows) {
+  return new Promise((resolve, reject) => {
+    sql.query('SELECT * FROM client_users', (err, rows) => {
       if (err) reject(err);
       else {
         const customers = [];
-        rows.forEach(row => {
+        rows.forEach((row) => {
           delete row['password'];
           customers.push(new Customer(row));
         });
@@ -171,55 +163,56 @@ Customer.retrieveAll = function () {
 };
 
 Customer.getAlertCaseId = function (user_id) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     sql.query(
       'SELECT alert_case_id FROM client_users WHERE user_id = ?',
       [user_id],
-      function (err, rows) {
+      (err, rows) => {
         if (err) reject(err);
         else if (rows[0] === undefined) reject('User does not exist.');
         else resolve(rows[0].alert_case_id);
-      }
+      },
     );
   });
 };
 
 Customer.getAlertCase = function (user_id) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     sql.query(
       'SELECT cases.* FROM client_users INNER JOIN cases ON client_users.alert_case_id = cases.case_id WHERE client_users.user_id = ?',
       [user_id],
-      function (err, rows) {
+      (err, rows) => {
         if (err) reject(err);
         else if (rows[0] === undefined) reject('Alert note does not exist.');
         else resolve(rows[0]);
-      }
+      },
     );
   });
 };
 
 Customer.setAlertCaseId = function (user_id, case_id) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     sql.query(
       'UPDATE client_users SET alert_case_id = ? WHERE user_id = ?',
       [case_id, user_id],
-      function (err, rows) {
+      (err, rows) => {
         if (err) reject(err);
         else resolve(rows[0]);
-      }
+      },
     );
   });
 };
 
-Customer.getCases = function(user_id, start_date, end_date) {
+Customer.getCases = function (user_id, start_date, end_date) {
   return new Promise((resolve, reject) => {
     sql.query(
       'SELECT * FROM cases WHERE user_id = ? AND date(last_update) BETWEEN ? AND ?',
       [user_id, start_date, end_date],
-      function(err, cases) {
-          if (err) reject(err);
-          resolve(cases);
-      });
+      (err, cases) => {
+        if (err) reject(err);
+        resolve(cases);
+      },
+    );
   });
 };
 

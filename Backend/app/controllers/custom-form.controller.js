@@ -1,6 +1,5 @@
 const CustomForm = require('../models/custom-form.model');
 
-
 const customFormController = {
 
   async getCustomForm(req, res) {
@@ -74,7 +73,6 @@ const customFormController = {
       res.send({ error: err });
     }
   }
-
-}
+};
 
 module.exports = customFormController;

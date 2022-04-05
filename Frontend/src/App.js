@@ -8,12 +8,12 @@ import CRM from './components/CRM.js';
 import Privileges from './components/Privileges.js';
 import ProfilePage from './components/ProfilePage.js';
 import { Typography } from '@mui/material';
-import CaseDetail from './components/CaseDetail';
+import CaseDetail from './pages/Admin/UserCase/CaseDetail';
 import FormTop from './pages/form/FormTop.js';
 import FormCreate from "./pages/form/FormCreate";
 import FormView from "./pages/form/FormView";
 import FormEdit from "./pages/form/FormEdit";
-import AddCase from "./components/AddCase.jsx";
+import AddCase from "./pages/Admin/UserCase/AddCase.jsx";
 
 function App() {
   return (

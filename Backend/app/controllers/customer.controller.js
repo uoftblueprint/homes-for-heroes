@@ -1,6 +1,6 @@
 const Customer = require('../models/customer.model');
-const CaseNote = require('../models/casenote.model');
-const Json2csvParser = require("json2csv").Parser;
+const Json2csvParser = require('json2csv').Parser;
+const logger = require('../logger');
 
 // Create and Save a new Customer
 
@@ -51,7 +51,7 @@ const customerController = {
       next(err);
     }
   },
-
+  
   async getUserData(req, res, next) {
     try {
       const user_data = await Customer.queryUserData(req.query);
@@ -82,6 +82,15 @@ const customerController = {
   // async deleteToDo(req, res, next) {
 
   // },
+  async putUserInfo(req, res, next) {
+    try {
+      const user_info = req.body;
+      await req.user.updateUserInfo(user_info);
+      res.send({ success: true });
+    } catch (err) {
+      next(err);
+    }
+  },
   async getUserInfoCSV(req, res, next) {
     try {
       const { name, email, phone, address, kin_name } = req.query;
@@ -112,6 +121,4 @@ const customerController = {
   },
 };
 
-
 module.exports = customerController;
-

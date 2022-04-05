@@ -13,6 +13,7 @@ import CaseCard from './CaseCard';
 export default function CaseList() {
   const [currentCase, setCurrentCase] = useState({});
   const [users, setUsers] = useState([]);
+<<<<<<< HEAD
   const [filteredUsers, setFilteredUsers] = useState([]);
 
   useEffect(() => {
@@ -29,10 +30,27 @@ export default function CaseList() {
       .then(response => response.json())
       .then(caseNote => setCurrentCase(caseNote))
       .catch(err => {
+=======
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/api/customers`)
+      .then((response) => response.json())
+      .then((res) => {
+        setUsers(res.customers);
+      });
+  }, []);
+
+  const showCard = (id) => {
+    fetch(`http://localhost:3000/api/customers/${id}/alertCase`)
+      .then((response) => response.json())
+      .then((caseNote) => setCurrentCase(caseNote))
+      .catch((err) => {
+>>>>>>> 6fae965e2794540c8832d532ae699416ffb5a412
         console.error(err);
       });
   };
 
+<<<<<<< HEAD
   const filterUsers = (query) => {
     if (!query) {
       setFilteredUsers(users);
@@ -43,13 +61,34 @@ export default function CaseList() {
       const userName = user.name.toLowerCase();
       return userName.includes(query);
     }));
+=======
+  const filterPosts = (posts, query) => {
+    if (!query) {
+      return posts;
+    }
+
+    return posts.filter((post) => {
+      const postName = post.name.toLowerCase();
+      return postName.includes(query);
+    });
+>>>>>>> 6fae965e2794540c8832d532ae699416ffb5a412
   };
 
   return (
     <>
+<<<<<<< HEAD
       <Typography sx={{ fontSize: 48, mb: '1px'}}>Case Management</Typography>
       <TextField
         sx={{ backgroundColor: '#F7F8F9', width: '75%', marginBottom: '2%'}}
+=======
+      <Typography sx={{ fontSize: 48, mb: '1px' }}>Case Management</Typography>
+      <TextField
+        sx={{
+          backgroundColor: '#F7F8F9',
+          width: '75%',
+          marginBottom: '2%',
+        }}
+>>>>>>> 6fae965e2794540c8832d532ae699416ffb5a412
         fullWidth
         variant="outlined"
         placeholder="Search Users"
@@ -58,7 +97,11 @@ export default function CaseList() {
         InputProps={{
           startAdornment: <SearchIcon fontSize="small" />,
         }}
+<<<<<<< HEAD
         onChange={e => filterUsers(e.target.value)}
+=======
+        onKeyPress={(e) => {}}
+>>>>>>> 6fae965e2794540c8832d532ae699416ffb5a412
       />
       <List
         sx={
@@ -68,6 +111,7 @@ export default function CaseList() {
           } /*{ width: '100%', maxWidth: 400, bgcolor: 'gray' }*/
         }
       >
+<<<<<<< HEAD
         {filteredUsers ? filteredUsers.map(user => {
           return (
             <>
@@ -98,6 +142,44 @@ export default function CaseList() {
             </>
           );
         }) : null}
+=======
+        {users
+          ? users.map((user) => {
+              return (
+                <>
+                  <ListItem
+                    key={'l' + user.user_id}
+                    sx={{ m: 1 }}
+                    secondaryAction={
+                      <IconButton edge="end" aria-label="show-card">
+                        {currentCase.user_id === user.user_id ? (
+                          <ExpandLessOutlinedIcon
+                            onClick={() => setCurrentCase({})}
+                          />
+                        ) : (
+                          <ExpandMoreOutlinedIcon
+                            onClick={() => showCard(user.user_id)}
+                          />
+                        )}
+                      </IconButton>
+                    }
+                  >
+                    {user.name}
+                  </ListItem>
+                  {currentCase.user_id === user.user_id ? (
+                    <CaseCard
+                      key={'c' + user.user_id}
+                      sx={{ boxShadow: 0 }}
+                      user={user}
+                      note={currentCase}
+                    ></CaseCard>
+                  ) : null}
+                  <Divider></Divider>
+                </>
+              );
+            })
+          : null}
+>>>>>>> 6fae965e2794540c8832d532ae699416ffb5a412
       </List>
     </>
   );
