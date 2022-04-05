@@ -1,17 +1,20 @@
 const CustomForm = require('../models/custom-form.model');
-const logger = require('../logger');
+
 
 const customFormController = {
 
-    async getCustomForm(req, res, next) {
-    try {
-      const { form_id } = req.params;
-      const resForm = await CustomForm.queryForm({ form_id: form_id });
-      res.send(resForm);
-    } catch (err) {
-      next(err);
-    }
-  },
+    async getCustomForm(req, res) {
+        try {
+            const { form_id } = req.params;
+            console.log(`get custom form id ${form_id}`)
+            const resForm = await CustomForm.queryForm({ form_id: form_id });
+            res.send(resForm);
+        } catch (err) {
+            console.error(err);
+            res.status(500);
+            res.send({ error: err });
+        }
+    },
 
     async updateCustomForm(req, res) {
         try {
@@ -71,6 +74,7 @@ const customFormController = {
             res.send({ error: err });
         }
     }
-  };
+
+}
 
 module.exports = customFormController;

@@ -13,30 +13,30 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 export default function AddCaseButton(props) {
   const [dt, setDate] = React.useState(null);
   const [open, setOpen] = React.useState(false);
-  const [body, setBody] = React.useState('');
-  const [title, setTitle] = React.useState('');
+  const [body, setBody] = React.useState("");
+  const [title, setTitle] = React.useState("");
   const [time, setTime] = React.useState(dt);
 
   const normRequestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
+    body: JSON.stringify({ 
       user_id: props.user_id,
       admin_id: 2,
-      notes: body,
-    }),
-  };
+      notes: body
+    })
+  };  
 
   const alertRequestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
+    body: JSON.stringify({ 
       alert_id: props.user_id,
       user_id: props.user_id,
       admin_id: 2,
-      notes: body,
-    }),
-  };
+      notes: body
+    })
+  };  
 
   const handleChangeTime = (newTime) => {
     setTime(newTime);
@@ -53,30 +53,28 @@ export default function AddCaseButton(props) {
   const addNote = () => {
     let dt = new Date().toLocaleDateString();
     setDate(dt);
-    fetch('http://localhost:3000/api/casenote', normRequestOptions).then(
-      (response) => response.json(),
-    );
+    fetch('http://localhost:3000/casenote', normRequestOptions)
+      .then(response => response.json());
     handleClose();
-  };
+  }
 
   const addAlertNote = () => {
     let dt = new Date().toLocaleDateString();
     setDate(dt);
-    fetch('http://localhost:3000/api/casenote', alertRequestOptions).then(
-      (response) => response.json(),
-    );
+    fetch('http://localhost:3000/casenote', alertRequestOptions)
+      .then(response => response.json());
     handleClose();
-  };
+  }
 
   const captureTitle = (e) => {
     e.preventDefault();
     setTitle(e.target.value);
-  };
+  }
 
   const captureBody = (e) => {
     e.preventDefault();
     setBody(e.target.value);
-  };
+  }
 
   return (
     <div>
@@ -84,11 +82,7 @@ export default function AddCaseButton(props) {
         <AddOutlinedIcon />
         Add Case
       </Button>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        PaperProps={{ sx: { width: '50%', height: '100%' } }}
-      >
+      <Dialog open={open} onClose={handleClose} PaperProps={{ sx: { width: "50%", height: "100%" } }}>
         <DialogTitle>Add Case Note</DialogTitle>
         <DialogContent>
           <TextField
@@ -122,7 +116,7 @@ export default function AddCaseButton(props) {
             value={time}
             onChange={handleChangeTime}
             renderInput={(params) => <TextField {...params} />}
-          />
+            />
         </LocalizationProvider>
         <DialogActions>
           <Button onClick={addAlertNote}>Set Alert</Button>

@@ -37,8 +37,6 @@ bower_components
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
 
-/node_modules
-
 # Dependency directories
 Frontend/node_modules/
 Frontend/jspm_packages/
@@ -108,4 +106,3 @@ dist
 .DS_Store
 
 .idea/
-package-lock.json
