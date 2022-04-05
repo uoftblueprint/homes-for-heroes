@@ -6,8 +6,8 @@ import Grid from "@mui/material/Grid";
 import EditIcon from '@mui/icons-material/Edit';
 import { DataGrid } from "@mui/x-data-grid";
 import { Link, useRouteMatch } from "react-router-dom";
-import {fetchCustomFormsAPI, publishFormAPI} from "../../api/formAPI";
-import PublishFormConfirmation from "../../components/form/PublishConfirmationModal";
+import {fetchCustomFormsAPI, publishFormAPI} from "../../../api/formAPI";
+import PublishFormConfirmation from "../../../components/form/PublishConfirmationModal";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -18,8 +18,6 @@ function FormTop() {
     const [drafts, setDrafts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
-
-    const admin_id = 2;
 
     let { url }= useRouteMatch();
 
@@ -69,9 +67,14 @@ function FormTop() {
                 const onClick = (e) => {
                     // e.stopPropagation(); // don't select this row after clicking
                     (async () => {
-                        await publishFormAPI(params.row)
+                        const res = await publishFormAPI(params.row.form_id)
+                        if (res.status !== 200) {
+                        //    TODO error handling
+                            alert("Error publishing!")
+                        } else {
+                            setRefreshKey(refreshKey => refreshKey + 1)
+                        }
                     })();
-                    setRefreshKey(refreshKey => refreshKey + 1)
                 };
                 return <PublishFormConfirmation form={params.row} publishFunc={onClick} />
             }
@@ -81,7 +84,7 @@ function FormTop() {
     useEffect(() => {
         (async () => {
             setLoading(true);
-            const forms = await fetchCustomFormsAPI(admin_id);
+            const forms = await fetchCustomFormsAPI();
             setCompleted(forms.completed.map((element, index) => ({ ...element, "id": index })));
             setDrafts(forms.drafts.map((element, index) => ({ ...element, "id": index })));
             setLoading(false);

@@ -1,9 +1,11 @@
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
-import {FormControlLabel, Input} from "@mui/material";
+import {FormControlLabel, Input, TextField} from "@mui/material";
 import Grid from "@mui/material/Grid";
+import {useState} from "react";
+import validator from "validator";
 
-export default function OptionAdder(props) {
+function OptionAdder({ choices, updateOptions, control, setFormError }) {
 
     /**
      * EXPECTED PROPS
@@ -12,20 +14,47 @@ export default function OptionAdder(props) {
      *  - control: MUI component to be rendered in each FormControlLabel
      */
 
-    let choices = props.choices;
+
+    const initError = {error: false, message: ''}
+    const [errors, setErrors] = useState(Array(choices.length).fill(initError));
 
     const handleChangeChoice = (e, i) => {
-        choices[i] = e.target.value
-        props.updateOptions(choices);
+        let c = [...choices]
+        c[i] = e.target.value
+        let err = [...errors];
+        err[i] = {
+            error: validateChoice(e.target.value) !== '',
+            message: validateChoice(e.target.value)
+        };
+        setErrors(err);
+        updateOptions(c);
+        setFormError(err.some(err => err.error === true));
     }
 
     const addChoice = () => {
-        props.updateOptions([...choices, 'Option']);
+        updateOptions([...choices, `Option${choices.length + 1}`]);
+        setErrors([...errors, initError])
     }
 
     const removeChoice = (i) => {
-        choices.splice(i, 1);
-        props.updateOptions(choices);
+        let c = [...choices];
+        c.splice(i, 1);
+        updateOptions(c);
+        let e = [...errors];
+        e.splice(i, 1);
+        setErrors(e);
+    }
+
+    const validateChoice = (choice) => {
+        if (validator.isEmpty(choice)) {
+            return 'Empty choice is not allowed';
+        }
+        for (const c of choices) {
+            if (validator.equals(choice, c)) {
+                return 'Duplicate choice is not allowed';
+            }
+        }
+        return '';
     }
 
     const createChoiceUI = (val, i) => {
@@ -35,13 +64,15 @@ export default function OptionAdder(props) {
                     <FormControlLabel
                         key={`choice-${i}`}
                         disabled
-                        control={props.control}
+                        control={control}
                         label={
                             <FormControl>
-                                <Input
+                                <TextField
                                     value={val}
                                     autoFocus={true}
                                     placeholder="Enter Option"
+                                    error={errors[i].error}
+                                    helperText={errors[i].message}
                                     required
                                     onChange={(e) => handleChangeChoice(e, i)}
                                 />
@@ -68,7 +99,7 @@ export default function OptionAdder(props) {
                     <FormControlLabel
                         value=""
                         disabled
-                        control={props.control}
+                        control={control}
                         onClick={addChoice}
                         label={
                             <FormControl>
@@ -85,3 +116,5 @@ export default function OptionAdder(props) {
         </FormControl>
     )
 }
+
+export default OptionAdder;

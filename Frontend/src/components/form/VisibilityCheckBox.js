@@ -5,16 +5,17 @@ import FormLabel from "@mui/material/FormLabel";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid";
+import {FormHelperText} from "@mui/material";
 
 export default function VisibilityCheckBox(props) {
     let level = props.level
 
+    const { l1, l2, l3, l4 } = level;
+    const error = [l1, l2, l3, l4].filter((v) => v).length === 0;
+
     const handleChange = (event) => {
         props.updateLevel(event.target.name, event.target.checked)
     };
-
-    const { l1, l2, l3, l4 } = level;
-    const error = [l1, l2, l3, l4].filter((v) => v).length === 0;
 
     return (
         <Grid container direction="row" justifyContent="center" sx={{mb:5}}>
@@ -51,6 +52,7 @@ export default function VisibilityCheckBox(props) {
                             />
                         </Grid>
                     </FormGroup>
+                    {error && <FormHelperText>Please choose at least one visibility level</FormHelperText>}
                 </FormControl>
             </Box>
         </Grid>
