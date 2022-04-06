@@ -10,6 +10,7 @@ CREATE TABLE partners (
     village CHAR(255),
     address CHAR(255),
     phone CHAR(255),
+    email CHAR(255),
     PRIMARY KEY (partner_id)
 );
 
