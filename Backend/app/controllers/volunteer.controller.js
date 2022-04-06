@@ -44,6 +44,16 @@ const volunteerController = {
       res.send({ error: err });
     }
   },
+
+  async updateInfo(req, res) {
+    try {
+      const { user_id } = req.params;
+      const updated_id = await Volunteer.updateInfo(user_id, req.body);
+      res.send(updated_id);
+    } catch (err) {
+      res.send({"error": err});
+    }
+  }
 };
 
 module.exports = volunteerController;

@@ -42,6 +42,15 @@ const supporterController = {
       res.send({ error: err });
     }
   },
+  async updateInfo(req, res) {
+    try {
+      const { user_id } = req.params;
+      const updated_id = await Supporter.updateInfo(user_id, req.body);
+      res.send(updated_id);
+    } catch (err) {
+      res.send({"error": err});
+    }
+  }
 };
 
 module.exports = supporterController;

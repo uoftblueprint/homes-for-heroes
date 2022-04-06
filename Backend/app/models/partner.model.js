@@ -8,19 +8,32 @@ const Partner = function (body) {
   this.village = body.village;
   this.address = body.address;
   this.phone = body.phone;
+  this.email = body.email;
 };
 
 // add new partner
 Partner.prototype.create = function () {
   return new Promise((resolve, reject) => {
     sql.query(
-      "INSERT INTO partners (org_name, city, village, address, phone) VALUES (?)",
-      [[this.name, this.city, this.village, this.address, this.phone]],
+      "INSERT INTO partners (org_name, city, village, address, phone, email) VALUES (?)",
+      [[this.name, this.city, this.village, this.address, this.phone, this.email]],
       function (err, results) {
         if (err) reject(err);
         else resolve(results.insertId);
       }
     );
+  });
+};
+
+// modify existing information of a partner
+Partner.updateInfo = function(user_id, body) {
+  return new Promise((resolve, reject) => {
+    sql.query("UPDATE partners SET org_name = ?, city = ?, village = ?, address = ?, phone = ?, email = ? WHERE partner_id = ?",
+    [body.name, body.city, body.village, body.address, body.phone, body.email, user_id],
+    function (err, results) {
+      if (err) reject(err);
+      else resolve(user_id);
+    });
   });
 };
 
