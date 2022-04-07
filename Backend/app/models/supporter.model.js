@@ -57,9 +57,9 @@ Supporter.updateInfo = function (supporter_id, body) {
       'UPDATE supporters SET name = ?, date_gifted = ?, gift_provided = ?, phone = ? WHERE supporter_id = ?',
       [
         body.name,
-        body.city,
         body.date_gifted,
         body.gift_provided,
+        body.phone,
         supporter_id,
       ],
       function (err, results) {
