@@ -1,5 +1,5 @@
-const sql = require("./db.js");
-const logger = require("../logger");
+const sql = require('./db.js');
+const logger = require('../logger');
 
 // constructor
 const Supporter = function (body) {
@@ -13,7 +13,7 @@ const Supporter = function (body) {
 Supporter.prototype.create = function () {
   return new Promise((resolve, reject) => {
     sql.query(
-      "INSERT INTO supporters (name, date_gifted, gift_provided, phone) VALUES (?, ?, ?, ?)",
+      'INSERT INTO supporters (name, date_gifted, gift_provided, phone) VALUES (?, ?, ?, ?)',
       [this.name, this.date_gifted, this.gift_provided, this.phone],
       function (err, results) {
         if (err) reject(err);
@@ -26,7 +26,7 @@ Supporter.prototype.create = function () {
 // list all supporters
 Supporter.listAll = function () {
   return new Promise(function (resolve, reject) {
-    sql.query("SELECT * FROM supporters", function (err, rows) {
+    sql.query('SELECT * FROM supporters', function (err, rows) {
       if (err) reject(err);
       else {
         resolve(rows);
@@ -39,11 +39,11 @@ Supporter.listAll = function () {
 Supporter.getSupporter = function (supporter_name) {
   return new Promise((resolve, reject) => {
     sql.query(
-      "SELECT * FROM supporters WHERE name = ? LIMIT 1",
+      'SELECT * FROM supporters WHERE name = ? LIMIT 1',
       [supporter_name],
       (err, rows) => {
         if (err) reject(err);
-        else if (!rows[0]) reject(new Error("Supporter not found"));
+        else if (!rows[0]) reject(new Error('Supporter not found'));
         else resolve(new Supporter(rows[0]));
       }
     );
@@ -51,14 +51,22 @@ Supporter.getSupporter = function (supporter_name) {
 };
 
 // modify existing information of a supporter
-Supporter.updateInfo = function(supporter_id, body) {
+Supporter.updateInfo = function (supporter_id, body) {
   return new Promise((resolve, reject) => {
-    sql.query("UPDATE supporters SET name = ?, date_gifted = ?, gift_provided = ?, phone = ? WHERE supporter_id = ?",
-    [body.name, body.city, body.date_gifted, body.gift_provided, supporter_id],
-    function (err, results) {
-      if (err) reject(err);
-      else resolve(supporter_id);
-    });
+    sql.query(
+      'UPDATE supporters SET name = ?, date_gifted = ?, gift_provided = ?, phone = ? WHERE supporter_id = ?',
+      [
+        body.name,
+        body.city,
+        body.date_gifted,
+        body.gift_provided,
+        supporter_id,
+      ],
+      function (err, results) {
+        if (err) reject(err);
+        else resolve(supporter_id);
+      }
+    );
   });
 };
 

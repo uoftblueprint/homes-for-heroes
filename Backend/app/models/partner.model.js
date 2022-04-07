@@ -1,5 +1,5 @@
-const sql = require("./db.js");
-const logger = require("../logger");
+const sql = require('./db.js');
+const logger = require('../logger');
 
 // constructor for partners
 const Partner = function (body) {
@@ -15,8 +15,15 @@ const Partner = function (body) {
 Partner.prototype.create = function () {
   return new Promise((resolve, reject) => {
     sql.query(
-      "INSERT INTO partners (name, city, village, address, phone, email) VALUES (?, ?, ?, ?, ?, ?)",
-      [this.org_name, this.city, this.village, this.address, this.phone, this.email],
+      'INSERT INTO partners (name, city, village, address, phone, email) VALUES (?, ?, ?, ?, ?, ?)',
+      [
+        this.org_name,
+        this.city,
+        this.village,
+        this.address,
+        this.phone,
+        this.email,
+      ],
       function (err, results) {
         if (err) reject(err);
         else resolve(results.insertId);
@@ -26,21 +33,31 @@ Partner.prototype.create = function () {
 };
 
 // modify existing information of a partner
-Partner.updateInfo = function(partner_id, body) {
+Partner.updateInfo = function (partner_id, body) {
   return new Promise((resolve, reject) => {
-    sql.query("UPDATE partners SET name = ?, city = ?, village = ?, address = ?, phone = ?, email = ? WHERE partner_id = ?",
-    [body.name, body.city, body.village, body.address, body.phone, body.email, partner_id],
-    function (err, results) {
-      if (err) reject(err);
-      else resolve(partner_id);
-    });
+    sql.query(
+      'UPDATE partners SET name = ?, city = ?, village = ?, address = ?, phone = ?, email = ? WHERE partner_id = ?',
+      [
+        body.name,
+        body.city,
+        body.village,
+        body.address,
+        body.phone,
+        body.email,
+        partner_id,
+      ],
+      function (err, results) {
+        if (err) reject(err);
+        else resolve(partner_id);
+      }
+    );
   });
 };
 
 // list all partners
 Partner.listAll = function () {
   return new Promise(function (resolve, reject) {
-    sql.query("SELECT * FROM partners", function (err, rows) {
+    sql.query('SELECT * FROM partners', function (err, rows) {
       if (err) reject(err);
       else {
         resolve(rows);
@@ -53,11 +70,11 @@ Partner.listAll = function () {
 Partner.getPartner = function (partner_name) {
   return new Promise((resolve, reject) => {
     sql.query(
-      "SELECT * FROM partners WHERE name = ? LIMIT 1",
+      'SELECT * FROM partners WHERE name = ? LIMIT 1',
       [partner_name],
       (err, rows) => {
         if (err) reject(err);
-        else if (!rows[0]) reject(new Error("Partner not found"));
+        else if (!rows[0]) reject(new Error('Partner not found'));
         else resolve(new Partner(rows[0]));
       }
     );
