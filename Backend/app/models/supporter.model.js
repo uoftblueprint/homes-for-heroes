@@ -50,4 +50,16 @@ Supporter.getSupporter = function (supporter_name) {
   });
 };
 
+// modify existing information of a supporter
+Supporter.updateInfo = function(supporter_id, body) {
+  return new Promise((resolve, reject) => {
+    sql.query("UPDATE supporters SET name = ?, date_gifted = ?, gift_provided = ?, phone = ? WHERE supporter_id = ?",
+    [body.name, body.city, body.date_gifted, body.gift_provided, supporter_id],
+    function (err, results) {
+      if (err) reject(err);
+      else resolve(supporter_id);
+    });
+  });
+};
+
 module.exports = Supporter;

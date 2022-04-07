@@ -36,13 +36,13 @@ Volunteer.listAll = function () {
 };
 
 // modify existing information of a volunteer
-Volunteer.updateInfo = function(user_id, body) {
+Volunteer.updateInfo = function(volunteer_id, body) {
   return new Promise((resolve, reject) => {
     sql.query("UPDATE volunteers SET name = ?, village = ?, date_joined = ?, role = ?, phone = ? WHERE volunteer_id = ?",
-    [body.name, body.village, body.date_joined, body.role, body.phone, user_id],
+    [body.name, body.village, body.date_joined, body.role, body.phone, volunteer_id],
     function (err, results) {
       if (err) reject(err);
-      else resolve(user_id);
+      else resolve(volunteer_id);
     });
   });
 };
