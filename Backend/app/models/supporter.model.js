@@ -13,8 +13,8 @@ const Supporter = function (body) {
 Supporter.prototype.create = function () {
   return new Promise((resolve, reject) => {
     sql.query(
-      "INSERT INTO supporters (name, date_gifted, gift_provided, phone) VALUES (?)",
-      [[this.name, this.date_gifted, this.gift_provided, this.phone]],
+      "INSERT INTO supporters (name, date_gifted, gift_provided, phone) VALUES (?, ?, ?, ?)",
+      [this.name, this.date_gifted, this.gift_provided, this.phone],
       function (err, results) {
         if (err) reject(err);
         else resolve(results.insertId);

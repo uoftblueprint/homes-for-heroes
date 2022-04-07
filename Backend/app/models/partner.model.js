@@ -15,8 +15,8 @@ const Partner = function (body) {
 Partner.prototype.create = function () {
   return new Promise((resolve, reject) => {
     sql.query(
-      "INSERT INTO partners (org_name, city, village, address, phone, email) VALUES (?)",
-      [[this.name, this.city, this.village, this.address, this.phone, this.email]],
+      "INSERT INTO partners (org_name, city, village, address, phone, email) VALUES (?, ?, ?, ?, ?, ?)",
+      [this.name, this.city, this.village, this.address, this.phone, this.email],
       function (err, results) {
         if (err) reject(err);
         else resolve(results.insertId);

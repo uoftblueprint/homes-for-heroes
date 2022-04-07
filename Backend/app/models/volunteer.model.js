@@ -13,8 +13,8 @@ const Volunteer = function (body) {
 Volunteer.prototype.create = function () {
   return new Promise((resolve, reject) => {
     sql.query(
-      "INSERT INTO volunteers (name, village, date_joined, role, phone) VALUES (?)",
-      [[this.name, this.village, this.date_joined, this.role, this.phone]],
+      "INSERT INTO volunteers (name, village, date_joined, role, phone) VALUES (?, ?, ?, ?, ?)",
+      [this.name, this.village, this.date_joined, this.role, this.phone],
       function (err, results) {
         if (err) reject(err);
         else resolve(results.insertId);
