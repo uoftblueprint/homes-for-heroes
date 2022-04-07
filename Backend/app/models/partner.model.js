@@ -17,7 +17,7 @@ Partner.prototype.create = function () {
     sql.query(
       'INSERT INTO partners (name, city, village, address, phone, email) VALUES (?, ?, ?, ?, ?, ?)',
       [
-        this.org_name,
+        this.name,
         this.city,
         this.village,
         this.address,
