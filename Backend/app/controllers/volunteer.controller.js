@@ -47,8 +47,10 @@ const volunteerController = {
 
   async updateInfo(req, res) {
     try {
-      const { user_id } = req.params;
-      const updated_id = await Volunteer.updateInfo(user_id, req.body);
+      logger.debug(req.params);
+      const { volunteer_id } = req.params;
+      logger.debug(req.body);
+      const updated_id = await Volunteer.updateInfo(volunteer_id, req.body);
       res.send(updated_id);
     } catch (err) {
       res.send({"error": err});

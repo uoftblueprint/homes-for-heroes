@@ -44,8 +44,9 @@ const partnerController = {
   },
   async updateInfo(req, res) {
     try {
-      const { user_id } = req.params;
-      const updated_id = await Partner.updateInfo(user_id, req.body);
+      logger.debug(req.params);
+      const { partner_id } = req.params;
+      const updated_id = await Partner.updateInfo(partner_id, req.body);
       res.send(updated_id);
     } catch (err) {
       res.send({"error": err});
