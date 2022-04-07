@@ -5,7 +5,7 @@ const customFormController = {
   async getCustomForm(req, res) {
     try {
       const { form_id } = req.params;
-      console.log(`get custom form id ${form_id}`)
+      console.log(`get custom form id ${form_id}`);
       const resForm = await CustomForm.queryForm({ form_id: form_id });
       res.send(resForm);
     } catch (err) {
@@ -18,9 +18,9 @@ const customFormController = {
   async updateCustomForm(req, res) {
     try {
       const { form_id } = req.params;
-      console.log("update controller")
-      console.log(req.body)
-      console.log({ form_id: form_id, ...req.body })
+      console.log('update controller');
+      console.log(req.body);
+      console.log({ form_id: form_id, ...req.body });
       const form = new CustomForm({ form_id: form_id, ...req.body });
       await form.update();
       res.status(200);

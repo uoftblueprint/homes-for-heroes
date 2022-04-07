@@ -63,7 +63,7 @@ module.exports = (app) => {
     customers.getToDo
   );
   app.put('/updateToDo/:user_id',
-  validationSchema.getUserInfoCSVSchema,
-  validationErrorHandler,
-  customers.updateToDo);
+    validationSchema.getUserInfoCSVSchema,
+    validationErrorHandler,
+    customers.updateToDo);
 };

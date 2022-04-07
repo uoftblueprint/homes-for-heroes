@@ -87,7 +87,7 @@ export default function CaseCard() {
       .then((res) => {
         setCaseNotes(res.cases);
       });
-  },);
+  }, [id]);
 
   useEffect(() => {
     fetch(`http://localhost:3000/getCustomerInfo/${id}/`)

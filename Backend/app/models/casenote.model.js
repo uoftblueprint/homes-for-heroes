@@ -46,7 +46,7 @@ CaseNote.updateNote = function (case_id, new_note) {
     sql.query(
       'UPDATE cases SET notes = ? WHERE case_id = ?',
       [new_note, case_id],
-      function (err, result) {
+      (err, result) => {
         if (err) reject(err);
         else resolve(result.case_id);      
       }
@@ -59,7 +59,7 @@ CaseNote.deleteNote = function (case_id) {
     sql.query(
       'DELETE FROM cases WHERE case_id = ?',
       [case_id],
-      function (err, result) {
+      (err, result) => {
         if (err) reject(err);
         else resolve(result.case_id); 
       }

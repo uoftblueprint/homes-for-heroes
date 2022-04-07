@@ -18,7 +18,8 @@ import ProfilePage from './pages/User/ProfilePage/ProfilePage';
 
 import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
 
-import CaseDetail from './pages/User/CaseDetails/CaseDetail';
+import CaseDetail from './pages/Admin/UserCase/CaseDetail.jsx';
+import AddCase from './pages/Admin/UserCase/AddCase';
 
 function App() {
   return (
@@ -50,6 +51,11 @@ function App() {
             exact
             path="/casenotes/:id"
             render={(props) => <CaseDetail {...props} />}
+          />
+          <Route
+            exact
+            path="/addcase/:id"
+            render={(props) => <AddCase {...props} />}
           />
           <Route
             exact

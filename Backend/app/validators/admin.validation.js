@@ -25,7 +25,7 @@ const validationSchema = {
     body('phone').isMobilePhone(),
     body('password').isStrongPassword(),
     body('address').trim().notEmpty(),
-    body('chapter_id').isInt({min: 0})
+    body('chapter_id').isInt({ min: 0 })
   ],
 };
 
