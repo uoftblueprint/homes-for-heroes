@@ -56,7 +56,7 @@ Volunteer.getVolunteer = function (volunteer_name) {
       (err, rows) => {
         if (err) reject(err);
         else if (!rows[0]) reject(new Error("Volunteer not found"));
-        else resolve(rows[0]);
+        else resolve(new Volunteer(rows[0]));
       }
     );
   });

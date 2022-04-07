@@ -44,7 +44,7 @@ Supporter.getSupporter = function (supporter_name) {
       (err, rows) => {
         if (err) reject(err);
         else if (!rows[0]) reject(new Error("Supporter not found"));
-        else resolve(rows[0]);
+        else resolve(new Supporter(rows[0]));
       }
     );
   });
