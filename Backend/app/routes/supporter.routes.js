@@ -18,7 +18,7 @@ module.exports = (app) => {
     "/supporters/:name",
     validationSchema.getSupporterSchema,
     validationErrorHandler,
-    supporter.getSupporter
+    supporter.getSupporterByName
   );
 
   app.put(

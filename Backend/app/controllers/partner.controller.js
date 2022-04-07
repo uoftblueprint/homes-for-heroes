@@ -26,7 +26,7 @@ const partnerController = {
       next(err);
     }
   },
-  async getPartner(req, res, next) {
+  async getPartnerByName(req, res, next) {
     try {
       const { name } = req.params;
       logger.debug(req.params);

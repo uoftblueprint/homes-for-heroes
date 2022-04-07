@@ -18,7 +18,7 @@ module.exports = (app) => {
     "/volunteers/:name",
     validationSchema.getVolunteerSchema,
     validationErrorHandler,
-    volunteer.getVolunteer
+    volunteer.getVolunteerByName
   );
 
   app.put(

@@ -26,7 +26,7 @@ const supporterController = {
       next(err);
     }
   },
-  async getSupporter(req, res, next) {
+  async getSupporterByName(req, res, next) {
     try {
       const { name } = req.params;
       logger.debug(req.params);

@@ -18,7 +18,7 @@ module.exports = (app) => {
     "/partners/:name",
     validationSchema.getPartnerSchema,
     validationErrorHandler,
-    partner.getPartner
+    partner.getPartnerByName
   );
 
   app.put(

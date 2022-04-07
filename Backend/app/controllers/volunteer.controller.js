@@ -28,7 +28,7 @@ const volunteerController = {
     }
   },
 
-  async getVolunteer(req, res, next) {
+  async getVolunteerByName(req, res, next) {
     try {
       const { name } = req.params;
       logger.debug(req.params);
