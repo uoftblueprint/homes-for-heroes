@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { useState } from 'react';
 import {
+  Alert,
   Button,
   Typography,
   TextField,
   Box,
   Form,
-  InputAdornment,
-  IconButton,
   FormControl,
   FormLabel,
   FormControlLabel,
@@ -18,7 +17,9 @@ import {
   MenuItem,
 } from '@mui/material';
 
-import { useParams } from 'react-router-dom';
+import validator from 'validator';
+
+import { useParams, useHistory } from 'react-router-dom';
 
 export default function SignupForm() {
   const [formInfo, setFormInfo] = useState({
@@ -42,23 +43,45 @@ export default function SignupForm() {
   const [password, setPassword] = useState('');
 
   let { jwt } = useParams();
+  let history = useHistory();
+
   const [partners, setPartners] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [roleID, setRoleID] = useState(0);
+
+  const [errorStr, setErrorStr] = useState('');
+  const [pwErrorStr, setPwErrorStr] = useState('');
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isVerified, setIsVerified] = useState(true);
 
   React.useEffect(() => {
     (async () => {
       setIsLoading(true);
 
-      const data = await fetchPartners();
-      // const id = await fetchRoleID();
-      setPartners(data['partners']);
-      // setRoleID(id['role_id']);
-      setRoleID(0);
+      // const verified = await verifyUser();
+      const verified = { success: true };
+      if (!verified.success) {
+        setIsLoading(false);
+        setIsVerified(false);
+      } else {
+        const data = await fetchPartners();
+        // const id = await fetchRoleID();
+        setPartners(data['partners']);
+        // setRoleID(id['role_id']);
+        setRoleID(0);
 
-      setIsLoading(false);
+        setIsLoading(false);
+      }
     })();
   }, []);
+
+  function verifyUser() {
+    return new Promise((resolve) => {
+      fetch(`http://localhost:3000/verify/${jwt}`)
+        .then((resp) => resp.json())
+        .then((data) => resolve(data));
+    });
+  }
 
   function fetchPartners() {
     return new Promise((resolve) => {
@@ -97,13 +120,73 @@ export default function SignupForm() {
     setPassword(value);
   };
 
-  const handleSubmit = () => {
-    pushInfo();
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setErrorStr('');
+    setPwErrorStr('');
+
+    const { email, phone, applicant_dob } = formInfo;
+
+    let errorLst = [];
+    let pwErrorLst = [];
+
+    if (!validator.isEmail(email)) {
+      errorLst.push(' email');
+    }
+
+    if (!validator.isMobilePhone(phone)) {
+      errorLst.push(' phone number');
+    }
+
+    if (!validator.isDate(applicant_dob)) {
+      errorLst.push(' date of birth');
+    }
+
+    if (roleID === 0) {
+      if (password.length < 8) {
+        pwErrorLst.push(' 8 letters');
+      }
+
+      if (password.replace(/[^a-z]/g, '').length < 1) {
+        pwErrorLst.push(' 1 lowercase letter');
+      }
+
+      if (password.replace(/[^A-Z]/g, '').length < 1) {
+        pwErrorLst.push(' 1 uppercase letter');
+      }
+
+      if (password.replace(/[^0-9]/g, '').length < 1) {
+        pwErrorLst.push(' 1 number');
+      }
+
+      if (
+        password.replace(/[^!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, '').length <
+        1
+      ) {
+        pwErrorLst.push(' 1 symbol');
+      }
+    }
+
+    if (errorLst.length || pwErrorLst.length) {
+      if (errorLst.length) {
+        setErrorStr('Error - Invalid' + errorLst.toString());
+      }
+      if (pwErrorLst.length) {
+        setPwErrorStr('Password error - need at least' + pwErrorLst.toString());
+      }
+    } else {
+      setErrorStr('');
+      setPwErrorStr('');
+      pushInfo();
+    }
   };
 
   const requestOptions = {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: jwt,
+    },
     body: JSON.stringify({
       name: formInfo.name,
       gender: formInfo.gender,
@@ -124,13 +207,56 @@ export default function SignupForm() {
   };
 
   function pushInfo() {
-    fetch(`http://localhost:3000/signup/${jwt}`, requestOptions).then(
-      (response) => response.json(),
-    );
+    fetch(`http://localhost:3000/signup`, requestOptions)
+      .then((resp) => resp.json())
+      .then((resp) => {
+        if (resp.success) {
+          history.push('/');
+        }
+      });
   }
 
   if (isLoading) {
-    return <Typography>Loading...</Typography>;
+    return (
+      <Typography
+        sx={{
+          fontSize: '1.8rem',
+          fontweight: 600,
+          mt: '30vh',
+          mb: '30vh',
+        }}
+      >
+        Loading...
+      </Typography>
+    );
+  } else if (!isVerified) {
+    return (
+      <Box
+        sx={{
+          mt: '20vh',
+          mb: '30vh',
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: '1.8rem',
+            fontweight: 600,
+            mb: '20px',
+          }}
+        >
+          Oops! You can't access this page.
+        </Typography>
+        <Button
+          onClick={() => history.push('/')}
+          variant="contained"
+          sx={{
+            fontSize: '1.2rem',
+          }}
+        >
+          Return to home
+        </Button>
+      </Box>
+    );
   }
   return (
     <Box
@@ -145,7 +271,6 @@ export default function SignupForm() {
         sx={{
           fontSize: '1.8rem',
           fontWeight: 600,
-          mt: '75px',
           mb: '25px',
         }}
       >
@@ -176,14 +301,25 @@ export default function SignupForm() {
         <RadioGroup
           row
           aria-labelledby="demo-radio-buttons-group-label"
-          required
           name="gender"
           value={formInfo.gender}
           onChange={handleFormChange}
         >
-          <FormControlLabel value="female" control={<Radio />} label="Female" />
-          <FormControlLabel value="male" control={<Radio />} label="Male" />
-          <FormControlLabel value="other" control={<Radio />} label="Other" />
+          <FormControlLabel
+            value="female"
+            control={<Radio required={true} />}
+            label="Female"
+          />
+          <FormControlLabel
+            value="male"
+            control={<Radio required={true} />}
+            label="Male"
+          />
+          <FormControlLabel
+            value="other"
+            control={<Radio required={true} />}
+            label="Other"
+          />
         </RadioGroup>
       </FormControl>
 
@@ -353,6 +489,18 @@ export default function SignupForm() {
       >
         Submit
       </Button>
+
+      {errorStr !== '' ? (
+        <Alert variant="filled" severity="error">
+          {errorStr}
+        </Alert>
+      ) : null}
+
+      {pwErrorStr !== '' ? (
+        <Alert variant="filled" severity="error">
+          {pwErrorStr}
+        </Alert>
+      ) : null}
     </Box>
   );
 }

@@ -17,7 +17,7 @@ import Privileges from './pages/Admin/Privileges/Privileges';
 import ProfilePage from './pages/User/ProfilePage/ProfilePage';
 
 import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
-import SignupForm from './components/SignupFormVeteran.jsx';
+import SignupForm from './components/SignupForm.jsx';
 
 import CaseDetail from './pages/User/CaseDetails/CaseDetail';
 
@@ -65,11 +65,12 @@ function App() {
           />
           <Route exact path="/login" render={(props) => <Login {...props} />} />
 
-          <Route
-            exact
-            path="/signup/:jwt"
-            render={(props) => <SignupForm {...props} />}
-          />
+          <Switch>
+            <Route
+              path="/signupform/:jwt"
+              render={(props) => <SignupForm {...props} />}
+            />
+          </Switch>
         </Switch>
       </header>
     </div>
