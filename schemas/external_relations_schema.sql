@@ -5,7 +5,7 @@ USE homes_for_heroes;
 DROP TABLE IF EXISTS partners;
 CREATE TABLE partners (
     partner_id INT NOT NULL AUTO_INCREMENT,
-    org_name CHAR(255) NOT NULL UNIQUE,
+    name CHAR(255) NOT NULL UNIQUE,
     city CHAR(255),
     village CHAR(255),
     address CHAR(255),
