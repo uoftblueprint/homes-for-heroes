@@ -26,13 +26,13 @@ Partner.prototype.create = function () {
 };
 
 // modify existing information of a partner
-Partner.updateInfo = function(user_id, body) {
+Partner.updateInfo = function(partner_id, body) {
   return new Promise((resolve, reject) => {
     sql.query("UPDATE partners SET org_name = ?, city = ?, village = ?, address = ?, phone = ?, email = ? WHERE partner_id = ?",
-    [body.name, body.city, body.village, body.address, body.phone, body.email, user_id],
+    [body.name, body.city, body.village, body.address, body.phone, body.email, partner_id],
     function (err, results) {
       if (err) reject(err);
-      else resolve(user_id);
+      else resolve(partner_id);
     });
   });
 };

@@ -21,4 +21,11 @@ module.exports = (app) => {
     supporter.getSupporter
   );
 
+  app.put(
+    "/supporters/update/:supporter_id",
+    validationSchema.updateSupporterSchema,
+    validationErrorHandler,
+    supporter.updateInfo
+  )
+
 };

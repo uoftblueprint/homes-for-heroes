@@ -20,4 +20,11 @@ module.exports = (app) => {
     validationErrorHandler,
     volunteer.getVolunteer
   );
+
+  app.put(
+    "/volunteers/update/:volunteer_id",
+    validationSchema.updateVolunteerSchema,
+    validationErrorHandler,
+    volunteer.updateInfo
+  )
 };
