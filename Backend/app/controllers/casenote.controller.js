@@ -23,7 +23,6 @@ const caseNoteController = {
       await CaseNote.updateNote(case_id, new_note);
       res.send({ new_note: new_note });
     } catch (err) {
-      console.error(err);
       // TODO error handling
       res.status(500);
       res.send({ error: err });
@@ -35,7 +34,6 @@ const caseNoteController = {
       await CaseNote.deleteNote(case_id);
       // res.send({ success: true });
     } catch (err) {
-      console.error(err);
       // TODO error handling
       res.status(500);
       res.send({ error: err });

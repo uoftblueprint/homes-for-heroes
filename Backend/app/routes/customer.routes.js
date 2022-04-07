@@ -55,15 +55,15 @@ module.exports = (app) => {
     validationErrorHandler,
     customers.getUserInfoCSV,
   );
-  // to do update these
   app.get(
     '/getToDo/:user_id', 
-    validationSchema.getUserInfoCSVSchema,
+    validationSchema.getToDoSchema,
     validationErrorHandler,
     customers.getToDo
   );
-  app.put('/updateToDo/:user_id',
-    validationSchema.getUserInfoCSVSchema,
+  app.put(
+    '/updateToDo/:user_id',
+    validationSchema.putToDoSchema,
     validationErrorHandler,
     customers.updateToDo);
 };

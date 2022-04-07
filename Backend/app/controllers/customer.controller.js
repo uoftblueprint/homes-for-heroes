@@ -51,7 +51,6 @@ const customerController = {
       next(err);
     }
   },
-  
   async getUserData(req, res, next) {
     try {
       const user_data = await Customer.queryUserData(req.query);
@@ -65,6 +64,7 @@ const customerController = {
       const { user_id } = req.params;
       const todo = await Customer.getToDo(user_id);
       res.send({ todo: todo });
+      logger.info('Retrieved to-do successfully.');
     } catch (err) {
       next(err);
     }
@@ -75,6 +75,7 @@ const customerController = {
       const { todo } = req.query;
       await Customer.updateToDo(user_id, todo);
       res.send('Updated');
+      logger.info('Updated to-do successfully.');
     } catch (err) {
       next(err);
     }
