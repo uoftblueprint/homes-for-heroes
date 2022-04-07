@@ -18,6 +18,8 @@ import {
   MenuItem,
 } from '@mui/material';
 
+import { useParams } from 'react-router-dom';
+
 export default function SignupForm() {
   const [formInfo, setFormInfo] = useState({
     name: '',
@@ -32,44 +34,31 @@ export default function SignupForm() {
     curr: 1, // does not change
   });
 
+  const [veteranInfo, setVeteranInfo] = useState({
+    income: 0,
+    demographic: '',
+  });
+
+  const [password, setPassword] = useState('');
+
+  let { jwt } = useParams();
   const [partners, setPartners] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [roleID, setRoleID] = useState(0);
 
-  const handleFormChange = (event) => {
-    const { name, value } = event.target;
-    setFormInfo({
-      ...formInfo,
-      [name]: value,
-    });
-  };
+  React.useEffect(() => {
+    (async () => {
+      setIsLoading(true);
 
-  const handleSubmit = (event) => {
-    pushInfo()
-  };
+      const data = await fetchPartners();
+      // const id = await fetchRoleID();
+      setPartners(data['partners']);
+      // setRoleID(id['role_id']);
+      setRoleID(0);
 
-  const requestOptions = {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name: formInfo.name,
-      email: formInfo.email,
-      phone: formInfo.phone,
-      street_name: formInfo.street_name,
-      city: formInfo.city,
-      province: formInfo.province,
-      applicant_dob: formInfo.applicant_dob,
-    }),
-  };
-
-  const pushInfo = () = {
-    // fetch(
-    //   'http://localhost:3000/updateCustomerProfile/11',
-    //   requestOptions,
-    // ).then((response) => response.json());
-    // setUserInfo({
-    //   ...formInfo,
-    // });
-  }
+      setIsLoading(false);
+    })();
+  }, []);
 
   function fetchPartners() {
     return new Promise((resolve) => {
@@ -79,15 +68,66 @@ export default function SignupForm() {
     });
   }
 
-  React.useEffect(() => {
-    (async () => {
-      setIsLoading(true);
-      const data = await fetchPartners();
-      setPartners(data['partners']);
+  // function fetchRoleID() {
+  //   return new Promise((resolve) => {
+  //     fetch('http://localhost:3000/roleid')
+  //       .then((resp) => resp.json())
+  //       .then((data) => resolve(data));
+  //   });
+  // }
 
-      setIsLoading(false);
-    })();
-  }, []);
+  const handleFormChange = (event) => {
+    const { name, value } = event.target;
+    setFormInfo({
+      ...formInfo,
+      [name]: value,
+    });
+  };
+
+  const handleVeteranFormChange = (event) => {
+    const { name, value } = event.target;
+    setVeteranInfo({
+      ...veteranInfo,
+      [name]: value,
+    });
+  };
+
+  const handleAdminPasswordChange = (event) => {
+    const { value } = event.target;
+    setPassword(value);
+  };
+
+  const handleSubmit = () => {
+    pushInfo();
+  };
+
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: formInfo.name,
+      gender: formInfo.gender,
+      email: formInfo.email,
+      ...(roleID === 0 && { password: password }),
+      phone: formInfo.phone,
+      applicant_dob: formInfo.applicant_dob,
+      street_name: formInfo.street_name,
+      city: formInfo.city,
+      province: formInfo.province,
+      ...(roleID === 1 && {
+        income: veteranInfo.income,
+        demographic: veteranInfo.demographic,
+      }),
+      referral: formInfo.referral,
+      curr: formInfo.curr,
+    }),
+  };
+
+  function pushInfo() {
+    fetch(`http://localhost:3000/signup/${jwt}`, requestOptions).then(
+      (response) => response.json(),
+    );
+  }
 
   if (isLoading) {
     return <Typography>Loading...</Typography>;
@@ -158,27 +198,45 @@ export default function SignupForm() {
         }}
       />
 
-      <TextField
-        required
-        label="Phone Number"
-        name="phone"
-        value={formInfo.phone}
-        onChange={handleFormChange}
-        sx={{
-          mt: '25px',
-        }}
-      />
+      {roleID === 0 ? (
+        <TextField
+          required
+          label="Password"
+          name="password"
+          type="password"
+          value={password}
+          onChange={handleAdminPasswordChange}
+          sx={{
+            mt: '25px',
+          }}
+        />
+      ) : null}
 
-      <TextField
-        required
-        label="Date of Birth"
-        name="applicant_dob"
-        value={formInfo.applicant_dob}
-        onChange={handleFormChange}
-        sx={{
-          mt: '25px',
-        }}
-      />
+      <Box>
+        <TextField
+          required
+          label="Phone Number"
+          name="phone"
+          value={formInfo.phone}
+          onChange={handleFormChange}
+          sx={{
+            mt: '25px',
+            width: '60%',
+          }}
+        />
+
+        <TextField
+          required
+          label="Date of Birth"
+          name="applicant_dob"
+          value={formInfo.applicant_dob}
+          onChange={handleFormChange}
+          sx={{
+            mt: '25px',
+            width: '40%',
+          }}
+        />
+      </Box>
 
       <Box id="location">
         <TextField
@@ -234,6 +292,36 @@ export default function SignupForm() {
         </FormControl>
       </Box>
 
+      {roleID === 1 ? (
+        <Box
+          sx={{
+            width: '100%',
+            mt: '25px',
+          }}
+        >
+          <TextField
+            required
+            label="Income"
+            name="income"
+            value={veteranInfo.income}
+            onChange={handleVeteranFormChange}
+            sx={{
+              width: '50%',
+            }}
+          />
+          <TextField
+            required
+            label="Demographic"
+            name="demographic"
+            value={veteranInfo.demographic}
+            onChange={handleVeteranFormChange}
+            sx={{
+              width: '50%',
+            }}
+          />
+        </Box>
+      ) : null}
+
       <FormControl
         sx={{
           mt: '25px',
@@ -254,6 +342,7 @@ export default function SignupForm() {
           </Select>
         </>
       </FormControl>
+
       <Button
         variant="outlined"
         type="submit"

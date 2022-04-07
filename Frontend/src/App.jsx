@@ -17,8 +17,6 @@ import Privileges from './pages/Admin/Privileges/Privileges';
 import ProfilePage from './pages/User/ProfilePage/ProfilePage';
 
 import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
-import Signup from './components/Signup.jsx';
-import VerifyEmail from './components/VerifyEmail.jsx';
 import SignupForm from './components/SignupFormVeteran.jsx';
 
 import CaseDetail from './pages/User/CaseDetails/CaseDetail';
@@ -69,17 +67,7 @@ function App() {
 
           <Route
             exact
-            path="/signup"
-            render={(props) => <Signup {...props} />}
-          />
-          <Route
-            exact
-            path="/signup/verify"
-            render={(props) => <VerifyEmail {...props} />}
-          />
-          <Route
-            exact
-            path="/signup/form"
+            path="/signup/:jwt"
             render={(props) => <SignupForm {...props} />}
           />
         </Switch>
