@@ -1,30 +1,30 @@
-const validationSchema = require("../validators/partner.validation");
-const validationErrorHandler = require("../middleware/validation-error-handler");
-const partner = require("../controllers/partner.controller");
+const validationSchema = require('../validators/partner.validation');
+const validationErrorHandler = require('../middleware/validation-error-handler');
+const partner = require('../controllers/partner.controller');
 
 module.exports = (app) => {
   // list all partners
-  app.get("/partners", partner.getAllPartners);
+  app.get('/partners', partner.getAllPartners);
 
   // create a new partner
   app.post(
-    "/partners/create",
+    '/partners/create',
     validationSchema.createPartnerSchema,
     validationErrorHandler,
     partner.create
   );
 
   app.get(
-    "/partners/:name",
+    '/partners/:name',
     validationSchema.getPartnerSchema,
     validationErrorHandler,
     partner.getPartnerByName
   );
 
   app.put(
-    "/partners/update/:partner_id",
+    '/partners/update/:partner_id',
     validationSchema.updatePartnerSchema,
     validationErrorHandler,
     partner.updateInfo
-  )
+  );
 };
