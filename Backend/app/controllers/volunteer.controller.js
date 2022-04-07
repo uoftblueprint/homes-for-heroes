@@ -2,18 +2,16 @@ const Volunteer = require("../models/volunteer.model");
 const logger = require("../logger");
 
 const volunteerController = {
-  async getAllVolunteers(req, res) {
+  async getAllVolunteers(req, res, next) {
     try {
       const results = await Volunteer.listAll();
       res.send({ volunteers: results });
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
   },
 
-  async create(req, res) {
+  async create(req, res, next) {
     try {
       logger.debug(req.body);
       const new_volunteer = new Volunteer(req.body);
@@ -26,26 +24,22 @@ const volunteerController = {
       );
       res.json(volunteer_id);
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
   },
 
-  async getVolunteer(req, res) {
+  async getVolunteer(req, res, next) {
     try {
       const { name } = req.params;
       logger.debug(req.params);
       const volunteer_info = await Volunteer.getVolunteer(name);
       res.send({ volunteerInfo: volunteer_info });
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
   },
 
-  async updateInfo(req, res) {
+  async updateInfo(req, res, next) {
     try {
       logger.debug(req.params);
       const { volunteer_id } = req.params;
@@ -53,7 +47,7 @@ const volunteerController = {
       const updated_id = await Volunteer.updateInfo(volunteer_id, req.body);
       res.send(updated_id);
     } catch (err) {
-      res.send({"error": err});
+      next(err);
     }
   }
 };

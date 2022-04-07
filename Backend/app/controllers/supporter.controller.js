@@ -2,17 +2,15 @@ const Supporter = require("../models/supporter.model");
 const logger = require("../logger");
 
 const supporterController = {
-  async getAllSupporters(req, res) {
+  async getAllSupporters(req, res, next) {
     try {
       const results = await Supporter.listAll();
       res.send({ supporters: results });
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
   },
-  async create(req, res) {
+  async create(req, res, next) {
     try {
       logger.debug(req.body);
       const new_supporter = new Supporter(req.body);
@@ -25,31 +23,28 @@ const supporterController = {
       );
       res.json(supporter_id);
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
   },
-  async getSupporter(req, res) {
+  async getSupporter(req, res, next) {
     try {
       const { name } = req.params;
       logger.debug(req.params);
       const supporter_info = await Supporter.getSupporter(name);
       res.send({ supporterInfo: supporter_info });
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
   },
-  async updateInfo(req, res) {
+  async updateInfo(req, res, next) {
     try {
       logger.debug(req.params);
       const { supporter_id } = req.params;
+      logger.debug(req.body);
       const updated_id = await Supporter.updateInfo(supporter_id, req.body);
       res.send(updated_id);
     } catch (err) {
-      res.send({"error": err});
+      next(err);
     }
   }
 };

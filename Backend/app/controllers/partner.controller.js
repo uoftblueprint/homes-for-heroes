@@ -2,17 +2,15 @@ const Partner = require("../models/partner.model");
 const logger = require("../logger");
 
 const partnerController = {
-  async getAllPartners(req, res) {
+  async getAllPartners(req, res, next) {
     try {
       const results = await Partner.listAll();
       res.send({ partners: results });
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
   },
-  async create(req, res) {
+  async create(req, res, next) {
     try {
       logger.debug(req.body);
       const new_partner = new Partner(req.body);
@@ -25,31 +23,28 @@ const partnerController = {
       );
       res.json(partner_id);
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
   },
-  async getPartner(req, res) {
+  async getPartner(req, res, next) {
     try {
       const { name } = req.params;
       logger.debug(req.params);
       const partner_info = await Partner.getPartner(name);
       res.send({ partnerInfo: partner_info });
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
   },
-  async updateInfo(req, res) {
+  async updateInfo(req, res, next) {
     try {
       logger.debug(req.params);
       const { partner_id } = req.params;
+      logger.debug(req.body);
       const updated_id = await Partner.updateInfo(partner_id, req.body);
       res.send(updated_id);
     } catch (err) {
-      res.send({"error": err});
+      next(err);
     }
   }
 };
