@@ -20,4 +20,11 @@ module.exports = (app) => {
     validationErrorHandler,
     partner.getPartner
   );
+
+  app.put(
+    "/partners/update/:partner_id",
+    validationSchema.updatePartnerSchema,
+    validationErrorHandler,
+    partner.updateInfo
+  )
 };
