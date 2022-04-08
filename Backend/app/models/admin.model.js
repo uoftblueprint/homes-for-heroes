@@ -1,19 +1,17 @@
 const sql = require('./db.js');
-const logger = require('../logger');
 const bcrypt = require('bcrypt');
 
-// constructor
 const Admin = function (body) {
     this.name = body.name;
     this.role_id = 1; // 0 by default
 };
 
-Admin.create = function (name, email, phone, password, address, chapter_id) {
+Admin.create = function (name, email, phone, password, chapter_id) {
     return new Promise((resolve, reject) => {
       const hashedPassword = bcrypt.hashSync(password, 15);
       sql.query(
-        'INSERT INTO admin_users (name, email, phone, password, address, chapter_id, role_id) VALUES (?, ?, ?, ?, ?, ?, 1)',
-        [name, email, phone, hashedPassword, address, chapter_id],
+        'INSERT INTO client_users (name, email, phone, password, role_id, verified, oauth) VALUES (?, ?, ?, ?, 1, FALSE, FALSE)',
+        [name, email, phone, hashedPassword],
         (err) => {
           if (err) reject(err);
           else {
@@ -21,13 +19,21 @@ Admin.create = function (name, email, phone, password, address, chapter_id) {
               if (err) reject(err);
               else {
                 // eslint-disable-next-line prefer-destructuring
-                const [ user_id ] = rows;
-                resolve(
-                  new Admin({
-                    name: name,
-                    role_id: 1,
-                  }),
-                );
+                const admin_id = JSON.parse(JSON.stringify(rows[0])).admin_id;
+                sql.query('INSERT INTO admin_users (user_id, default_password, chapter_id) VALUES (?, ?, ?)',
+                [admin_id, hashedPassword, chapter_id],
+                (err) => {
+                  if (err) reject (err);
+                  else {
+                    resolve(
+                      new Admin({
+                        name: name,
+                        role_id: 1,
+                      }),
+                    );
+                  }
+                }
+                )
               }
             });
           }
@@ -38,7 +44,7 @@ Admin.create = function (name, email, phone, password, address, chapter_id) {
 
 Admin.listAll = function () {
     return new Promise(function (resolve, reject) {
-        sql.query('SELECT * FROM admin_users', function (err, admins) {
+        sql.query('SELECT c.name, c.role_id, a.chapter_id FROM admin_users a INNER JOIN client_users c ON a.user_id = c.user_id', function (err, admins) {
             if (err) reject(err);
             else {
                 resolve(admins);
@@ -50,7 +56,7 @@ Admin.listAll = function () {
 Admin.getSearchAdmins = function (name) {
   return new Promise((resolve, reject) => {
     sql.query(
-      'SELECT * FROM admin_users WHERE name LIKE ?',
+      'SELECT c.name, c.email, c.address FROM admin_users a INNER JOIN client_users c ON a.user_id = c.user_id WHERE name LIKE ? and role_id != 1',
       [`%${name}%`],
       (err, admins) => {
         if (err) reject(err);
@@ -62,18 +68,24 @@ Admin.getSearchAdmins = function (name) {
 
 Admin.makeSuperadmin = function(admin_id) {
     return new Promise(function (resolve, reject) {
-        sql.query('UPDATE admin_users SET role_id = 2 WHERE admin_id = ?',
+        sql.query('UPDATE client_users SET role_id = 2 WHERE user_id = ?',
         [admin_id],
         function (err, rows) {
             if (err) reject (err);
-            else resolve(rows[0]);
+            else {
+              sql.query('UPDATE admin_users SET chapter_id = NULL WHERE user_id = ?', [admin_id],
+              function (err, rows) {
+                if (err) reject (err);
+                resolve(rows[0]);
+              });
+            };
         });
     });
 };
 
 Admin.unsetSuperadmin = function(admin_id) {
     return new Promise(function (resolve, reject) {
-        sql.query('UPDATE admin_users SET role_id = 1 WHERE admin_id = ?',
+        sql.query('UPDATE client_users SET role_id = 1 WHERE user_id = ?',
         [admin_id],
         function (err, rows) {
             if (err) reject (err);
@@ -83,10 +95,9 @@ Admin.unsetSuperadmin = function(admin_id) {
 }
 
 Admin.assignChapter = function (admin_id, chapter_id) {
-  logger.debug(admin_id);
   return new Promise((resolve, reject) => {
     sql.query(
-      'UPDATE admin_users SET chapter_id = ? WHERE admin_id = ?',
+      'UPDATE admin_users SET chapter_id = ? WHERE user_id = ?',
       [chapter_id, admin_id],
       (err) => {
         if (err) reject(err);
@@ -100,15 +111,26 @@ Admin.assignChapter = function (admin_id, chapter_id) {
 
 Admin.listByChapter = function(chapter_id) {
     return new Promise(function (resolve, reject) {
-        sql.query('SELECT * FROM admin_users where role_id = 1 and chapter_id = ?', [chapter_id], function (err, supervisors) {
+        sql.query('SELECT c.name FROM admin_users a INNER JOIN client_users c ON a.user_id = c.user_id where c.role_id = 1 and a.chapter_id = ?', [chapter_id], function (err, admins) {
             if (err) reject (err);
             else {
-                resolve(supervisors);
+                resolve(admins);
             }
         });
     });
 }
 
+Admin.getRole = function(admin_id) {
+  return new Promise(function(resolve, reject) {
+    sql.query('SELECT c.role_id FROM admin_users a INNER JOIN client_users c ON a.user_id = c.user_id WHERE a.user_id = ?', [admin_id],
+    function (err, rows) {
+      if (err) reject (err);
+      else {
+        resolve(JSON.parse(JSON.stringify(rows[0])).role_id);
+      }
+    })
+  })
+}
 
 
 module.exports = Admin;
