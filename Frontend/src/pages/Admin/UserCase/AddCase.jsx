@@ -22,6 +22,7 @@ export default function AddCase () {
   const [shouldBlockNavigation, setNavigation] = useState(true);
 
   const [dt, setDate] = useState(null);
+  const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [time, setTime] = useState(dt);
 
@@ -35,6 +36,8 @@ export default function AddCase () {
       user_id: id,
       admin_id: 2,
       notes: body,
+      title: title,
+      category: stat,
     }),
   };
 
@@ -45,7 +48,7 @@ export default function AddCase () {
       .then((res) => {
         setCurrUser(res.customerInfo[0]);
       });
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     if (shouldBlockNavigation) {
@@ -75,6 +78,11 @@ export default function AddCase () {
   const captureBody = (e) => {
     e.preventDefault();
     setBody(e.target.value);
+  }
+
+  const captureTitle = (e) => {
+    e.preventDefault();
+    setTitle(e.target.value);
   }
 
   return (
@@ -124,6 +132,21 @@ export default function AddCase () {
           <MenuItem value={3}>Thriving</MenuItem>
         </Select>
         </FormControl>
+      </Grid>
+      <Grid item xs={10} marginLeft={"150px"} marginRight={"150px"}>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="other"
+          label="Title"
+          multiline
+          minRows={1}
+          maxRows={1}
+          type="title"
+          fullWidth
+          variant="standard"
+          onChange={captureTitle}
+        />
       </Grid>
       <Grid item xs={12} marginLeft={"150px"} marginRight={"150px"}>
         <TextField

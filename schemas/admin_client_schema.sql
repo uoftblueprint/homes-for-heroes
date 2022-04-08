@@ -52,6 +52,8 @@ DROP TABLE IF EXISTS cases;
 CREATE TABLE IF NOT EXISTS cases (
     user_id INT NOT NULL,
     admin_id INT NOT NULL,
+    title TEXT,
+    category INT NOT NULL,
     notes TEXT,
     last_update DATETIME NOT NULL DEFAULT NOW(),
     case_id INT NOT NULL AUTO_INCREMENT,

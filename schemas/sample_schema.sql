@@ -110,9 +110,9 @@ VALUES
 
 
 INSERT INTO cases VALUES
-(1, 2, 'This is Case Note 1', now(), 1),
-(2, 2, 'This is Case Note 2', now(), 2),
-(3, 2, NULL, now(), 3);
+(1, 2,'Alert Case Note 1', 0, 'This is Case Note 1', now(), 1),
+(2, 2, 'Alert Case Note 2', 0, 'This is Case Note 2', now(), 2),
+(3, 2, 'Alert Case Note 3', 0, NULL, now(), 3);
 
 INSERT INTO client_users VALUES 
 (1, "Abby C", "abby2@gmail.com", "905456", "password2", 'Toronto', 'Montreal', TRUE, FALSE, 1), 

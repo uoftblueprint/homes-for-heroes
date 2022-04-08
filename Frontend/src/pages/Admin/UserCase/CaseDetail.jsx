@@ -57,6 +57,10 @@ export default function CaseCard() {
 
   const [view, setView] = useState(4);
 
+  const { search } = window.location;
+  const query = new URLSearchParams(search).get('search');
+  const [searchQuery, setSearchQuery] = useState(query || '');
+
   const getOptions = {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' }
@@ -67,29 +71,24 @@ export default function CaseCard() {
     headers: { 'Content-Type': 'application/json' }
   };
 
-  const createToDoInput = (new_item) => {
-    var lastKey = Object.keys(todoList)[Object.keys(todoList).length - 1];
-    todoList[lastKey + 1] = new_item;
-  }
-
   const updateOptions = {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' }
   };
 
-  // this is definitely not good
+  const createToDoInput = (new_item) => {
+    var lastKey = Object.keys(todoList)[Object.keys(todoList).length - 1];
+    todoList[lastKey + 1] = new_item;
+  }
 
   useEffect(() => {
     fetch(
       `http://localhost:3000/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`
-    )
+      )
       .then((response) => response.json())
       .then((res) => {
         setCaseNotes(res.cases);
       });
-  }, [id]);
-
-  useEffect(() => {
     fetch(`http://localhost:3000/getCustomerInfo/${id}/`)
       .then((response) => response.json())
       .then((res) => {
@@ -137,6 +136,16 @@ export default function CaseCard() {
   const captureBody = (e) => {
     e.preventDefault();
     setBody(e.target.value);
+  };
+
+  const filterCases = (posts, query) => {
+    if (!query) {
+      return posts;
+    }
+
+    return posts.filter((post) => {
+      return post.name.includes(query);
+    });
   };
 
   // const getToDo = (case_id) => {
@@ -289,7 +298,6 @@ export default function CaseCard() {
               <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
                 {todoList.map((value) => {
                   const labelId = `checkbox-list-label-${value}`;
-
                   return (
                     <ListItem
                       key={value}
@@ -366,11 +374,11 @@ export default function CaseCard() {
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <Typography>Case Note {index}</Typography>
-              <PersonIcon sx={{marginLeft: "10px"}}/>
-              <Typography variant="subtitle2" sx={{ marginLeft: "10px" }}>ADMIN NAME</Typography>
-              <DateRangeIcon sx={{ marginLeft: "10px" }}/>
-              <Typography variant="subtitle2" sx={{ marginLeft: "10px" }}>{new Date(item.last_update).toISOString().slice(0, 10)}</Typography>
+              <Typography noWrap >{item.title}</Typography>
+              <PersonIcon sx={{marginLeft: "5px"}}/>
+              <Typography variant="subtitle2" sx={{ marginLeft: "5px", WebkitLineClamp: 1}}>ADMIN</Typography>
+              <DateRangeIcon sx={{ marginLeft: "5px" }}/>
+              <Typography variant="subtitle2" sx={{ marginLeft: "5px", WebkitLineClamp: 1 }}>{new Date(item.last_update).toISOString().slice(0, 10)}</Typography>
               <Dialog
               open={open}
               onClose={handleClose}
