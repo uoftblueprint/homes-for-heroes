@@ -12,10 +12,7 @@ const chapter_id = [
 const validationSchema = {
   makeSuperadminSchema: [...admin_id],
   unsetSuperadminSchema: [...admin_id],
-  assignChapterSchema: [
-    ...admin_id,
-    body('name').trim().notEmpty(),
-  ],
+  assignChapterSchema: [...admin_id, body('name').trim().notEmpty()],
   createAdminSchema: [
     body('name').trim().notEmpty().escape(),
     body('email').isEmail().normalizeEmail(),

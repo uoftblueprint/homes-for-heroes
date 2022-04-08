@@ -3,37 +3,41 @@ const validationSchema = require('../validators/admin.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
 const adminController = require('../controllers/admin.controller');
 
-module.exports = app => {
+module.exports = (app) => {
   app.get('/admins/getAll', admin.listAll);
   app.get('/admins/getSearchAdmins', admin.getSearchAdmins);
 
   app.put(
-    '/admins/:admin_id/makeSuperadmin', 
+    '/admins/:admin_id/makeSuperadmin',
     validationSchema.makeSuperadminSchema,
     validationErrorHandler,
-    admin.makeSuperadmin);
+    admin.makeSuperadmin
+  );
 
   app.put(
-    '/admins/:admin_id/unsetSuperadmin', 
+    '/admins/:admin_id/unsetSuperadmin',
     validationSchema.unsetSuperadminSchema,
     validationErrorHandler,
-    admin.unsetSuperadmin);
+    admin.unsetSuperadmin
+  );
   app.put(
-    '/admins/:admin_id/assignChapter', 
+    '/admins/:admin_id/assignChapter',
     validationSchema.assignChapterSchema,
     validationErrorHandler,
-    admin.assignChapter);
+    admin.assignChapter
+  );
 
   app.get(
-    '/admins/:chapter/listByChapter', 
+    '/admins/:chapter/listByChapter',
     validationSchema.listChapterSupervisorsSchema,
     validationErrorHandler,
-    admin.getByChapter);
+    admin.getByChapter
+  );
 
   app.post(
-      '/admins/createAdmin',
-      validationSchema.createAdminSchema,
-      validationErrorHandler,
-      adminController.createAdmin,
-    );
+    '/admins/createAdmin',
+    validationSchema.createAdminSchema,
+    validationErrorHandler,
+    adminController.createAdmin
+  );
 };
