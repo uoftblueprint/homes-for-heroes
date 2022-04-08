@@ -14,7 +14,6 @@ const partnerController = {
     try {
       const new_partner = new Partner(req.body);
       const partner_id = await new_partner.create();
-      logger.debug(partner_id);
       res.json(partner_id);
     } catch (err) {
       next(err);
@@ -24,8 +23,8 @@ const partnerController = {
     try {
       const { name } = req.params;
       logger.debug(req.params);
-      const partner_info = await Partner.getPartner(name);
-      res.send({ partnerInfo: partner_info });
+      const partner = await Partner.getPartner(name);
+      res.json(partner);
     } catch (err) {
       next(err);
     }
@@ -34,9 +33,8 @@ const partnerController = {
     try {
       logger.debug(req.params);
       const { partner_id } = req.params;
-      logger.debug(req.body);
       const updated_id = await Partner.updateInfo(partner_id, req.body);
-      res.send(updated_id);
+      res.json(updated_id);
     } catch (err) {
       next(err);
     }

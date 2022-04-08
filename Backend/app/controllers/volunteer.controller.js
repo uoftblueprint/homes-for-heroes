@@ -15,7 +15,6 @@ const volunteerController = {
     try {
       const new_volunteer = new Volunteer(req.body);
       const volunteer_id = await new_volunteer.create();
-      logger.debug(volunteer_id);
       res.json(volunteer_id);
     } catch (err) {
       next(err);
@@ -26,8 +25,8 @@ const volunteerController = {
     try {
       const { name } = req.params;
       logger.debug(req.params);
-      const volunteer_info = await Volunteer.getVolunteer(name);
-      res.send({ volunteerInfo: volunteer_info });
+      const volunteer = await Volunteer.getVolunteer(name);
+      res.json(volunteer);
     } catch (err) {
       next(err);
     }
@@ -39,7 +38,7 @@ const volunteerController = {
       const { volunteer_id } = req.params;
       logger.debug(req.body);
       const updated_id = await Volunteer.updateInfo(volunteer_id, req.body);
-      res.send(updated_id);
+      res.json(updated_id);
     } catch (err) {
       next(err);
     }

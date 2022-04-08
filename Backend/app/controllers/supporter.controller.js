@@ -14,7 +14,6 @@ const supporterController = {
     try {
       const new_supporter = new Supporter(req.body);
       const supporter_id = await new_supporter.create();
-      logger.debug(supporter_id);
       res.json(supporter_id);
     } catch (err) {
       next(err);
@@ -24,8 +23,8 @@ const supporterController = {
     try {
       const { name } = req.params;
       logger.debug(req.params);
-      const supporter_info = await Supporter.getSupporter(name);
-      res.send({ supporterInfo: supporter_info });
+      const supporter = await Supporter.getSupporter(name);
+      res.json(supporter);
     } catch (err) {
       next(err);
     }
@@ -34,9 +33,8 @@ const supporterController = {
     try {
       logger.debug(req.params);
       const { supporter_id } = req.params;
-      logger.debug(req.body);
       const updated_id = await Supporter.updateInfo(supporter_id, req.body);
-      res.send(updated_id);
+      res.json(updated_id);
     } catch (err) {
       next(err);
     }
