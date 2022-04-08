@@ -16,14 +16,11 @@ const validationSchema = {
     ...admin_id,
     body('name').trim().notEmpty(),
   ],
-  listChapterSupervisorsSchema: [...chapter_id],
   createAdminSchema: [
     body('name').trim().notEmpty().escape(),
     body('email').isEmail().normalizeEmail(),
     body('phone').isMobilePhone(),
     body('password').isStrongPassword(),
-    body('address').trim().notEmpty(),
-    body('chapter_id').isInt({min: 0})
   ],
 };
 
