@@ -7,14 +7,9 @@ const partnerId = [
 ];
 
 const validationSchema = {
-<<<<<<< HEAD
-  createPartnerSchema: [body('name').trim().notEmpty()],
-  getPartnerSchema: [param('name').trim().notEmpty()],
-=======
   createPartnerSchema: [...partnerInfoSchema],
   getPartnerSchema: [param('name').trim().notEmpty()],
   updatePartnerSchema: [...partnerInfoSchema, ...partnerId],
->>>>>>> a4692745cc6c1fcb8afda55fa539e7fe80ed5916
 };
 
 module.exports = validationSchema;
