@@ -63,18 +63,18 @@ const authController = {
     const { name, email } = req.body;
 
     const generatePassword = () => {
-    var length = 8,
-        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-        retVal = "";
-    for (var i = 0, n = charset.length; i < length; ++i) {
+      var length = 8,
+        charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+        retVal = '';
+      for (var i = 0, n = charset.length; i < length; ++i) {
         retVal += charset.charAt(Math.floor(Math.random() * n));
-    }
-    return retVal;
-    }
+      }
+      return retVal;
+    };
 
     try {
       //TODO: Add auth to send this request.
-      const password = generatePassword()
+      const password = generatePassword();
       const user = await Customer.create(name, null, email, password);
       const verificationCode = issueEmailJWT(user);
       // TODO: Grab correct hostname from env variables

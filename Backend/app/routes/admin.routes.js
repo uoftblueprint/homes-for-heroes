@@ -42,9 +42,9 @@ module.exports = app => {
     admin.getByChapter);
 
   app.post(
-      '/admins/createAdmin',
-      validationSchema.createAdminSchema,
-      validationErrorHandler,
-      adminController.createAdmin,
-    );
+    '/admins/createAdmin',
+    validationSchema.createAdminSchema,
+    validationErrorHandler,
+    adminController.createAdmin,
+  );
 };

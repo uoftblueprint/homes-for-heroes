@@ -19,11 +19,6 @@ function FormTop() {
     const [loading, setLoading] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
 
-<<<<<<< HEAD:Frontend/src/pages/form/FormTop.js
-    const admin_id = 2;
-
-=======
->>>>>>> 6fae965e2794540c8832d532ae699416ffb5a412:Frontend/src/pages/User/Form/FormTop.js
     let { url }= useRouteMatch();
 
     const displayDataColumns = [

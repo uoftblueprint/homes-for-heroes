@@ -1,9 +1,6 @@
 import './App.css';
 
 import { Route, Switch } from 'react-router-dom';
-
-import Typography from '@mui/material/Typography';
-
 import NavBar from './components/NavBar';
 import FormTop from './pages/User/Form/FormTop.js';
 import FormCreate from "./pages/User/Form/FormCreate";
@@ -15,6 +12,9 @@ import Login from './pages/User/Login/Login';
 import CRM from './pages/Admin/UserCrm/CRM';
 import Privileges from './pages/Admin/Privileges/Privileges';
 import ProfilePage from './pages/User/ProfilePage/ProfilePage';
+
+import Home from './components/Home.jsx';
+import FormComplete from './pages/User/Form/FormComplete.js';
 
 import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
 
@@ -29,8 +29,9 @@ function App() {
           <Route
             exact
             from="/"
-            render={(props) => <Typography color="black">Home</Typography>}
+            render={(props) => <Home {...props}/>}
           />
+          <Route exact path="/forms/complete/:formId" render={(props) => <FormComplete {...props}/>} />
           <Route exact path="/usercrm" render={(props) => <CRM {...props} />} />
           <Route
             exact
