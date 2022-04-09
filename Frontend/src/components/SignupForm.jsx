@@ -64,40 +64,38 @@ export default function SignupForm() {
         setIsLoading(false);
         setIsVerified(false);
       } else {
-        const data = await fetchPartners();
-        // const id = await fetchRoleID();
-        setPartners(data['partners']);
-        // setRoleID(id['role_id']);
-        setRoleID(0);
+        try {
+          const data = await fetchPartners();
+          // const id = await fetchRoleID();
+          setPartners(data['partners']);
+          // setRoleID(id['role_id']);
+          const role_id = await fetchRoleID();
+          setRoleID(role_id);
 
-        setIsLoading(false);
+          setIsLoading(false);
+        } catch(err) {
+          setErrorStr(err);
+        }
       }
     })();
   }, []);
 
-  function verifyUser() {
-    return new Promise((resolve) => {
-      fetch(`http://localhost:3000/verify/${jwt}`)
-        .then((resp) => resp.json())
-        .then((data) => resolve(data));
-    });
-  }
-
   function fetchPartners() {
     return new Promise((resolve) => {
-      fetch('http://localhost:3000/partners')
+      fetch('http://localhost:3000/api/partners')
         .then((resp) => resp.json())
         .then((data) => resolve(data));
     });
   }
 
-  // function fetchRoleID() {
-  //   return new Promise((resolve) => {
-  //     fetch('http://localhost:3000/roleid')
-  //       .then((resp) => resp.json())
-  //       .then((data) => resolve(data));
-  //   });
-  // }
+  function fetchRoleID() {
+    return new Promise((resolve, reject) => {
+      fetch(`http://localhost:3000/api/checkJWT/${jwt}`)
+        .then((resp) => resp.json())
+        .then((data) => resolve(data))
+        .catch(reject);
+    });
+  }
 
   const handleFormChange = (event) => {
     const { name, value } = event.target;
@@ -142,29 +140,27 @@ export default function SignupForm() {
       errorLst.push(' date of birth');
     }
 
-    if (roleID === 0) {
-      if (password.length < 8) {
-        pwErrorLst.push(' 8 letters');
-      }
+    if (password.length < 8) {
+      pwErrorLst.push(' 8 letters');
+    }
 
-      if (password.replace(/[^a-z]/g, '').length < 1) {
-        pwErrorLst.push(' 1 lowercase letter');
-      }
+    if (password.replace(/[^a-z]/g, '').length < 1) {
+      pwErrorLst.push(' 1 lowercase letter');
+    }
 
-      if (password.replace(/[^A-Z]/g, '').length < 1) {
-        pwErrorLst.push(' 1 uppercase letter');
-      }
+    if (password.replace(/[^A-Z]/g, '').length < 1) {
+      pwErrorLst.push(' 1 uppercase letter');
+    }
 
-      if (password.replace(/[^0-9]/g, '').length < 1) {
-        pwErrorLst.push(' 1 number');
-      }
+    if (password.replace(/[^0-9]/g, '').length < 1) {
+      pwErrorLst.push(' 1 number');
+    }
 
-      if (
-        password.replace(/[^!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, '').length <
-        1
-      ) {
-        pwErrorLst.push(' 1 symbol');
-      }
+    if (
+      password.replace(/[^!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, '').length <
+      1
+    ) {
+      pwErrorLst.push(' 1 symbol');
     }
 
     if (errorLst.length || pwErrorLst.length) {
@@ -185,29 +181,29 @@ export default function SignupForm() {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: jwt,
     },
     body: JSON.stringify({
       name: formInfo.name,
       gender: formInfo.gender,
       email: formInfo.email,
-      ...(roleID === 0 && { password: password }),
+      password,
       phone: formInfo.phone,
       applicant_dob: formInfo.applicant_dob,
       street_name: formInfo.street_name,
       city: formInfo.city,
       province: formInfo.province,
-      ...(roleID === 1 && {
+      ...(roleID === 0 && {
         income: veteranInfo.income,
         demographic: veteranInfo.demographic,
       }),
       referral: formInfo.referral,
-      curr: formInfo.curr,
+      curr_level: formInfo.curr,
+      jwt,
     }),
   };
 
   function pushInfo() {
-    fetch(`http://localhost:3000/signup`, requestOptions)
+    fetch(`http://localhost:3000/api/signup`, requestOptions)
       .then((resp) => resp.json())
       .then((resp) => {
         if (resp.success) {
@@ -306,17 +302,17 @@ export default function SignupForm() {
           onChange={handleFormChange}
         >
           <FormControlLabel
-            value="female"
+            value="F"
             control={<Radio required={true} />}
             label="Female"
           />
           <FormControlLabel
-            value="male"
+            value="M"
             control={<Radio required={true} />}
             label="Male"
           />
           <FormControlLabel
-            value="other"
+            value="O"
             control={<Radio required={true} />}
             label="Other"
           />
@@ -334,7 +330,6 @@ export default function SignupForm() {
         }}
       />
 
-      {roleID === 0 ? (
         <TextField
           required
           label="Password"
@@ -346,7 +341,6 @@ export default function SignupForm() {
             mt: '25px',
           }}
         />
-      ) : null}
 
       <Box>
         <TextField
@@ -428,7 +422,7 @@ export default function SignupForm() {
         </FormControl>
       </Box>
 
-      {roleID === 1 ? (
+      {roleID === 0 ? (
         <Box
           sx={{
             width: '100%',
