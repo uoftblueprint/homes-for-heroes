@@ -28,19 +28,22 @@ const authController = {
       } = req.body;
       const { id } = verifyEmailJWT(jwt);
       const user = await Customer.getById(id);
-      await user.update(name, phone, email);
-      await user.updateUserInfo({
-        gender,
-        applicant_dob,
-        street_name,
-        curr_level,
-        city,
-        province,
-        referral,
-      });
-      await user.changePassword(password);
-      await Customer.verify(id);
-      res.send({ success: true });
+      if(!user.verified) {
+        await user.update(name, phone, email);
+        await user.updateUserInfo({
+          gender,
+          applicant_dob,
+          street_name,
+          curr_level,
+          city,
+          province,
+          referral,
+        });
+        await user.changePassword(password);
+        await Customer.verify(id);
+        res.send({ success: true });
+      } else
+        next(new Error('User is already signed up'));
     } catch (err) {
       next(err);
     }
@@ -50,7 +53,10 @@ const authController = {
       const { jwt } = req.params;
       const { id } = verifyEmailJWT(jwt);
       const user = await Customer.getById(id);
-      res.send({ role_id: user.role_id });
+      if(!user.verified)
+        res.send({ role_id: user.role_id });
+      else
+        next(new Error('User is already signed up'));
     } catch (err) {
       next(err);
     }
