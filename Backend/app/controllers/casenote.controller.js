@@ -32,7 +32,7 @@ const caseNoteController = {
     try {
       const { case_id } = req.params;
       await CaseNote.deleteNote(case_id);
-      // res.send({ success: true });
+      res.send({ success: true });
     } catch (err) {
       // TODO error handling
       res.status(500);

@@ -130,11 +130,6 @@ export default function CaseCard() {
     setOpen(false);
   }
 
-  const handleAlertCase = () => {
-    setNoteOpen(true);
-    setCurrCaseId(alertCaseId);
-  };
-
   const addItem = () => {
     var nextKey = Object.keys(todo).length;
     let temp = [...todo, {"id": nextKey, "value": body}];
@@ -208,6 +203,14 @@ export default function CaseCard() {
         .then((res) => {
           setCaseNotes(res.cases);
         });
+      })
+      .then(() => {
+        fetch(`http://localhost:3000/customers/${id}/alertCase`)
+        .then((response) => response.json())
+        .then((caseNote) => setAlert(caseNote))
+        .catch((err) => {
+          console.error(err);
+        });
       });
     setNoteOpen(false);
   }
@@ -215,9 +218,16 @@ export default function CaseCard() {
   const deleteCase = (case_id) => {
     fetch(`http://localhost:3000/casenote/${case_id}`, deleteOptions)
       .then((response) => response.json())
-      .then((res) => {
-        console.log(res);
-    });
+      .then((res) => console.log(res))
+      .then(() => {
+        fetch(
+        `http://localhost:3000/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`
+        )
+        .then((response) => response.json())
+        .then((res) => {
+          setCaseNotes(res.cases);
+        });
+      });
   }
 
   return (
@@ -285,7 +295,7 @@ export default function CaseCard() {
               action={
                 <div>
                   <IconButton sx={{ marginLeft: "auto" }}>
-                    <EditIcon onClick={() => handleAlertCase()}/>
+                    <EditIcon onClick={() => editCaseNote(alert.case_id, alert.title, alert.notes)}/>
                   </IconButton>
                   <IconButton>
                     {alertOpen ? (
