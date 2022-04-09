@@ -1,7 +1,6 @@
 const admin = require('../controllers/admin.controller');
 const validationSchema = require('../validators/admin.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
-const adminController = require('../controllers/admin.controller');
 
 module.exports = (app) => {
   app.get('/admins/getAll', admin.listAll);
@@ -31,13 +30,13 @@ module.exports = (app) => {
     '/admins/:chapter/listByChapter',
     validationSchema.listChapterSupervisorsSchema,
     validationErrorHandler,
-    admin.getByChapter
+    admin.listByChapter
   );
 
   app.post(
     '/admins/createAdmin',
     validationSchema.createAdminSchema,
     validationErrorHandler,
-    adminController.createAdmin
+    admin.createAdmin
   );
 };
