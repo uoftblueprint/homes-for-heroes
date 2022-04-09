@@ -200,14 +200,15 @@ export default function ProfilePage({ user_id }) {
   const passwordRequestOptions = {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json-patch+json' },
-    body: [
-       {"op":"replace", "path":"/password", "value":passwords.new}
-    ]
+    body: {
+      oldPassword: passwords.old,
+      newPassword: passwords.new,
+    }
   };
 
   const changePassword = () => {
     console.log(passwordRequestOptions)
-    fetch('http://localhost:3000/changepassword', requestOptions)
+    fetch('http://localhost:3000/api/changePassword', requestOptions)
       .then(response => {
         if (response.status !== 200) {
           setPwErrorStr(response.error)
