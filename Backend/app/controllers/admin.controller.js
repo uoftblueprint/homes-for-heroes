@@ -1,4 +1,5 @@
 const Admin = require('../models/admin.model');
+const Chapter = require('../models/chapter.model');
 const logger = require('../logger');
 
 const adminController = {
