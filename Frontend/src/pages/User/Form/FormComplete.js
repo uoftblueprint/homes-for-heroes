@@ -11,7 +11,7 @@ import FormGridOptionView from "../../../components/form/FormGridOptionView";
 import Grid from "@mui/material/Grid";
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import QuestionType from "../../../components/form/QuestionType";
+import QuestionTypeAnswer from "../../../components/form/QuestionTypeAnswer";
 
 function FormComplete() {
 
@@ -67,7 +67,7 @@ function FormComplete() {
     }
 
     const renderView = (question) => {
-        const qTypeProperty = QuestionType(question.type);
+        const qTypeProperty = QuestionTypeAnswer(question.type);
         if ([3, 4, 5].includes(qTypeProperty.qType)) {
             return (
                 <Grid container direction="column">
