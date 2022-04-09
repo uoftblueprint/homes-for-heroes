@@ -1,20 +1,12 @@
-const sql = require('./db.js');
+const Admin = require('./admin.model');
 
 // constructor
-const Superadmin = function (body) {
-    this.name = body.name;
-    this.role_status = 2;
+const Superadmin = function () {
+  this.role_id = 2;
 };
 
 Superadmin.listAll = function() {
-    return new Promise(function (resolve, reject) {
-        sql.query('SELECT * FROM admin_users where role_id = 2', function (err, superadmins) {
-            if (err) reject (err);
-            else {
-                resolve(superadmins);
-            }
-        });
-    });
-}
+  return Admin.listAllRole(2);
+};
 
 module.exports = Superadmin;
