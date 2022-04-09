@@ -10,16 +10,31 @@ module.exports = (app) => {
     form.getCustomForm,
   );
 
+  app.put(
+    '/custom-Form/put/:form_id',
+    validationSchema.updateCustomFormSchema,
+    validationErrorHandler,
+    form.updateCustomForm,
+  );
+
+  app.get(
+    '/custom-Form/queryAllAdminForms',
+    validationErrorHandler,
+    form.queryAllAdminForms
+  );
+
   app.post(
     '/custom-form/createCustomForm',
     validationSchema.createCustomFormSchema,
     validationErrorHandler,
     form.createCustomForm,
   );
-  app.get(
-    '/custom-form/queryCustomForms',
-    validationSchema.queryCustomForms,
+
+  app.post(
+    '/custom-Form/publish',
+    validationSchema.publishFormSchema,
     validationErrorHandler,
-    form.queryCustomForms,
+    form.publishForm
   );
+
 };

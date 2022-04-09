@@ -5,16 +5,17 @@ import FormControl from "@mui/material/FormControl";
 import {
     FormControlLabel,
     FormGroup,
-    OutlinedInput,
-    Switch, Typography
+    Switch, TextField, Typography
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import IconButton from "@mui/material/Button";
 import OptionAdder from "./OptionAdder";
 import QuestionType from "./QuestionType";
 import QuestionTypeInput from "./QuestionTypeInput";
+import {useState} from "react";
+import validator from "validator";
 
-export default function FormQuestion(props) {
+function FormQuestion({id, question, updateQuestion, removeQuestion, setFormError}) {
     /**
      * EXPECTED PROPS
      * id: question index
@@ -23,39 +24,83 @@ export default function FormQuestion(props) {
      * disabled
      */
 
-    let question = props.question;
-    const qTypeProperty = QuestionType(props.question.type);
+    const qTypeProperty = QuestionType(question.type);
+    const [questionError, setQuestionError] = useState(false);
 
     const handleQTypeChange = (qType) => {
         question.type = qType;
-        props.updateQuestion(question, props.id);
+        updateQuestion(question, id);
     }
 
     const handleChangeQuestion = (e) => {
+        setQuestionError(validator.isEmpty(e.target.value));
+        setFormError(validator.isEmpty(e.target.value));
         question.question = e.target.value;
-        props.updateQuestion(question, props.id);
+        updateQuestion(question, id);
     }
 
     const handleChangeOptions = (options) => {
         question.options = options;
-        props.updateQuestion(question, props.id);
+        updateQuestion(question, id);
+    }
+
+    const handleChangeRows = (options) => {
+        question.rows = options;
+        updateQuestion(question, id);
     }
 
     const handleChangeRequired = (e) => {
         question.required = e.target.checked;
-        props.updateQuestion(question, props.id);
+        updateQuestion(question, id);
     }
 
     const renderQuestionOption = () => {
         if (qTypeProperty === undefined) return;
-        if (qTypeProperty.options !== null) {
-                return <OptionAdder
-                    choices={question.options}
-                    updateOptions={handleChangeOptions}
-                    control={qTypeProperty.options}
-                />
+        if ([3, 4, 5].includes(qTypeProperty.qType)) {
+            return <OptionAdder
+                choices={question.options}
+                updateOptions={handleChangeOptions}
+                control={qTypeProperty.options}
+                setFormError={setFormError}
+            />
+        } else if ([7, 8].includes(qTypeProperty.qType)) {
+            return (
+                <Grid container direction="row" spacing={12}>
+                    <Grid item>
+                        <Grid container direction="column" alignItems={'flex-start'}>
+                            <Grid item>
+                                <Typography sx={{mx: 2, fontSize: 18}}>Rows</Typography>
+                            </Grid>
+                            <Grid item>
+                                <OptionAdder
+                                    choices={question.rows}
+                                    updateOptions={handleChangeRows}
+                                    control={qTypeProperty.row_control}
+                                    setFormError={setFormError}
+                                />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Grid container direction="column" alignItems={'flex-start'}>
+                            <Grid item>
+                                <Typography sx={{mx: 2, fontSize: 18}}>Columns</Typography>
+                            </Grid>
+                            <Grid>
+                                <OptionAdder
+                                    choices={question.options}
+                                    updateOptions={handleChangeOptions}
+                                    control={qTypeProperty.options}
+                                    setFormError={setFormError}
+                                />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            )
         } else {
-            return qTypeProperty.view || '';
+            if (!qTypeProperty.view) return '';
+            return <qTypeProperty.view {...qTypeProperty.viewProps} /> || '';
         }
     }
 
@@ -74,9 +119,11 @@ export default function FormQuestion(props) {
             <Box sx={{ display: 'flex', border: '1px solid black', p:5 }}>
                 <FormGroup>
                     <FormControl sx={{mb: 1}}>
-                        <OutlinedInput
+                        <TextField
                             placeholder="Question"
                             value={question.question}
+                            error={questionError}
+                            helperText={questionError ? 'Question cannot be empty': ''}
                             name="question"
                             onChange={handleChangeQuestion}
                         />
@@ -87,7 +134,7 @@ export default function FormQuestion(props) {
             <Box sx={{ display: 'flex', border: '1px solid black', p:1 }}>
                 <Grid container justifyContent="flex-end">
                     <Grid item>
-                        <IconButton aria-label="remove" onClick={() => props.removeQuestion(props.id)}>
+                        <IconButton aria-label="remove" onClick={() => {removeQuestion(id)}}>
                             <DeleteIcon />
                         </IconButton>
                     </Grid>
@@ -107,3 +154,5 @@ export default function FormQuestion(props) {
         </Grid>
     )
 }
+
+export default FormQuestion;

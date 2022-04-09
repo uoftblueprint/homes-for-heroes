@@ -22,6 +22,6 @@
     "lint:fix": "eslint --fix .",
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc.json",
     "pm2:delete": "pm2 delete ecosystem.config.js",
-    "pm2:start": "npm run pm2:delete && pm2 start ecosystem.config.js"
+    "pm2:start": "npm run pm2:delete && cp ./Backend/.env .env && pm2 start ecosystem.config.js"
   }
 }
