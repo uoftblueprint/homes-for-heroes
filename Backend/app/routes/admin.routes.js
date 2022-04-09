@@ -26,13 +26,13 @@ module.exports = (app) => {
     validationErrorHandler,
     admin.assignChapter
   );
-
-  //app.get(
-  //  '/admins/:chapter/listByChapter',
-  //  validationSchema.listChapterSupervisorsSchema,
-  //  validationErrorHandler,
-  //  admin.listByChapter
-  //);
+  
+  app.get(
+    '/admins/:chapter/listByChapter',
+    validationSchema.listChapterSupervisorsSchema,
+    validationErrorHandler,
+    admin.listByChapter
+  );
 
   app.post(
     '/admins/createAdmin',
