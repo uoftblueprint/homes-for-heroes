@@ -1,7 +1,6 @@
 import './App.css';
 
 import NavBar from './components/NavBar';
-import Signup from './components/Signup.jsx';
 import FormTop from './pages/User/Form/FormTop.js';
 import FormCreate from "./pages/User/Form/FormCreate";
 import FormView from "./pages/User/Form/FormView";
