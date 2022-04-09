@@ -11,7 +11,7 @@ const validationSchema = {
       .isDate({ format: 'YYYY-MM-DD' })
       .withMessage('start_date must be in format YYYY-MM-DD'),
     body('street_name').isString().isLength({ max: 255 }),
-    body('curr_level').isString().isLength({ max: 255 }), // Do we want to let the user set this??
+    body('curr_level').isInt(), // Do we want to let the user set this??
     // TODO: Maybe force these two to be enums?
     body('city').isString().isLength({ max: 255 }),
     body('province').isString().isLength({ min: 2, max: 3 }),
