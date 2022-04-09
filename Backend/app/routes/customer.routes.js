@@ -34,6 +34,13 @@ module.exports = (app) => {
     customers.getAlertCase,
   );
 
+  app.get(
+    '/customers/:user_id/alertCaseID',
+    validationSchema.getAlertCaseIDSchema,
+    validationErrorHandler,
+    customers.getAlertCaseID,
+  );
+
   app.put(
     '/customers/:user_id/alertCase',
     validationSchema.setAlertCaseSchema,
@@ -61,7 +68,7 @@ module.exports = (app) => {
     validationErrorHandler,
     customers.getToDo
   );
-  app.put(
+  app.post(
     '/updateToDo/:user_id',
     validationSchema.putToDoSchema,
     validationErrorHandler,

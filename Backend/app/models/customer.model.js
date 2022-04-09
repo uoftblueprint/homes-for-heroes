@@ -238,17 +238,6 @@ Customer.updateToDo = function(user_id, todo) {
   });
 };
 
-// Customer.deleteToDo = function(user_id) {
-//   return new Promise((resolve, reject) => {
-//       sql.query("SELECT * FROM cases WHERE user_id = ? AND date(last_update) between ? and ?", 
-//       [user_id, start_date, end_date],
-//       function(err, cases) {
-//           if (err) reject(err);
-//           resolve(cases);
-//       });
-//   });
-// };
-
 Customer.getUserInfoCSV = function (
   client_name,
   email,

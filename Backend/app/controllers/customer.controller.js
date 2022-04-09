@@ -32,6 +32,15 @@ const customerController = {
       next(err);
     }
   },
+  async getAlertCaseID(req, res, next) {
+    try {
+      const { user_id } = req.params;
+      const alert_case_id = await Customer.getAlertCaseId(user_id);
+      res.send({ id : alert_case_id });
+    } catch (err) {
+      next(err);
+    }
+  },
   async setAlertCase(req, res, next) {
     try {
       const { user_id } = req.params;
@@ -63,7 +72,7 @@ const customerController = {
     try {
       const { user_id } = req.params;
       const todo = await Customer.getToDo(user_id);
-      res.send({ todo: todo });
+      res.send({ payload: todo });
       logger.info('Retrieved to-do successfully.');
     } catch (err) {
       next(err);
@@ -80,9 +89,6 @@ const customerController = {
       next(err);
     }
   },
-  // async deleteToDo(req, res, next) {
-
-  // },
   async putUserInfo(req, res, next) {
     try {
       const user_info = req.body;

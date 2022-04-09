@@ -19,8 +19,8 @@ const caseNoteController = {
   async update(req, res) {
     try {
       const { case_id } = req.params;
-      const { new_note } = req.query;
-      await CaseNote.updateNote(case_id, new_note);
+      const { new_note, new_title } = req.query;
+      await CaseNote.updateNote(case_id, new_note, new_title);
       res.send({ new_note: new_note });
     } catch (err) {
       // TODO error handling

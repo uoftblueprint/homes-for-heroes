@@ -45,11 +45,11 @@ CaseNote.getById = function (case_id) {
   });
 };
 
-CaseNote.updateNote = function (case_id, new_note) {
+CaseNote.updateNote = function (case_id, new_note, new_title) {
   return new Promise((resolve, reject) => {
     sql.query(
-      'UPDATE cases SET notes = ? WHERE case_id = ?',
-      [new_note, case_id],
+      'UPDATE cases SET notes = ?, title = ? WHERE case_id = ?',
+      [new_note, new_title, case_id],
       (err, result) => {
         if (err) reject(err);
         else resolve(result.case_id);      

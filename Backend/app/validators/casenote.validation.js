@@ -9,6 +9,7 @@ const validationSchema = {
   putSchema: [
     param('case_id').isInt({ min: 0 }).withMessage('Invalid case_id'),
     query('new_note').isString().isLength({ min: 1 }).withMessage('Invalid new note'),
+    query('new_title').isString().isLength({ min: 1 }).withMessage('Invalid new title'),
   ],
   deleteSchema: [
     param('case_id').isInt({ min: 0 }).withMessage('Invalid case_id'),

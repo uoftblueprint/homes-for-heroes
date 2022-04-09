@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS client_users (
     verified BOOLEAN NOT NULL,
     oauth BOOLEAN NOT NULL,
     alert_case_id INT UNIQUE,
+    todo JSON NOT NULL,
     PRIMARY KEY (user_id),
     FOREIGN KEY (alert_case_id)
     REFERENCES cases(case_id)

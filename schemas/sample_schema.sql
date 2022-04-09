@@ -115,9 +115,9 @@ INSERT INTO cases VALUES
 (3, 2, 'Alert Case Note 3', 0, NULL, now(), 3);
 
 INSERT INTO client_users VALUES 
-(1, "Abby C", "abby2@gmail.com", "905456", "password2", 'Toronto', 'Montreal', TRUE, FALSE, 1), 
-(2, "Sarah F", "sarah@outlook.com", "416123", "password3", 'Montreal', 'New York', TRUE, FALSE, 2), 
-(3, "Alex P", "alexp@outlook.com", "416416", "password4", 'Toronto', 'Moncton', TRUE, FALSE, 3);
+(1, "Abby C", "abby2@gmail.com", "905456", "password2", 'Toronto', 'Montreal', TRUE, FALSE, 1, '{"notes": []}'), 
+(2, "Sarah F", "sarah@outlook.com", "416123", "password3", 'Montreal', 'New York', TRUE, FALSE, 2, '{"notes": []}'), 
+(3, "Alex P", "alexp@outlook.com", "416416", "password4", 'Toronto', 'Moncton', TRUE, FALSE, 3, '{"notes": []}');
 
 
 INSERT INTO UserInfo VALUES 

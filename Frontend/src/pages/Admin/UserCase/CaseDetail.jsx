@@ -37,7 +37,6 @@ import DateRangeIcon from '@mui/icons-material/DateRange';
 import CreateIcon from '@mui/icons-material/Create';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-
 export default function CaseCard() {
   let { id } = useParams();
   const history = useHistory();
@@ -47,13 +46,17 @@ export default function CaseCard() {
   const [alertOpen, setAlertOpen] = useState(false);
 
   const [checked, setChecked] = useState([0]);
-  const [todoList, setTodoList] = useState([]);
+  const [todo, setTodo] = useState([]);
 
   const [open, setOpen] = useState(false);
   const [body, setBody] = useState('');
+  const [title, setTitle] = useState('');
   const [noteOpen, setNoteOpen] = useState(false);
   const [newNote, setNewNote] = useState('');
   const [currCaseId, setCurrCaseId] = useState(0);
+  const [currTitle, setCurrTitle] = useState('');
+  const [currBody, setCurrBody] = useState('');
+  const [alertCaseId, setAlertCaseId] = useState(0);
 
   const [view, setView] = useState(4);
 
@@ -76,12 +79,17 @@ export default function CaseCard() {
     headers: { 'Content-Type': 'application/json' }
   };
 
-  const createToDoInput = (new_item) => {
-    var lastKey = Object.keys(todoList)[Object.keys(todoList).length - 1];
-    todoList[lastKey + 1] = new_item;
-  }
+  const postOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+  };
 
   useEffect(() => {
+    fetch(`http://localhost:3000/getToDo/${id}`)
+      .then((response) => response.json())
+      .then((res) => {
+        setTodo(res.payload[0].todo.notes);
+      });
     fetch(
       `http://localhost:3000/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`
       )
@@ -89,6 +97,9 @@ export default function CaseCard() {
       .then((res) => {
         setCaseNotes(res.cases);
       });
+  }, [])
+
+  useEffect(() => {
     fetch(`http://localhost:3000/getCustomerInfo/${id}/`)
       .then((response) => response.json())
       .then((res) => {
@@ -100,23 +111,15 @@ export default function CaseCard() {
       .catch((err) => {
         console.error(err);
       });
+    fetch(`http://localhost:3000/customers/${id}/alertCaseID`)
+      .then((response) => response.json())
+      .then((res) => {
+        setAlertCaseId(res.id);
+      });
   }, [id]);
 
   const handleChangeView = (event) => {
     setView(event.target.value);
-  };
-
-  const handleToggle = (value) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setChecked(newChecked);
   };
 
   const handleOpen = () => {
@@ -127,50 +130,84 @@ export default function CaseCard() {
     setOpen(false);
   }
 
+  const handleAlertCase = () => {
+    setNoteOpen(true);
+    setCurrCaseId(alertCaseId);
+  };
+
   const addItem = () => {
-    const temp = todoList.concat(body);
-    setTodoList(temp);
+    var nextKey = Object.keys(todo).length;
+    let temp = [...todo, {"id": nextKey, "value": body}];
+    let payload = JSON.stringify({notes: temp});
+    fetch(`http://localhost:3000/updateToDo/${id}?todo=${payload}`, postOptions)
+    .then((response) => response.json());
+    setTodo(temp);
     handleClose();
   }
+
+  const handleToggle = (value) => () => {
+    const newChecked = [...checked];
+
+    var toggledItemIndex = todo.findIndex(object => {
+      return object.id === value;
+    });
+    todo.splice(toggledItemIndex, 1)
+    
+    let payload = JSON.stringify({notes: todo});
+    fetch(`http://localhost:3000/updateToDo/${id}?todo=${payload}`, postOptions)
+    .then((response) => response.json());
+
+    setChecked(newChecked);
+  };
+
+    const captureTitle = (e) => {
+      e.preventDefault();
+      setTitle(e.target.value);
+    };
 
   const captureBody = (e) => {
     e.preventDefault();
     setBody(e.target.value);
   };
 
-  const filterCases = (posts, query) => {
-    if (!query) {
-      return posts;
-    }
+  const filterNotes = (posts) => {
+    // if (!query) {
+    //   return posts;
+    // }
 
+    // return posts.filter((post) => {
+    //   return post.name.includes(query);
+    // });
     return posts.filter((post) => {
-      return post.name.includes(query);
+      return post.case_id !== alertCaseId;
     });
   };
-
-  // const getToDo = (case_id) => {
-  //   fetch(`http://localhost:3000/getToDo/${case_id}`, getOptions)
-  //     .then((response) => response.json())
-  //     .then((res) => {
-  //       setTodoList(res);
-  //     });
-  // }
 
   const captureNote = (e) => {
     e.preventDefault();
     setNewNote(e.target.value);
   };
 
-  const editCaseNote = (case_id) => {
+  const editCaseNote = (case_id, title, notes) => {
     setNoteOpen(true);
     setCurrCaseId(case_id);
+    setCurrBody(notes);
+    setCurrTitle(title);
+    setTitle(title);
   }
 
   const updateCaseNote = () => {
-    fetch(`http://localhost:3000/casenote/${currCaseId}/update?new_note=${newNote}`, updateOptions)
+    fetch(`http://localhost:3000/casenote/${currCaseId}/update?new_note=${newNote}&new_title=${title}`, updateOptions)
       .then((response) => response.json())
-      .then((res) => {
-        console.log(res);
+      .then((res) => console.log(res))
+      .then(() => {
+        fetch(
+        `http://localhost:3000/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`
+        )
+        .then((response) => response.json())
+        .then((res) => {
+          setCaseNotes(res.cases);
+        });
       });
     setNoteOpen(false);
   }
@@ -180,7 +217,7 @@ export default function CaseCard() {
       .then((response) => response.json())
       .then((res) => {
         console.log(res);
-      });
+    });
   }
 
   return (
@@ -248,7 +285,7 @@ export default function CaseCard() {
               action={
                 <div>
                   <IconButton sx={{ marginLeft: "auto" }}>
-                    <EditIcon />
+                    <EditIcon onClick={() => handleAlertCase()}/>
                   </IconButton>
                   <IconButton>
                     {alertOpen ? (
@@ -261,9 +298,9 @@ export default function CaseCard() {
               }
             >
               <AlertTitle>
-                {" "}
-                Alert created at {alert.last_update} by this admin
+                {alert.title}
               </AlertTitle>
+              Alert created at {alert.last_update} by this admin.<br/>
               {alert.notes}
             </Alert>
           </Grid>
@@ -296,27 +333,27 @@ export default function CaseCard() {
               <Typography variant="h6">{curr.name}'s To-Do list:</Typography>
               <Button onClick={handleOpen} startIcon={<AddIcon />}>Add Item</Button>
               <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                {todoList.map((value) => {
-                  const labelId = `checkbox-list-label-${value}`;
+                {todo.map(item => {
+                  const labelId = `checkbox-list-label-${item.value}`;
                   return (
                     <ListItem
-                      key={value}
+                      key={item.id}
                       secondaryAction={
                         <IconButton edge="end" aria-label="comments" />
                       }
                       disablePadding
                     >
-                      <ListItemButton role={undefined} onClick={handleToggle(value)} dense>
+                      <ListItemButton role={undefined} onClick={handleToggle(item.id)} dense>
                         <ListItemIcon>
                           <Checkbox
                             edge="start"
-                            checked={checked.indexOf(value) !== -1}
+                            checked={checked.indexOf(item.value) !== -1}
                             tabIndex={-1}
                             disableRipple
                             inputProps={{ 'aria-labelledby': labelId }}
                           />
                         </ListItemIcon>
-                        <ListItemText id={labelId} primary={value} />
+                        <ListItemText id={labelId} primary={item.value} />
                       </ListItemButton>
                     </ListItem>
                   );
@@ -348,7 +385,19 @@ export default function CaseCard() {
         PaperProps={{ sx: { width: '50%', height: '50%' } }}
         >
           <DialogContent>
-          <TextField
+            <TextField
+            autoFocus
+            margin="dense"
+            label="Edit Title"
+            minRows={1}
+            maxRows={1}
+            type="notes"
+            fullWidth
+            variant="standard"
+            onChange={captureTitle}
+            defaultValue={currTitle}
+            />
+            <TextField
               autoFocus
               margin="dense"
               id="editeNotes"
@@ -360,50 +409,65 @@ export default function CaseCard() {
               fullWidth
               variant="standard"
               onChange={captureNote}
+              defaultValue={currBody}
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={updateCaseNote}>Edit Case Note</Button>
           </DialogActions>
        </Dialog>
+       <Dialog
+          open={open}
+          onClose={handleClose}
+          PaperProps={{ sx: { width: '50%', height: '50%' } }}
+          >
+          <DialogContent>
+            <TextField
+            autoFocus
+            margin="dense"
+            label="Edit Note"
+            multiline
+            minRows={15}
+            maxRows={50}
+            type="notes"
+            fullWidth
+            variant="standard"
+            onChange={captureBody}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={addItem}>Submit Changes</Button>
+          </DialogActions>
+        </Dialog>
       <Grid item xs={12}>
-        {caseNotes.map((item, index) => (
+        {filterNotes(caseNotes).map((item, index) => (
           <Accordion index={index}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <Typography noWrap >{item.title}</Typography>
-              <PersonIcon sx={{marginLeft: "5px"}}/>
-              <Typography variant="subtitle2" sx={{ marginLeft: "5px", WebkitLineClamp: 1}}>ADMIN</Typography>
-              <DateRangeIcon sx={{ marginLeft: "5px" }}/>
-              <Typography variant="subtitle2" sx={{ marginLeft: "5px", WebkitLineClamp: 1 }}>{new Date(item.last_update).toISOString().slice(0, 10)}</Typography>
-              <Dialog
-              open={open}
-              onClose={handleClose}
-              PaperProps={{ sx: { width: '50%', height: '50%' } }}
-              >
-              <DialogContent>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  label="Edit Note"
-                  multiline
-                  minRows={15}
-                  maxRows={50}
-                  type="notes"
-                  fullWidth
-                  variant="standard"
-                  onChange={captureBody}
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={addItem}>Submit Changes</Button>
-              </DialogActions>
-              </Dialog>
-              <Button onClick={() => editCaseNote(item.case_id)} sx={{ marginLeft : "800px" }} startIcon={<CreateIcon />}>Edit Note</Button>
-              <Button onClick={() => deleteCase(item.case_id)} sx={{ float: "right" }} startIcon={<DeleteIcon />}>Delete Note</Button>
+              <Grid container spacing={0} alignItems="center" display='flex' direction="row" justifyContent="flex-start">
+                <Grid item xs={2}>
+                  <Typography noWrap >{item.title}</Typography>
+                </Grid>
+                <Grid item xs={1} container display='flex' direction="row" >
+                  <PersonIcon sx={{}}/>
+                  <Typography variant="subtitle2" sx={{ WebkitLineClamp: 1}}>ADMIN</Typography>
+                </Grid>
+                <Grid item xs={2} container display='flex' direction="row">
+                  <DateRangeIcon sx={{  }}/>
+                  <Typography variant="subtitle2" sx={{WebkitLineClamp: 1 }}>{new Date(item.last_update).toISOString().slice(0, 10)}</Typography>
+                </Grid>
+                <Grid item xs={7} container display='flex' direction="row" justifyContent="flex-end">
+                  <Grid item xs={3} >
+                    <Button onClick={() => editCaseNote(item.case_id, item.title, item.notes)} startIcon={<CreateIcon />}>Edit Note</Button>
+                  </Grid>
+                  <Grid item xs={3} >
+                    <Button onClick={() => deleteCase(item.case_id)} startIcon={<DeleteIcon />}>Delete Note</Button>
+                  </Grid>
+                </Grid>
+              </Grid>
             </AccordionSummary>
             <AccordionDetails>
               <Typography>{item.notes}</Typography>
