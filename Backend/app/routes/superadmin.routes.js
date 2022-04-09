@@ -1,5 +1,5 @@
-module.exports = app => {
-    const superadmins = require("../controllers/superadmin.controller");
-  
-    app.get('/superadmins/getAll', superadmins.getAll);
-  };
+const superadmins = require("../controllers/superadmin.controller");
+
+module.exports = (app) => {
+  app.get('/superadmins/getAll', superadmins.getAll);
+};

@@ -19,6 +19,7 @@ module.exports = (app) => {
     validationErrorHandler,
     admin.unsetSuperadmin
   );
+
   app.put(
     '/admins/:admin_id/assignChapter',
     validationSchema.assignChapterSchema,
@@ -26,12 +27,12 @@ module.exports = (app) => {
     admin.assignChapter
   );
 
-  app.get(
-    '/admins/:chapter/listByChapter',
-    validationSchema.listChapterSupervisorsSchema,
-    validationErrorHandler,
-    admin.listByChapter
-  );
+  //app.get(
+  //  '/admins/:chapter/listByChapter',
+  //  validationSchema.listChapterSupervisorsSchema,
+  //  validationErrorHandler,
+  //  admin.listByChapter
+  //);
 
   app.post(
     '/admins/createAdmin',
