@@ -136,7 +136,7 @@ export default function SignupForm() {
       errorLst.push(' phone number');
     }
 
-    if (!validator.isDate(applicant_dob)) {
+    if (!validator.isDate(applicant_dob, { format: 'YYYY-MM-DD' })) {
       errorLst.push(' date of birth');
     }
 
