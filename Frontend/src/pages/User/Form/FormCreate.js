@@ -29,6 +29,7 @@ function FormCreate() {
             title="Form Title"
             level={level}
             questions={[]}
+            answers={[]}
             saveDraft={createDraft}
             err={true}
         />
