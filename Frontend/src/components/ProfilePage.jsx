@@ -77,7 +77,7 @@ export default function ProfilePage({ user_id }) {
 
   function fetchInfo() {
     return new Promise((resolve) => {
-      fetch(`http://localhost:3000/getCustomerInfo/11`) // TODO: make sure to change to /api and use ${user_id} instead of 11
+      fetch(`http://localhost:3000/getCustomerInfo/2`) // TODO: make sure to change to /api and use ${user_id} instead of 11
         .then((resp) => resp.json())
         .then((data) => resolve(data));
     });
@@ -168,7 +168,7 @@ export default function ProfilePage({ user_id }) {
   const changeInfo = () => {
     console.log(requestOptions);
     fetch(
-      'http://localhost:3000/updateCustomerProfile/11',
+      'http://localhost:3000/api/updateCustomerProfile/2',
       requestOptions,
     ).then((response) => response.json());
     setUserInfo({
@@ -199,24 +199,29 @@ export default function ProfilePage({ user_id }) {
     } else {
       setPwErrorStr('');
       changePassword();
+      // TODO: check for valid/strong password?
     }
   };
 
   const passwordRequestOptions = {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json-patch+json' },
-    body: [{ op: 'replace', path: '/password', value: passwords.new }],
+    body: {
+      oldPassword: passwords.old,
+      newPassword: passwords.new,
+    },
   };
 
   const changePassword = () => {
     console.log(passwordRequestOptions);
-    fetch('http://localhost:3000/changepassword', requestOptions).then(
-      (response) => {
-        if (response.status !== 200) {
-          setPwErrorStr(response.error);
-        }
-      },
-    );
+    fetch(
+      'http://localhost:3000/api/changePassword',
+      passwordRequestOptions,
+    ).then((response) => {
+      if (response.status !== 200) {
+        setPwErrorStr(response.error);
+      }
+    });
     // TODO - implement changing password
   };
 

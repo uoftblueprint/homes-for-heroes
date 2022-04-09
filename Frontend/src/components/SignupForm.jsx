@@ -66,14 +66,12 @@ export default function SignupForm() {
       } else {
         try {
           const data = await fetchPartners();
-          // const id = await fetchRoleID();
           setPartners(data['partners']);
-          // setRoleID(id['role_id']);
           const role_id = await fetchRoleID();
           setRoleID(role_id);
 
           setIsLoading(false);
-        } catch(err) {
+        } catch (err) {
           setErrorStr(err);
         }
       }
@@ -157,8 +155,7 @@ export default function SignupForm() {
     }
 
     if (
-      password.replace(/[^!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, '').length <
-      1
+      password.replace(/[^!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, '').length < 1
     ) {
       pwErrorLst.push(' 1 symbol');
     }
@@ -330,17 +327,17 @@ export default function SignupForm() {
         }}
       />
 
-        <TextField
-          required
-          label="Password"
-          name="password"
-          type="password"
-          value={password}
-          onChange={handleAdminPasswordChange}
-          sx={{
-            mt: '25px',
-          }}
-        />
+      <TextField
+        required
+        label="Password"
+        name="password"
+        type="password"
+        value={password}
+        onChange={handleAdminPasswordChange}
+        sx={{
+          mt: '25px',
+        }}
+      />
 
       <Box>
         <TextField
