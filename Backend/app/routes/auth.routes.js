@@ -3,12 +3,20 @@ const validationSchema = require('../validators/auth.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
 
 module.exports = (app, passport) => {
-  // app.post(
-  //   '/signup',
-  //   validationSchema.signUpSchema,
-  //   validationErrorHandler,
-  //   authController.signUp,
-  // );
+
+  app.post(
+    '/signup',
+    validationSchema.signUpSchema,
+    validationErrorHandler,
+    authController.signUp,
+  );
+
+  app.get(
+    '/checkJWT/:jwt',
+    validationSchema.checkJWT,
+    validationErrorHandler,
+    authController.checkJWT,
+  );
 
   app.post(
     '/login',
