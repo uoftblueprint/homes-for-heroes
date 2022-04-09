@@ -13,6 +13,13 @@ const validationSchema = {
     query('page').isInt({ min: 0 }),
     query('page_size').isInt({ min: 0 }),
   ],
+  updateInfoSchema: [
+    body('*.org_name').optional(),
+    body('*.city').optional(),
+    body('*.address').optional(),
+    body('*.village').optional(),
+    body('*.phone').optional(),
+  ],
 };
 
 module.exports = validationSchema;

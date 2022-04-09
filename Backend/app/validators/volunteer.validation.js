@@ -14,6 +14,13 @@ const validationSchema = {
     query('page').isInt({ min: 0 }),
     query('page_size').isInt({ min: 0 }),
   ],
+  updateInfoSchema: [
+    body('*.name').optional(),
+    body('*.village').optional(),
+    body('*.date_joined').optional(),
+    body('*.role').optional(),
+    body('*.phone').optional(),
+  ],
 };
 
 module.exports = validationSchema;

@@ -34,7 +34,22 @@ const supporterController = {
             res.status(500);
             res.send({ error: err });
         }
-    }
+    },
+
+    async updateInfo(req, res) {
+        try {
+            for (var key in req.body) {
+                if (req.body.hasOwnProperty(key)) {
+                    await Supporter.updateInfo(key, req.body[key]);
+                }
+            }
+            res.json({ success: true });
+        } catch (err) {
+            console.error(err);
+            res.status(500);
+            res.send({ error: err });
+        }
+    },
 };
 
 module.exports = supporterController;

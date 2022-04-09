@@ -54,6 +54,7 @@ const customerController = {
   
   async getUserData(req, res, next) {
     try {
+      console.log(req.query)
       const user_data = await Customer.queryUserData(req.query);
       res.send(user_data);
     } catch (err) {
@@ -69,7 +70,7 @@ const customerController = {
     } catch (err) {
       next(err);
     }
-  },
+  }, 
 
   async getUserInfoCSV(req, res, next) {
     try {
@@ -99,6 +100,20 @@ const customerController = {
       next(err);
     }
   },
+  async updateUserInfo(req, res) {
+    try {
+      for (var key in req.body) {
+        if (req.body.hasOwnProperty(key)) {
+          await Customer.updateUserInfo(key, req.body[key]);
+        }
+      }
+      res.json({ success: true });
+    } catch (err) {
+      console.error(err);
+      res.status(500);
+      res.send({ error: err });
+    }
+  },  
 };
 
 module.exports = customerController;

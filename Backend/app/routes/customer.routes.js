@@ -41,12 +41,12 @@ module.exports = (app) => {
     customers.setAlertCase,
   );
 
-  app.put(
-    '/userinfo',
-    isAuthenticated,
-    validationSchema.putUserInfoSchema,
+  app.post(
+    '/updateUserInfo',
+    // isAuthenticated,
+    validationSchema.updateUserInfoSchema,
     validationErrorHandler,
-    customers.putUserInfo,
+    customers.updateUserInfo,
   );
 
   app.get(

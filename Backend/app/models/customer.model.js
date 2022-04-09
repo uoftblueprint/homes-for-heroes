@@ -73,6 +73,9 @@ Customer.createOAuth = function (name, email) {
           sql.query('SELECT LAST_INSERT_ID() as user_id', (err, rows) => {
             if (err) reject(err);
             else {
+              sql.query(
+                'INSERT INTO UserInfo ('
+              )
               // eslint-disable-next-line prefer-destructuring
               const [ user_id ] = rows[0];
               resolve(
@@ -265,7 +268,10 @@ Customer.queryUserData = function (query_params) {
   return new Promise((resolve, reject) => {
     const q = new CustomerQueryData(query_params);
     q.constructQuery();
-    const page_query =`SELECT COUNT(*) AS count FROM client_users AS client ${q.query}`
+    const page_query =`SELECT COUNT(*) AS count FROM client_users AS client 
+     LEFT JOIN UserInfo AS info ON info.user_id = client.user_id
+     LEFT JOIN NextKin AS kin ON kin.user_id = client.user_id
+     ${q.query}`
     const data_query = ` 
     SELECT
       client.user_id, client.name, client.email, client.verified,
@@ -278,10 +284,6 @@ Customer.queryUserData = function (query_params) {
     ORDER BY client.name
     LIMIT ${q.offset}, ${q.limit}
     `;
-    sql.query(data_query, (err, row) => {
-      if (err) reject(err);
-      page_count = row
-    }); 
     sql.query(page_query, (error, page) => { 
       if (error) reject(error);
       sql.query(data_query, (err, row) => {
@@ -292,4 +294,21 @@ Customer.queryUserData = function (query_params) {
   });
 };
 
+Customer.updateUserInfo = function (user_id, query_params) {
+  return new Promise((resolve, reject) => {
+    const q = new CustomerQueryData(query_params);
+    q.constructEditQuery();
+    const data_query = `   
+    UPDATE client_users AS client
+      LEFT JOIN UserInfo AS info ON info.user_id = client.user_id
+      LEFT JOIN NextKin AS kin ON kin.user_id = client.user_id
+    ${q.query}
+    WHERE client.user_id = ${user_id} 
+    `;
+    sql.query(data_query, (error, info) => { 
+      if (error) reject(error); 
+        resolve(info)
+    });
+  });
+};
 module.exports = Customer;

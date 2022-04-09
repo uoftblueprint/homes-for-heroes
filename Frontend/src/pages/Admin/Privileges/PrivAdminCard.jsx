@@ -165,7 +165,7 @@ export default function PrivAdminCard() {
     <Card sx={{ maxWidth: 385, mt: "40px", mr: "30px", border: 1 }}>
       <CardContent>
         <Grid container display="flex" direction="row" justify="space-evenly">
-          <Typography>System Admins</Typography>
+          <Typography>Superadmins</Typography>
           <Button
             size="small"
             onClick={handleAdminOpen}
@@ -180,7 +180,7 @@ export default function PrivAdminCard() {
           color="text.secondary"
           sx={{ textAlign: "left" }}
         >
-          System administrators have access to all areas of this application.
+          Superadministrators have access to all areas of this application.
           There must always be at least one.
         </Typography>
         {isLoading ? (

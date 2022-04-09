@@ -1,41 +1,40 @@
 import * as React from "react";
-
-import AddVolunteerModal from './AddVolunteerModal';
-
-import { DataGrid } from "@mui/x-data-grid";
-
+import { Prompt } from "react-router";
+import { DataGrid, GridToolbarContainer } from "@mui/x-data-grid";
 import { makeStyles } from "@mui/styles";
-
 import Grid from "@mui/material/Grid";
 import Pagination from "@mui/material/Pagination";
 import Card from "@mui/material/Card";
-import PaginationItem from "@mui/material/PaginationItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip"
-import Button from "@mui/material/Button";
-
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
+import Button from "@mui/material/Button";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import validator from "validator";
+
+import AddVolunteerModal from "./AddVolunteerModal.jsx";
+
+import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles({
   root: {
     marginTop: "10px",
-    border: 0, 
+    border: 0,
     alignContent: "flex-start",
     justifyContent: "flex-start",
     "& .MuiDataGrid-columnHeaderTitle": {
       fontSize: "small",
       marginTop: "5px",
-      marginLeft: "-5px",
       marginBottom: "10px",
     },
     "& .MuiDataGrid-columnHeaders": {
@@ -63,8 +62,9 @@ const useStyles = makeStyles({
 function exportCSV(searchParams) {
   let url = "http://localhost:3000/getUsersInfoCSV?";
 
-  searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
-  console.log(url);
+  searchParams.forEach(
+    (element) => (url += `&${element.name}=${element.value}`)
+  );
 
   fetch(url, {
     headers: {
@@ -88,7 +88,7 @@ function exportCSV(searchParams) {
 
 export default function VolunteerCRM({ tab }) {
   const classes = useStyles();
-
+  const [dialog, setDialog] = React.useState(false);
   const [pageSize, setPageSize] = React.useState(5);
   const [page, setPage] = React.useState(1);
   const [rows, setRows] = React.useState([]);
@@ -96,107 +96,263 @@ export default function VolunteerCRM({ tab }) {
   const [loading, setLoading] = React.useState(false);
   const [searchCategory, setSearchCategory] = React.useState("name");
   const [searchParams, setSearchParams] = React.useState([]);
-  const [cellValue, setCellValue] = React.useState('')
-  const [cellChanges, setCellChanges] = React.useState([])
-  const [dialog, toggleDialog] = React.useState(false);
-
-  function loadServerRows(searchParams, page, pageSize) {
-    if (tab === 1){
-  return new Promise((resolve) => {
-    let url = "http://localhost:3000/api/volunteers/getData?";
-
-    url += `page=${page}`;
-    url += `&page_size=${pageSize}`;
-    console.log(pageSize)
-    searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
-    console.log(url);
-
-    fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then((resp) => resp.json())
-      .then((resp) => {
-        if (resp.constructor === Array){
-          resolve(resp);
-        }
-        {
-          resolve([])
-        }
-      });
-    // resolve(data.slice((page-1) * pageSize, page * pageSize * 5))
-  });
-}
-}
+  const [cellValue, setCellValue] = React.useState("");
+  const [cellChanges, setCellChanges] = React.useState({});
+  const [highlightCells, updateHighlightCells] = React.useState([]);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   function handlePageSizeChange(value) {
     setPage(1);
     setPageSize(value);
+    setCellChanges({});
+    updateHighlightCells([]);
   }
 
-  const updateCell = (e) => {
-      console.log(e.value);
-      console.log(cellValue);
-      if (e.value !== cellValue) {
-        setCellChanges(prevArray => [...prevArray, e])
-      }
+  function loadServerRows(searchParams, page, pageSize, tab) {
+    if (tab === 1){
+      return new Promise((resolve) => {
+        let url = "http://localhost:3000/api/volunteers/getData?";
+
+        url += `page=${page}`;
+        url += `&page_size=${pageSize}`;
+        searchParams.forEach(
+          (element) => (url += `&${element.name}=${element.value}`)
+        );
+        fetch(url, {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        })
+          .then((resp) => resp.json())
+          .then((resp) => {
+            if (resp.constructor === Array) {
+              resolve(resp);
+            } else {
+              throw new Error();
+            }
+          })
+          .catch((e) => {
+            const action = (key) => (
+              <Grid>
+                <Button
+                  onClick={() => {
+                    window.location.reload();
+                  }}
+                >
+                  Refresh
+                </Button>
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    closeSnackbar(key);
+                  }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              </Grid>
+            );
+            enqueueSnackbar("Something went wrong", {
+              variant: "error",
+              autoHideDuration: 15000,
+              action,
+            });
+          });
+      });
+    }
   }
+
+  const changePage = (value) => {
+    if (Object.keys(cellChanges).length !== 0) {
+      if (
+        window.confirm(
+          "You have unapplied changes, would you like to continue?"
+        )
+      )
+        setPage(value);
+      setCellChanges({});
+      updateHighlightCells([]);
+    } else {
+      setPage(value);
+      setCellChanges({});
+      updateHighlightCells([]);
+    }
+  };
+
+  const validateUpdate = (params, event) => {
+    const action = (key) => (
+      <Grid>
+        <IconButton
+          aria-label="close"
+          color="inherit"
+          size="small"
+          onClick={() => {
+            closeSnackbar(key);
+          }}
+        >
+          <CloseIcon fontSize="inherit" />
+        </IconButton>
+      </Grid>
+    );
+
+    if (params.field === "name" && validator.isEmpty(cellValue)) {
+      event.defaultMuiPrevented = true;
+      enqueueSnackbar("Please enter a valid name!", {
+        variant: "error",
+        autoHideDuration: 15000,
+        action,
+      });
+    } else if (params.field === "village" && validator.isEmpty(cellValue)) {
+      event.defaultMuiPrevented = true;
+      enqueueSnackbar("Please enter a valid village!", {
+        variant: "error",
+        autoHideDuration: 15000,
+        action,
+      });
+    } else if (
+      params.field === "date_joined" &&
+      validator.isEmpty(cellValue)
+    ) {
+      event.defaultMuiPrevented = true;
+      enqueueSnackbar("Date cannot be empty!", {
+        variant: "error",
+        autoHideDuration: 15000,
+        action,
+      }); 
+    } else if (
+      params.field === "role" &&
+      validator.isEmpty(cellValue)
+    ) {
+      event.defaultMuiPrevented = true;
+      enqueueSnackbar("Please enter a valid role!", {
+        variant: "error",
+        autoHideDuration: 15000,
+        action,
+      }); 
+    } else if (
+      params.field === "phone" &&
+      !validator.isMobilePhone(cellValue)
+    ) {
+      event.defaultMuiPrevented = true;
+      enqueueSnackbar("Please enter a valid phone number!", {
+        variant: "error",
+        autoHideDuration: 15000,
+        action,
+      }); 
+    } else {
+      updateCellChanges(params.id, params.field, cellValue);
+      updateHighlightCells((prevArray) => [
+        ...prevArray,
+        { id: params.id, field: params.field },
+      ]);
+    }
+  };
+  const updateCellChanges = (id, field, value) => {
+    setCellChanges((prevObj) => ({
+      ...prevObj,
+      [id]: {
+        ...prevObj[id],
+        [field]: value,
+      },
+    }));
+  };
 
   const submitChanges = () => {
-    console.log(cellChanges)
-    setCellChanges([]);
-  }
+    setLoading(true);
+    const url = `http://localhost:3000/volunteers/updateInfo`;
 
-  const handleOpenModal = () => {
-    toggleDialog(true);
-  }
-
-    React.useEffect(() => {
-
-        let active = true;
-
-        (async () => {
-          setLoading(true);
-          const newRows = await loadServerRows(searchParams, page, pageSize);
-          if (!active) {
-            return;
-          }
-          setRows(newRows[1]);
-          setPageCount(Math.ceil(newRows[0].count / pageSize))
-          setCellChanges([]);
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(cellChanges),
+    })
+      .then((resp) => {
+        if (!resp.ok){
+          throw new Error(); 
+        }
+        {
+          updateHighlightCells([]);
+          setCellChanges({});
           setLoading(false);
-        })();
+        }
+      })
+      .catch((e) => {
+        const action = (key) => (
+          <Grid>
+            <Button
+              onClick={() => {
+                window.location.reload();
+              }}
+            >
+              Refresh
+            </Button>
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => {
+                closeSnackbar(key);
+              }}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          </Grid>
+        );
+        enqueueSnackbar("Something went wrong", {
+          variant: "error",
+          autoHideDuration: 15000,
+          action,
+        });
+      });
+  };
 
-        return () => {
-          active = false;
-        }; 
+  React.useEffect(() => {
+    let active = true;
+
+    (async () => {
+      setLoading(true);
+      const newRows = await loadServerRows(searchParams, page, pageSize, tab);
+      if (!active) {
+        return;
+      }
+      setRows(newRows[1]);
+      setPageCount(Math.ceil(newRows[0].count / pageSize));
+      setCellChanges({});
+      updateHighlightCells([]);
+      setLoading(false);
+    })();
+
+    return () => {
+      active = false;
+    };
   }, [searchParams, page, pageSize, dialog, tab]);
 
   return (
     <Card
       display="flex"
       direction="column"
-      sx={{ mt: '15px', boxShadow: 'None', minHeight: 1000, minWidth: 375, width: "100%", maxWidth: 1200 }}
+      sx={{
+        mt: "15px",
+        mb: "50px",
+        boxShadow: "None",
+        minHeight: 1000,
+        minWidth: 375,
+        width: "100%",
+        maxWidth: 1200,
+      }}
     >
-      <Grid
-        display='flex'
-        direction='row'
-        justifyContent='flex-end'
-      >
-        <Typography sx={{ fontSize: 48, mb: '1px', marginRight: "auto" }}>
-          Volunteers CRM
-        </Typography>
-        <Button sx={{ m: 1, height: '60px' }} variant="outlined" onClick={handleOpenModal}>
-          <AddOutlinedIcon />
-          Add Volunteer
-        </Button>
+      <Prompt
+        when={Object.keys(cellChanges).length !== 0}
+        message="You have unsaved changes, are you sure you want to leave?"
+      />
+      <Grid container display="flex" direction="row">
+        <Typography sx={{ fontSize: 48, mb: "1px" }}>Volunteer CRM</Typography>
       </Grid>
-      <Grid
-        display="flex"
-        direction="row"
-      >
+      <Grid display="flex">
         <Select
           value={searchCategory}
           onChange={(e) => setSearchCategory(e.target.value)}
@@ -206,100 +362,66 @@ export default function VolunteerCRM({ tab }) {
           <MenuItem value={"date_joined"}>Date Joined</MenuItem>
           <MenuItem value={"role"}>Role</MenuItem>
           <MenuItem value={"phone"}>Phone</MenuItem>
-      </Select>           
+        </Select>
         <TextField
           className={classes.SearchInputField}
           fullWidth
           variant="outlined"
-          placeholder="Search Volunteers"
+          placeholder="Search Supporters"
           name="search"
           type="text"
           InputProps={{
             startAdornment: <SearchIcon fontSize="small" />,
           }}
           onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              setSearchParams(arr => ([...arr, {
-                "name": searchCategory,
-                "value": e.target.value
-              }]));
-              e.target.value = ""
+            if (e.key === "Enter") {
+              setSearchParams((arr) => [
+                ...arr,
+                {
+                  name: searchCategory,
+                  value: e.target.value,
+                },
+              ]);
+              e.target.value = "";
+              setPage(1);
             }
           }}
         />
       </Grid>
-      <Grid
-        display="flex"
-        direction="row"
-      >
+      <Grid container display="flex" direction="row">
         {searchParams.map((param) => (
           <Chip
-            sx={{ m: '10px' }}
-            label={param.name + '=' + param.value}
-            onDelete={(e) => setSearchParams(arr => arr.filter(element => element !== param))}
+            sx={{ m: "10px" }}
+            label={param.name + "=" + param.value}
+            onDelete={(e) => {
+              setSearchParams((arr) =>
+                arr.filter((element) => element !== param)
+              );
+              setPage(1);
+            }}
           />
         ))}
       </Grid>
-      <Grid
-        container
-        display="flex"
-        direction="row"
-        alignItems="center"
-        justifyContent="flex-end"
-        sx={{ minWidth: 562 }}
-      >
-        <FormControl
-          variant="standard"
-          sx={{ textAlign: "left", m: 1, width: 200 }}
-        >
-          <Select
-            sx={{ color: "#0000008A" }}
-            value={pageSize}
-            label="Rows Per Page"
-            onChange={(e) => handlePageSizeChange(e.target.value)}
-            renderValue={(perPage) => `${perPage} per page`}
-          >
-            <MenuItem value={5}>5</MenuItem>
-            <MenuItem value={10}>10</MenuItem>
-            <MenuItem value={25}>25</MenuItem>
-          </Select>
-        </FormControl>
-        <Pagination
-          color="primary"
-          variant="outlined"
-          hideNextButton
-          hidePrevButton
-          siblingCount={1}
-          boundaryCount={1}
-          page={page}
-          count={pageCount}
-          renderItem={(props2) => <PaginationItem {...props2} />}
-          onChange={(event, value) => setPage(value)}
-        />
-        <IconButton onClick={page === 1 ? null : (e) => setPage(page - 1)}>
-          <ArrowBackIosNewIcon />
-        </IconButton>
 
-        <IconButton
-          onClick={page === pageCount ? null : (e) => setPage(page + 1)}
-        >
-          <ArrowForwardIosIcon />
-        </IconButton>
-        <Button onClick={() => exportCSV(searchParams)}>
-          Export as CSV
-          <FileDownloadIcon />
-        </Button>
-      </Grid>
       <Box
         sx={{
           height: 300,
           width: 1,
-          '& .hot': {
-            backgroundColor: '#C91C1C',
-            color: '#1a3e72',
+          "& .hot": {
+            backgroundColor: "#00FF00",
+            color: "#1a3e72",
           },
         }}
       >
+        <Box display="flex" sx={{ justifyContent: "center", mt: 1, border: 1 }}>
+          <Button
+            sx={{ fontWeight: 700 }}
+            onClick={submitChanges}
+            disabled={Object.keys(cellChanges).length === 0}
+          >
+            Apply Changes
+          </Button>
+        </Box>
         <DataGrid
           container
           autoHeight
@@ -307,21 +429,92 @@ export default function VolunteerCRM({ tab }) {
           direction="row"
           className={classes.root}
           pageSize={pageSize}
-          getRowId={row => row.volunteer_id}
+          getRowId={(row) => row.volunteer_id}
           rows={rows}
+          rowsPerPageOptions={[5, 10, 25]}
           loading={loading}
-          onCellEditStart={(event) => setCellValue(event.formattedValue)}
-          onCellEditCommit={updateCell}
+          onEditCellPropsChange={(params) => setCellValue(params.props.value)}
+          onCellEditStop={validateUpdate}
           getCellClassName={(params) => {
-            let bool = false;
-            cellChanges.forEach((item, key) => {
+            let hot = false;
+            highlightCells.forEach((item, key) => {
               if (params.field === item.field && params.id === item.id) {
-                bool = true;
+                hot = true;
               }
-            })
-            if (bool === true) {
-              return 'hot'
+            });
+            if (hot) {
+              return "hot";
             }
+          }}
+          components={{
+            Toolbar: () => {
+              return (
+                <GridToolbarContainer>
+                  <Grid
+                    container
+                    display="flex"
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="flex-end"
+                    sx={{ minWidth: 562 }}
+                  >
+                    <Button
+                      sx={{ marginRight: "auto" }}
+                      endIcon={<AddIcon />}
+                      onClick={() => setDialog(true)}
+                    >
+                      Add Volunteer 
+                    </Button>
+                    <FormControl
+                      variant="standard"
+                      sx={{ textAlign: "left", m: 1, width: 200 }}
+                    >
+                      <Select
+                        sx={{ color: "#0000008A" }}
+                        value={pageSize}
+                        label="Rows Per Page"
+                        onChange={(e) => handlePageSizeChange(e.target.value)}
+                        renderValue={(perPage) => `${perPage} per page`}
+                      >
+                        <MenuItem value={5}>5</MenuItem>
+                        <MenuItem value={10}>10</MenuItem>
+                        <MenuItem value={25}>25</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <Pagination
+                      color="primary"
+                      variant="outlined"
+                      hideNextButton
+                      hidePrevButton
+                      siblingCount={0}
+                      boundaryCount={1}
+                      page={page}
+                      count={pageCount}
+                      onChange={(event, value) => changePage(value)}
+                    />
+                    <IconButton
+                      onClick={page === 1 ? null : (e) => changePage(page - 1)}
+                    >
+                      <ArrowBackIosNewIcon />
+                    </IconButton>
+
+                    <IconButton
+                      onClick={
+                        page === pageCount ? null : (e) => changePage(page + 1)
+                      }
+                    >
+                      <ArrowForwardIosIcon />
+                    </IconButton>
+                    <Button
+                      endIcon={<FileDownloadIcon />}
+                      onClick={() => exportCSV(searchParams)}
+                    >
+                      Export as CSV
+                    </Button>
+                  </Grid>
+                </GridToolbarContainer>
+              );
+            },
           }}
           columns={[{
             editable: "true",
@@ -356,18 +549,7 @@ export default function VolunteerCRM({ tab }) {
           ]}
         />
       </Box>
-      <Grid
-        display='flex'
-      >
-        <Button
-          sx={{ marginLeft: 'auto' }}
-          onClick={submitChanges}
-          disabled={cellChanges.length === 0}
-        >
-          Apply Changes
-        </Button>
-      </Grid>
-      <AddVolunteerModal dialog={dialog} toggleDialog={toggleDialog} />
+      <AddVolunteerModal dialog={dialog} toggleDialog={setDialog} />
     </Card>
   );
 }

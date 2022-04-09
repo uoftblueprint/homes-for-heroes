@@ -15,13 +15,22 @@ const PartnerQueryData = function (query_params) {
   this.query = '';
 
   this.constructQuery = function () {
-    this.appendQueryParam(this.org_name, 'partners.org_name');
-    this.appendQueryParam(this.city, 'partners.city');
-    this.appendQueryParam(this.village, 'partners.village');
-    this.appendQueryParam(this.address, 'partners.address');
-    this.appendQueryParam(this.phone, 'partners.phone');
+    this.appendQueryParamKeyword(this.org_name, 'partners.org_name');
+    this.appendQueryParamKeyword(this.city, 'partners.city');
+    this.appendQueryParamKeyword(this.village, 'partners.village');
+    this.appendQueryParamKeyword(this.address, 'partners.address');
+    this.appendQueryParamKeyword(this.phone, 'partners.phone');
     this.query = this.query ? `WHERE ${this.query}` : this.query;
   };
+
+  this.constructEditQuery = function () {
+    this.appendUpdateParam(this.org_name, 'partners.org_name');
+    this.appendUpdateParam(this.city, 'partners.city');
+    this.appendUpdateParam(this.village, 'partners.village');
+    this.appendUpdateParam(this.address, 'partners.address');
+    this.appendUpdateParam(this.phone, 'partners.phone');
+    this.query = this.query ? `SET ${this.query}` : this.query;
+  }
 };
 
 PartnerQueryData.prototype = new BaseQueryData();

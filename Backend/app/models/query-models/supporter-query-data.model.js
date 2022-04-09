@@ -14,11 +14,19 @@ const SupporterQueryData = function (query_params) {
     this.query = '';
   
     this.constructQuery = function () {
-      this.appendQueryParam(this.name, 'partners.name');
-      this.appendQueryParam(this.date_gifted, 'partners.date_gifted');
-      this.appendQueryParam(this.gift_provided, 'partners.gift_provided'); 
-      this.appendQueryParam(this.phone, 'partners.phone');
+      this.appendQueryParamKeyword(this.name, 'supporters.name');
+      this.appendQueryParamKeyword(this.date_gifted, 'supporters.date_gifted');
+      this.appendQueryParamKeyword(this.gift_provided, 'supporters.gift_provided'); 
+      this.appendQueryParamKeyword(this.phone, 'supporters.phone');
       this.query = this.query ? `WHERE ${this.query}` : this.query;
+    };
+
+    this.constructEditQuery = function () {
+      this.appendUpdateParam(this.name, 'supporterss.name');
+      this.appendUpdateParam(this.date_gifted, 'supporters.date_gifted');
+      this.appendUpdateParam(this.gift_provided, 'supporters.gift_provided'); 
+      this.appendUpdateParam(this.phone, 'supporters.phone');
+      this.query = this.query ? `SET ${this.query}` : this.query;
     };
   };
   

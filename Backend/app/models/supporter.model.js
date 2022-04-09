@@ -61,5 +61,20 @@ Supporter.queryData = function (query_params) {
     });
   };
 
+Supporter.updateInfo = function (user_id, query_params) {
+  return new Promise((resolve, reject) => {
+    const q = new SupporterQueryData(query_params);
+    q.constructEditQuery();
+    const data_query = `   
+    UPDATE supporters 
+    ${q.query}
+    WHERE supporter_id = ${user_id} 
+    `;
+    sql.query(data_query, (error, info) => {
+      if (error) reject(error);
+      resolve(info)
+    });
+  });
+};
 
 module.exports = Supporter;

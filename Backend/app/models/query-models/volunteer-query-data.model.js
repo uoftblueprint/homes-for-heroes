@@ -15,12 +15,21 @@ const VolunteerQueryData = function (query_params) {
   this.query = '';
 
   this.constructQuery = function () {
-    this.appendQueryParam(this.name, 'volunteers.name'); 
-    this.appendQueryParam(this.village, 'volunteers.village');
-    this.appendQueryParam(this.address, 'volunteers.date_joined');
-    this.appendQueryParam(this.role, 'volunteers.role');
-    this.appendQueryParam(this.phone, 'volunteers.phone');
+    this.appendQueryParamKeyword(this.name, 'volunteers.name'); 
+    this.appendQueryParamKeyword(this.village, 'volunteers.village');
+    this.appendQueryParamKeyword(this.address, 'volunteers.date_joined');
+    this.appendQueryParamKeyword(this.role, 'volunteers.role');
+    this.appendQueryParamKeyword(this.phone, 'volunteers.phone');
     this.query = this.query ? `WHERE ${this.query}` : this.query;
+  };
+
+  this.constructEditQuery = function () {
+    this.appendUpdateParam(this.name, 'volunteers.name'); 
+    this.appendUpdateParam(this.village, 'volunteers.village');
+    this.appendUpdateParam(this.address, 'volunteers.date_joined');
+    this.appendUpdateParam(this.role, 'volunteers.role');
+    this.appendUpdateParam(this.phone, 'volunteers.phone');
+    this.query = this.query ? `SET ${this.query}` : this.query;
   };
 };
 

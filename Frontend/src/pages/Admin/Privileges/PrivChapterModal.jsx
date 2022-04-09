@@ -10,6 +10,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from '@mui/material/IconButton';
 import { useTheme } from "@mui/material/styles";
 import CloseIcon from '@mui/icons-material/Close';
@@ -69,7 +70,7 @@ const handleAddChapter = () => {
       });
   }
 
-return (
+return ( 
   <>
  <Dialog
           maxWidth="sm"
@@ -79,6 +80,11 @@ return (
           onClose={() => toggleChapterDialog(false)}
         >
           <DialogTitle>Add Chapter</DialogTitle>
+          {isLoading ?  
+           <div style={{ display: 'flex', justifyContent: 'center' }}>
+             <CircularProgress />
+           </div>
+            : 
           <DialogContent>
           <TextField 
           label="Chapter Name" 
@@ -86,6 +92,7 @@ return (
           value={chapterName} 
           onChange={(e) => setChapterName(e.target.value)} />
           </DialogContent>
+          }
           <DialogActions>
             <Button onClick={handleAddChapter}>
               Add Chapter

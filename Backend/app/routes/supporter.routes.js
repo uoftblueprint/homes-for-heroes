@@ -21,5 +21,13 @@ module.exports = app => {
         validationSchema.getDataSchema,
         validationErrorHandler,
         supporter.getData);
+
+    app.post(
+        '/supporters/updateInfo',
+        // isAuthenticated,
+        validationSchema.updateInfoSchema,
+        validationErrorHandler,
+        supporter.updateInfo,
+    );
   };
   

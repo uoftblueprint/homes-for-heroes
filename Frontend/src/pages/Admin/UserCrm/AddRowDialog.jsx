@@ -6,10 +6,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Grid from '@mui/material/Grid';
 import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
-import AddIcon from '@mui/icons-material/Add';
 import validator from 'validator';
 
 import { useSnackbar } from "notistack";
@@ -27,7 +27,6 @@ export default function AddRowButton({ dialog, setDialog }) {
   }
 
   const addRow = () => {
-    let active = true;
     setLoading(true);
     const url = `http://localhost:3000/createveteran`;
 
@@ -72,9 +71,14 @@ export default function AddRowButton({ dialog, setDialog }) {
   }
 
   return (
-    <Grid sx={{ marginRight: "auto" }}> 
+    <Grid sx={{ marginRight: "auto" }}>  
       <Dialog open={dialog} onClose={() => setDialog(false)} PaperProps={{ sx: { width: "50%", height: "100%" } }}>
         <DialogTitle>Add Veteran</DialogTitle>
+        {isLoading ?  
+           <div style={{ display: 'flex', justifyContent: 'center' }}>
+             <CircularProgress />
+           </div>
+            : 
         <DialogContent> 
           <TextField
             autoFocus
@@ -98,11 +102,12 @@ export default function AddRowButton({ dialog, setDialog }) {
             variant="standard" 
             /> 
         </DialogContent>
+        }
         <DialogActions>
           <Button disabled={emailError} onClick={addRow}>Add Veteran</Button>
           <Button onClick={() => setDialog(false)}>Cancel</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> 
     </Grid>
   );
 }
