@@ -34,6 +34,18 @@ Customer.prototype.updateUserInfo = function(user_info) {
   });
 };
 
+Customer.prototype.changePassword = async function(password) {
+  return new Promise((resolve, reject) => {
+    const hashedPassword = bcrypt.hashSync(password, 15);
+    sql.query('UPDATE client_users SET password = ? WHERE user_id = ?',
+      [hashedPassword, this.user_id],
+      (err) => {
+        if (err) reject(err);
+        else resolve(true);
+      });
+  });
+};
+
 Customer.create = function (name, phone, email, password, role_id = 0, conn = null) {
   return new Promise((resolve, reject) => {
     let txn = false;

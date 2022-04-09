@@ -50,6 +50,10 @@ const validationSchema = {
     query('address').optional(),
     query('kin_name').optional(),
   ],
+  patchChangePasswordSchema: [
+    body('oldPassword').isString(),
+    body('newPassword').isStrongPassword(),
+  ],
   updateCustomerProfileSchema: [
     query('name'),
     query('email').isEmail(),
