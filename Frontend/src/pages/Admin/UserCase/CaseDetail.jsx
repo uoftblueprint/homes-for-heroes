@@ -36,6 +36,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import CreateIcon from '@mui/icons-material/Create';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function CaseCard() {
   let { id } = useParams();
@@ -83,6 +85,10 @@ export default function CaseCard() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
   };
+
+  const addCase = () => {
+    history.push(`/addcase/${id}`);
+  }
 
   useEffect(() => {
     fetch(`http://localhost:3000/getToDo/${id}`)
@@ -165,16 +171,15 @@ export default function CaseCard() {
     setBody(e.target.value);
   };
 
-  const filterNotes = (posts) => {
-    // if (!query) {
-    //   return posts;
-    // }
+  const filterNotes = (posts, query) => {
+    if (!query) {
+      return posts.filter((post) => {
+        return post.case_id !== alertCaseId;
+      });
+    }
 
-    // return posts.filter((post) => {
-    //   return post.name.includes(query);
-    // });
     return posts.filter((post) => {
-      return post.case_id !== alertCaseId;
+      return post.title.includes(query) && post.case_id !== alertCaseId;
     });
   };
 
@@ -373,7 +378,7 @@ export default function CaseCard() {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs ={12}>
+      <Grid item xs ={2}>
         <FormControl sx={{ width: "200px", float: "left"}}>
           <InputLabel>Showing</InputLabel>
           <Select
@@ -388,6 +393,27 @@ export default function CaseCard() {
             <MenuItem value={4}>All Case Notes</MenuItem>
           </Select>
         </FormControl>
+      </Grid>
+      <Grid item xs ={8}>
+        <TextField
+          sx={{
+            backgroundColor: '#F7F8F9',
+            width: '75%',
+            marginBottom: '2%',
+          }}
+          fullWidth
+          variant="outlined"
+          placeholder="Search Users"
+          name="search"
+          type="text"
+          InputProps={{
+            startAdornment: <SearchIcon fontSize="small" />,
+          }}
+          onInput={(e) => {setSearchQuery(e.target.value)}}
+        />
+      </Grid>
+      <Grid item xs ={2}>
+        <Button variant="outlined" size="large" onClick={addCase} startIcon={<AddOutlinedIcon />}>Add Case</Button>
       </Grid>
       <Dialog
         open={noteOpen}
@@ -450,7 +476,7 @@ export default function CaseCard() {
           </DialogActions>
         </Dialog>
       <Grid item xs={12}>
-        {filterNotes(caseNotes).map((item, index) => (
+        {filterNotes(caseNotes, searchQuery).map((item, index) => (
           <Accordion index={index}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
