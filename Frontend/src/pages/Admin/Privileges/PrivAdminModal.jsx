@@ -215,7 +215,7 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
                     ) : (
                       <Button
                         size="small"
-                        onClick={() => handleSetSuperadmin(admin.admin_id)} 
+                        onClick={() => handleSetSuperadmin(admin.user_id)}
                         startIcon={<AddIcon />}
                         sx={{ color: "#B20009", marginLeft: "auto" }}
                       >
