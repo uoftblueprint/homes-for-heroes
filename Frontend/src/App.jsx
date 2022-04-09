@@ -1,13 +1,14 @@
 import './App.css';
 
 import NavBar from './components/NavBar';
-import FormTop from './pages/User/Form/FormTop.js';
-import FormCreate from "./pages/User/Form/FormCreate";
-import FormView from "./pages/User/Form/FormView";
-import FormEdit from "./pages/User/Form/FormEdit";
 
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import Typography from "@mui/material/Typography";
+import Typography from '@mui/material/Typography';
+
+import FormTop from './pages/User/Form/FormTop.js';
+import FormCreate from './pages/User/Form/FormCreate';
+import FormView from './pages/User/Form/FormView';
+import FormEdit from './pages/User/Form/FormEdit';
 
 import CaseList from './pages/Admin/UserCase/CaseList';
 import Login from './pages/User/Login/Login';
@@ -16,11 +17,9 @@ import Privileges from './pages/Admin/Privileges/Privileges';
 import ProfilePage from './pages/User/ProfilePage/ProfilePage';
 
 import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
+import SignupForm from './components/SignupForm.jsx';
 
 import CaseDetail from './pages/User/CaseDetails/CaseDetail';
-import Signup from './components/Signup.jsx';
-import VerifyEmail from './components/VerifyEmail.jsx';
-import SignupForm from './components/SignupForm.jsx'
 
 function App() {
   return (
@@ -40,9 +39,9 @@ function App() {
             render={(props) => <CaseList {...props} />}
           />
           <Route exact path="/forms" component={FormTop} />
-            <Route exact path="/forms/create" component={FormCreate} />
-            <Route exact path="/forms/view/:formId" component={FormView} />
-            <Route exact path="/forms/edit/:formId" component={FormEdit} />
+          <Route exact path="/forms/create" component={FormCreate} />
+          <Route exact path="/forms/view/:formId" component={FormView} />
+          <Route exact path="/forms/edit/:formId" component={FormEdit} />
           <Route
             exact
             path="/admin"
@@ -66,9 +65,12 @@ function App() {
           />
           <Route exact path="/login" render={(props) => <Login {...props} />} />
 
-          <Route exact path="/signup" render={(props) => <Signup {...props} />} />
-            <Route exact path="/signup/verify" render={(props) => <VerifyEmail {...props} />} />
-            <Route exact path="/signup/form" render={(props) => <SignupForm {...props} />} />
+          <Switch>
+            <Route
+              path="/signupform/:jwt"
+              render={(props) => <SignupForm {...props} />}
+            />
+          </Switch>
         </Switch>
       </header>
     </div>

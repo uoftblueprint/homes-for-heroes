@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { useState } from 'react';
 import {
+  Alert,
   Button,
   Typography,
   TextField,
   Box,
   Form,
-  InputAdornment,
-  IconButton,
   FormControl,
   FormLabel,
   FormControlLabel,
@@ -17,6 +16,10 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
+
+import validator from 'validator';
+
+import { useParams, useHistory } from 'react-router-dom';
 
 export default function SignupForm() {
   const [formInfo, setFormInfo] = useState({
@@ -32,19 +35,53 @@ export default function SignupForm() {
     curr: 1, // does not change
   });
 
+  const [veteranInfo, setVeteranInfo] = useState({
+    income: 0,
+    demographic: '',
+  });
+
+  const [password, setPassword] = useState('');
+
+  let { jwt } = useParams();
+  let history = useHistory();
+
   const [partners, setPartners] = useState([]);
+  const [roleID, setRoleID] = useState(0);
 
-  const handleFormChange = (event) => {
-    const { id, value } = event.target;
-    setFormInfo({
-      ...formInfo,
-      [id]: value,
+  const [errorStr, setErrorStr] = useState('');
+  const [pwErrorStr, setPwErrorStr] = useState('');
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isVerified, setIsVerified] = useState(true);
+
+  React.useEffect(() => {
+    (async () => {
+      setIsLoading(true);
+
+      // const verified = await verifyUser();
+      const verified = { success: true };
+      if (!verified.success) {
+        setIsLoading(false);
+        setIsVerified(false);
+      } else {
+        const data = await fetchPartners();
+        // const id = await fetchRoleID();
+        setPartners(data['partners']);
+        // setRoleID(id['role_id']);
+        setRoleID(0);
+
+        setIsLoading(false);
+      }
+    })();
+  }, []);
+
+  function verifyUser() {
+    return new Promise((resolve) => {
+      fetch(`http://localhost:3000/verify/${jwt}`)
+        .then((resp) => resp.json())
+        .then((data) => resolve(data));
     });
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-  };
+  }
 
   function fetchPartners() {
     return new Promise((resolve) => {
@@ -54,13 +91,173 @@ export default function SignupForm() {
     });
   }
 
-  React.useEffect(() => {
-    (async () => {
-      const data = await fetchPartners();
-      setPartners(data);
-    })();
-  }, []);
+  // function fetchRoleID() {
+  //   return new Promise((resolve) => {
+  //     fetch('http://localhost:3000/roleid')
+  //       .then((resp) => resp.json())
+  //       .then((data) => resolve(data));
+  //   });
+  // }
 
+  const handleFormChange = (event) => {
+    const { name, value } = event.target;
+    setFormInfo({
+      ...formInfo,
+      [name]: value,
+    });
+  };
+
+  const handleVeteranFormChange = (event) => {
+    const { name, value } = event.target;
+    setVeteranInfo({
+      ...veteranInfo,
+      [name]: value,
+    });
+  };
+
+  const handleAdminPasswordChange = (event) => {
+    const { value } = event.target;
+    setPassword(value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setErrorStr('');
+    setPwErrorStr('');
+
+    const { email, phone, applicant_dob } = formInfo;
+
+    let errorLst = [];
+    let pwErrorLst = [];
+
+    if (!validator.isEmail(email)) {
+      errorLst.push(' email');
+    }
+
+    if (!validator.isMobilePhone(phone)) {
+      errorLst.push(' phone number');
+    }
+
+    if (!validator.isDate(applicant_dob)) {
+      errorLst.push(' date of birth');
+    }
+
+    if (roleID === 0) {
+      if (password.length < 8) {
+        pwErrorLst.push(' 8 letters');
+      }
+
+      if (password.replace(/[^a-z]/g, '').length < 1) {
+        pwErrorLst.push(' 1 lowercase letter');
+      }
+
+      if (password.replace(/[^A-Z]/g, '').length < 1) {
+        pwErrorLst.push(' 1 uppercase letter');
+      }
+
+      if (password.replace(/[^0-9]/g, '').length < 1) {
+        pwErrorLst.push(' 1 number');
+      }
+
+      if (
+        password.replace(/[^!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, '').length <
+        1
+      ) {
+        pwErrorLst.push(' 1 symbol');
+      }
+    }
+
+    if (errorLst.length || pwErrorLst.length) {
+      if (errorLst.length) {
+        setErrorStr('Error - Invalid' + errorLst.toString());
+      }
+      if (pwErrorLst.length) {
+        setPwErrorStr('Password error - need at least' + pwErrorLst.toString());
+      }
+    } else {
+      setErrorStr('');
+      setPwErrorStr('');
+      pushInfo();
+    }
+  };
+
+  const requestOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: jwt,
+    },
+    body: JSON.stringify({
+      name: formInfo.name,
+      gender: formInfo.gender,
+      email: formInfo.email,
+      ...(roleID === 0 && { password: password }),
+      phone: formInfo.phone,
+      applicant_dob: formInfo.applicant_dob,
+      street_name: formInfo.street_name,
+      city: formInfo.city,
+      province: formInfo.province,
+      ...(roleID === 1 && {
+        income: veteranInfo.income,
+        demographic: veteranInfo.demographic,
+      }),
+      referral: formInfo.referral,
+      curr: formInfo.curr,
+    }),
+  };
+
+  function pushInfo() {
+    fetch(`http://localhost:3000/signup`, requestOptions)
+      .then((resp) => resp.json())
+      .then((resp) => {
+        if (resp.success) {
+          history.push('/');
+        }
+      });
+  }
+
+  if (isLoading) {
+    return (
+      <Typography
+        sx={{
+          fontSize: '1.8rem',
+          fontweight: 600,
+          mt: '30vh',
+          mb: '30vh',
+        }}
+      >
+        Loading...
+      </Typography>
+    );
+  } else if (!isVerified) {
+    return (
+      <Box
+        sx={{
+          mt: '20vh',
+          mb: '30vh',
+        }}
+      >
+        <Typography
+          sx={{
+            fontSize: '1.8rem',
+            fontweight: 600,
+            mb: '20px',
+          }}
+        >
+          Oops! You can't access this page.
+        </Typography>
+        <Button
+          onClick={() => history.push('/')}
+          variant="contained"
+          sx={{
+            fontSize: '1.2rem',
+          }}
+        >
+          Return to home
+        </Button>
+      </Box>
+    );
+  }
   return (
     <Box
       component="form"
@@ -74,7 +271,6 @@ export default function SignupForm() {
         sx={{
           fontSize: '1.8rem',
           fontWeight: 600,
-          mt: '75px',
           mb: '25px',
         }}
       >
@@ -84,7 +280,7 @@ export default function SignupForm() {
       <TextField
         required
         label="Name"
-        id="name"
+        name="name"
         value={formInfo.name}
         onChange={handleFormChange}
       />
@@ -105,21 +301,32 @@ export default function SignupForm() {
         <RadioGroup
           row
           aria-labelledby="demo-radio-buttons-group-label"
-          required
-          id="gender"
+          name="gender"
           value={formInfo.gender}
           onChange={handleFormChange}
         >
-          <FormControlLabel value="female" control={<Radio />} label="Female" />
-          <FormControlLabel value="male" control={<Radio />} label="Male" />
-          <FormControlLabel value="other" control={<Radio />} label="Other" />
+          <FormControlLabel
+            value="female"
+            control={<Radio required={true} />}
+            label="Female"
+          />
+          <FormControlLabel
+            value="male"
+            control={<Radio required={true} />}
+            label="Male"
+          />
+          <FormControlLabel
+            value="other"
+            control={<Radio required={true} />}
+            label="Other"
+          />
         </RadioGroup>
       </FormControl>
 
       <TextField
         required
         label="Email"
-        id="email"
+        name="email"
         value={formInfo.email}
         onChange={handleFormChange}
         sx={{
@@ -127,33 +334,51 @@ export default function SignupForm() {
         }}
       />
 
-      <TextField
-        required
-        label="Phone Number"
-        id="phone"
-        value={formInfo.phone}
-        onChange={handleFormChange}
-        sx={{
-          mt: '25px',
-        }}
-      />
+      {roleID === 0 ? (
+        <TextField
+          required
+          label="Password"
+          name="password"
+          type="password"
+          value={password}
+          onChange={handleAdminPasswordChange}
+          sx={{
+            mt: '25px',
+          }}
+        />
+      ) : null}
 
-      <TextField
-        required
-        label="Date of Birth"
-        id="applicant_dob"
-        value={formInfo.applicant_dob}
-        onChange={handleFormChange}
-        sx={{
-          mt: '25px',
-        }}
-      />
+      <Box>
+        <TextField
+          required
+          label="Phone Number"
+          name="phone"
+          value={formInfo.phone}
+          onChange={handleFormChange}
+          sx={{
+            mt: '25px',
+            width: '60%',
+          }}
+        />
+
+        <TextField
+          required
+          label="Date of Birth"
+          name="applicant_dob"
+          value={formInfo.applicant_dob}
+          onChange={handleFormChange}
+          sx={{
+            mt: '25px',
+            width: '40%',
+          }}
+        />
+      </Box>
 
       <Box id="location">
         <TextField
           required
           label="Street Name"
-          id="street_name"
+          name="street_name"
           value={formInfo.street_name}
           onChange={handleFormChange}
           sx={{
@@ -164,7 +389,7 @@ export default function SignupForm() {
         <TextField
           required
           label="City"
-          id="city"
+          name="city"
           value={formInfo.city}
           onChange={handleFormChange}
           sx={{
@@ -182,7 +407,7 @@ export default function SignupForm() {
           <Select
             required
             label="Province"
-            id="province"
+            name="province"
             value={formInfo.province}
             onChange={handleFormChange}
           >
@@ -203,24 +428,57 @@ export default function SignupForm() {
         </FormControl>
       </Box>
 
+      {roleID === 1 ? (
+        <Box
+          sx={{
+            width: '100%',
+            mt: '25px',
+          }}
+        >
+          <TextField
+            required
+            label="Income"
+            name="income"
+            value={veteranInfo.income}
+            onChange={handleVeteranFormChange}
+            sx={{
+              width: '50%',
+            }}
+          />
+          <TextField
+            required
+            label="Demographic"
+            name="demographic"
+            value={veteranInfo.demographic}
+            onChange={handleVeteranFormChange}
+            sx={{
+              width: '50%',
+            }}
+          />
+        </Box>
+      ) : null}
+
       <FormControl
         sx={{
           mt: '25px',
         }}
       >
-        <InputLabel>Incoming Referral *</InputLabel>
-        <Select
-          required
-          label="Incoming Referral"
-          id="referral"
-          value={formInfo.referral}
-          onChange={handleFormChange}
-        >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
+        <>
+          <InputLabel>Incoming Referral *</InputLabel>
+          <Select
+            required
+            label="Incoming Referral"
+            name="referral"
+            value={formInfo.referral}
+            onChange={handleFormChange}
+          >
+            {partners.map(({ org_name }) => (
+              <MenuItem value={org_name}>{org_name}</MenuItem>
+            ))}
+          </Select>
+        </>
       </FormControl>
+
       <Button
         variant="outlined"
         type="submit"
@@ -231,6 +489,18 @@ export default function SignupForm() {
       >
         Submit
       </Button>
+
+      {errorStr !== '' ? (
+        <Alert variant="filled" severity="error">
+          {errorStr}
+        </Alert>
+      ) : null}
+
+      {pwErrorStr !== '' ? (
+        <Alert variant="filled" severity="error">
+          {pwErrorStr}
+        </Alert>
+      ) : null}
     </Box>
   );
 }
