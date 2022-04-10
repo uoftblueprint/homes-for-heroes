@@ -4,23 +4,20 @@ const Chapter = function (body) {
   this.name = body.name;
 };
 
-Chapter.prototype.create = function () {
+Chapter.prototype.create = function() {
   return new Promise((resolve, reject) => {
-    sql.query(
-      'INSERT INTO chapters (name) VALUES (?)',
-      [[this.name]],
-      function (err, results) {
-        if (err) reject(err);
+    sql.query('INSERT INTO chapters (name) VALUES (?)', [this.name],
+      (err, results) => {
+        if (err) reject (err);
         else resolve(results.insertId);
-      }
-    );
+      });
   });
 };
 
-Chapter.listAll = function () {
-  return new Promise(function (resolve, reject) {
-    sql.query('SELECT * FROM chapters', function (err, chapters) {
-      if (err) reject(err);
+Chapter.listAll = function() {
+  return new Promise((resolve, reject) => {
+    sql.query('SELECT * FROM chapters', (err, chapters) => {
+      if (err) reject (err);
       else {
         resolve(chapters);
       }
@@ -28,18 +25,14 @@ Chapter.listAll = function () {
   });
 };
 
-Chapter.getId = function (chapter_name) {
-  return new Promise(function (resolve, reject) {
-    sql.query(
-      'SELECT chapter_id from chapters where name = ?',
+Chapter.getId = function(chapter_name) {
+  return new Promise((resolve, reject) => {
+    sql.query('SELECT chapter_id from chapters where name = ?',
       [chapter_name],
-      function (err, results) {
-        if (err) reject(err);
-        else {
-          resolve(JSON.parse(JSON.stringify(results[0])).chapter_id);
-        }
-      }
-    );
+      (err, results) => {
+        if (err) reject (err);
+        else resolve(results[0].chapter_id);
+      });
   });
 };
 

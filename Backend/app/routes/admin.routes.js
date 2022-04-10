@@ -1,43 +1,49 @@
-const admin = require('../controllers/admin.controller');
+const adminController = require('../controllers/admin.controller');
 const validationSchema = require('../validators/admin.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
+const { isSuperAdmin } = require('../auth/helpers');
 
-module.exports = (app) => {
-  app.get('/admins/getAll', admin.listAll);
-  app.get('/admins/getSearchAdmins', admin.getSearchAdmins);
+module.exports = app => {
+  app.get('/admins/getAll', isSuperAdmin, adminController.listAll);
+  app.get('/admins/getSearchAdmins', isSuperAdmin, adminController.getSearchAdmins);
 
   app.put(
+    '/admins/:admin_id/makeSupervisor',
+    isSuperAdmin,
+    validationSchema.makeSupervisorSchema,
+    validationErrorHandler,
+    adminController.makeSupervisor);
+
+  app.put(
+    '/admins/:admin_id/unsetSupervisor',
+    isSuperAdmin,
+    validationSchema.unsetSupervisorSchema,
+    validationErrorHandler,
+    adminController.unsetSupervisor);
+  app.put(
     '/admins/:admin_id/makeSuperadmin',
+    isSuperAdmin,
     validationSchema.makeSuperadminSchema,
     validationErrorHandler,
-    admin.makeSuperadmin
-  );
+    adminController.makeSuperadmin);
 
   app.put(
     '/admins/:admin_id/unsetSuperadmin',
+    isSuperAdmin,
     validationSchema.unsetSuperadminSchema,
     validationErrorHandler,
-    admin.unsetSuperadmin
-  );
-
+    adminController.unsetSuperadmin);
   app.put(
     '/admins/:admin_id/assignChapter',
+    isSuperAdmin,
     validationSchema.assignChapterSchema,
     validationErrorHandler,
-    admin.assignChapter
-  );
-  
+    adminController.assignChapter);
+
   app.get(
     '/admins/:chapter/listByChapter',
+    isSuperAdmin,
     validationSchema.listChapterSupervisorsSchema,
     validationErrorHandler,
-    admin.listByChapter
-  );
-
-  app.post(
-    '/admins/createAdmin',
-    validationSchema.createAdminSchema,
-    validationErrorHandler,
-    admin.createAdmin
-  );
+    adminController.getByChapter);
 };
