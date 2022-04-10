@@ -2,18 +2,16 @@ const Volunteer = require('../models/volunteer.model');
 const logger = require('../logger');
 
 const volunteerController = {
-  async getAllVolunteers(req, res) {
+  async getAllVolunteers(req, res, next) {
     try {
       const results = await Volunteer.listAll();
       res.send({ volunteers: results });
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
   },
 
-  async create(req, res) {
+  async create(req, res, next) {
     try {
       logger.debug(req.body);
       const new_volunteer = new Volunteer(req.body);
@@ -21,9 +19,7 @@ const volunteerController = {
       logger.debug(volunteer_id);
       res.json(volunteer_id);
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
   }
 };

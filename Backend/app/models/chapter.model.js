@@ -6,7 +6,7 @@ const Chapter = function (body) {
 
 Chapter.prototype.create = function() {
   return new Promise((resolve, reject) => {
-    sql.query('INSERT INTO chapters (name) VALUES (?)', [[this.name]],
+    sql.query('INSERT INTO chapters (name) VALUES (?)', [this.name],
       (err, results) => {
         if (err) reject (err);
         else resolve(results.insertId);

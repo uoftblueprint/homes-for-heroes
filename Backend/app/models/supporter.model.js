@@ -1,5 +1,4 @@
 const sql = require('./db.js');
-const logger = require('../logger');
 
 // constructor
 const Supporter = function (body) {
@@ -12,8 +11,8 @@ const Supporter = function (body) {
 // add new supporter
 Supporter.prototype.create = function() {
   return new Promise((resolve, reject) => {
-    sql.query('INSERT INTO supporters (name, date_gifted, gift_provided, phone) VALUES (?)',
-      [[this.name, this.date_gifted, this.gift_provided, this.phone]],
+    sql.query('INSERT INTO supporters (name, date_gifted, gift_provided, phone) VALUES (?, ?, ?, ?)',
+      [this.name, this.date_gifted, this.gift_provided, this.phone],
       (err, results) => {
         if (err) reject (err);
         else resolve(results.insertId);

@@ -56,6 +56,19 @@ const validationSchema = {
     param('user_id').isInt({ min: 0 }).withMessage('Invalid user_id'),
     query('todo').isJSON().isLength({ min: 0 }).withMessage('Invalid To Do list passed'),
   ],
+  patchChangePasswordSchema: [
+    body('oldPassword').isString(),
+    body('newPassword').isStrongPassword(),
+  ],
+  updateCustomerProfileSchema: [
+    query('name'),
+    query('email').isEmail(),
+    query('phone').isMobilePhone(),
+    query('street_name'),
+    query('city'),
+    query('province'),
+    query('applicant_dob').isDate()
+  ],
 };
 
 module.exports = validationSchema;

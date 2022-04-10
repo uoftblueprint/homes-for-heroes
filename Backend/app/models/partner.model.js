@@ -1,5 +1,4 @@
 const sql = require('./db.js');
-const logger = require('../logger');
 
 // constructor for partners 
 const Partner = function (body) {

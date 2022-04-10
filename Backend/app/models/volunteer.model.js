@@ -1,5 +1,4 @@
 const sql = require('./db.js');
-const logger = require('../logger');
 
 const Volunteer = function (body) {
   this.name = body.name;
@@ -12,8 +11,8 @@ const Volunteer = function (body) {
 // add new volunteer
 Volunteer.prototype.create = function() {
   return new Promise((resolve, reject) => {
-    sql.query('INSERT INTO volunteers (name, village, date_joined, role, phone) VALUES (?)',
-      [[this.name, this.village, this.date_joined, this.role, this.phone]],
+    sql.query('INSERT INTO volunteers (name, village, date_joined, role, phone) VALUES (?, ?, ?, ?, ?)',
+      [this.name, this.village, this.date_joined, this.role, this.phone],
       (err, results) => {
         if (err) reject (err);
         else resolve(results.insertId);

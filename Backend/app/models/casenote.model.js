@@ -22,8 +22,8 @@ CaseNote.prototype.create = function () {
       return;
     }
     sql.query(
-      'INSERT INTO cases (user_id, admin_id, notes, title, category) VALUES (?)',
-      [[this.user_id, this.admin_id, this.notes, this.title, this.category]],
+      'INSERT INTO cases (user_id, admin_id, notes, title, category) VALUES (?, ?, ?, ?, ?)',
+      [this.user_id, this.admin_id, this.notes, this.title, this.category],
       (err, result) => {
         if (err) reject(err);
         else resolve(result.insertId); // Return the case_id
@@ -52,7 +52,7 @@ CaseNote.updateNote = function (case_id, new_note, new_title) {
       [new_note, new_title, case_id],
       (err, result) => {
         if (err) reject(err);
-        else resolve(result.case_id);      
+        else resolve(result.case_id);
       }
     );
   });
@@ -65,7 +65,7 @@ CaseNote.deleteNote = function (case_id) {
       [case_id],
       (err, result) => {
         if (err) reject(err);
-        else resolve(result.case_id); 
+        else resolve(result.case_id);
       }
     );
   });
