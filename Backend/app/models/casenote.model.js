@@ -18,9 +18,9 @@ CaseNote.prototype.create = function () {
       return;
     }
     sql.query(
-      'INSERT INTO cases (user_id, admin_id, notes) VALUES (?)',
-      [[this.user_id, this.admin_id, this.notes]],
-      function (err, result) {
+      'INSERT INTO cases (user_id, admin_id, notes) VALUES (?, ?, ?)',
+      [this.user_id, this.admin_id, this.notes],
+      (err, result) => {
         if (err) reject(err);
         else resolve(result.insertId); // Return the case_id
       }

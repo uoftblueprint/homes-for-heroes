@@ -1,5 +1,10 @@
+const superadminController = require('../controllers/superadmin.controller');
+const { isSuperAdmin } = require('../auth/helpers');
+
 module.exports = app => {
-    const superadmins = require("../controllers/superadmin.controller");
-  
-    app.get('/superadmins/getAll', superadmins.getAll);
-  };
+  app.get(
+    '/superadmins/getAll',
+    isSuperAdmin,
+    superadminController.getAll
+  );
+};
