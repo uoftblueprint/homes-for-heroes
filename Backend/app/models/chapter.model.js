@@ -27,12 +27,12 @@ Chapter.listAll = function() {
 
 Chapter.getId = function(chapter_name) {
   return new Promise((resolve, reject) => {
-    sql.query('SELECT chapter_id from chapters where name = ?',
-      [chapter_name],
-      (err, results) => {
-        if (err) reject (err);
-        else resolve(results[0].chapter_id);
-      });
+    sql.query('SELECT chapter_id from chapters where name = ?', [chapter_name], (err, results) => {
+      if (err) reject (err);
+      else {
+        resolve(JSON.parse(JSON.stringify(results[0])).chapter_id);
+      }
+    });
   });
 };
 
