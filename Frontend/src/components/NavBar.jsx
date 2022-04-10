@@ -15,6 +15,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {useSelector} from "react-redux";
+import {selectLoggedIn} from "../redux/userSlice";
 
 const theme = createTheme({
   palette: {
@@ -31,6 +33,7 @@ const Header = (props) => {
   const { history } = props;
   const [open, toggleOpen] = React.useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const authLogin = useSelector(selectLoggedIn);
 
   const handleMenuClick = (pageURL) => {
     history.push(pageURL);
@@ -41,28 +44,49 @@ const Header = (props) => {
     history.push(pageURL);
   };
 
-  const menuItems = [
+  let menuItems = [];
+  let rightMenuItems = [
     {
-      menuTitle: 'User CRM',
-      pageURL: '/usercrm',
-    },
-    {
-      menuTitle: 'User Case',
-      pageURL: '/usercase',
-    },
-    {
-      menuTitle: 'Forms',
-      pageURL: '/forms',
-    },
-    {
-      menuTitle: 'Admin Privileges',
-      pageURL: '/admin',
-    },
-    {
-      menuTitle: 'External Relations',
-      pageURL: '/external',
-    },
+      menuTitle: 'Login',
+      'pageUrl': '/login',
+    }
   ];
+
+  if (authLogin) {
+    menuItems = [
+      {
+        menuTitle: 'User CRM',
+        pageURL: '/usercrm',
+      },
+      {
+        menuTitle: 'User Case',
+        pageURL: '/usercase',
+      },
+      {
+        menuTitle: 'Forms',
+        pageURL: '/forms',
+      },
+      {
+        menuTitle: 'Admin Privileges',
+        pageURL: '/admin',
+      },
+      {
+        menuTitle: 'External Relations',
+        pageURL: '/external'
+      }
+    ];
+
+    rightMenuItems = [
+      {
+        menuTitle: 'Profile',
+        pageUrl: 'profile',
+      },
+      {
+        menuTitle: 'Logout',
+        pageUrl: 'logout',
+      }
+    ];
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -88,7 +112,7 @@ const Header = (props) => {
                 onOpen={() => toggleOpen(true)}
               >
                 <List>
-                  {menuItems.map((menuItem) => {
+                  {menuItems.concat(rightMenuItems).map((menuItem) => {
                     const { menuTitle, pageURL } = menuItem;
                     return (
                       <ListItem onClick={() => handleMenuClick(pageURL)}>
@@ -96,13 +120,6 @@ const Header = (props) => {
                       </ListItem>
                     );
                   })}
-                  <ListItem onClick={() => handleMenuClick('profile')}>
-                    Profile
-                  </ListItem>
-
-                  <ListItem onClick={() => handleMenuClick('login')}>
-                    Login
-                  </ListItem>
                 </List>
               </SwipeableDrawer>
             </>
@@ -139,27 +156,21 @@ const Header = (props) => {
               </div>
 
               <div style={{ marginLeft: 'auto' }}>
-                <Button
-                  onClick={() => handleButtonClick('profile')}
-                  sx={{
-                    marginLeft: 'auto',
-                    color: 'white',
-                    fontSize: 16,
-                  }}
-                >
-                  Profile
-                </Button>
-
-                <Button
-                  onClick={() => handleButtonClick('login')}
-                  sx={{
-                    marginLeft: 'auto',
-                    color: 'white',
-                    fontSize: 16,
-                  }}
-                >
-                  Login
-                </Button>
+                {rightMenuItems.map((menuItem) => {
+                  const { menuTitle, pageUrl } = menuItem;
+                  return (
+                      <Button
+                          onClick={() => handleButtonClick(pageUrl)}
+                          sx={{
+                            marginLeft: 'auto',
+                            color: 'white',
+                            fontSize: 16,
+                          }}
+                      >
+                        {menuTitle}
+                      </Button>
+                  )
+                })}
               </div>
             </>
           )}

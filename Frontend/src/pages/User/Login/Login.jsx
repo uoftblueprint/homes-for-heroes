@@ -13,6 +13,10 @@ import {
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { login, selectLoggedIn } from '../../../redux/userSlice';
+import { useHistory, useLocation } from 'react-router-dom';
+
 const theme = createTheme({
   palette: {
     background: {
@@ -28,8 +32,20 @@ const theme = createTheme({
 });
 
 export default function Login() {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const dispatch = useDispatch();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const location = useLocation();
+  const history = useHistory();
+
+  const authLogin = useSelector(selectLoggedIn);
+
+  if (authLogin) {
+    const { from } = location.state || { from: { pathname: '/' } };
+    history.replace(from);
+  }
 
   function handleEmailChange(e) {
     setEmail(e.target.value);
@@ -52,6 +68,15 @@ export default function Login() {
       });
       const { token } = await res.json();
       console.log(token);
+      dispatch(
+          login({
+            email: email,
+            password: password,
+            loggedIn: true,
+          }),
+      );
+      const { from } = location.state || { from: { pathname: '/' } };
+      history.replace(from);
     } catch (err) {
       console.error(err);
     }
