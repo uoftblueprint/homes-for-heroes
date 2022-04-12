@@ -19,6 +19,7 @@ const validationSchema = {
     body('phone').isMobilePhone(),
     body('password').isStrongPassword(),
   ],
+  listChapterSupervisorsSchema: [...chapter_id],
 };
 
 module.exports = validationSchema;
