@@ -71,6 +71,20 @@ const customerController = {
     }
   },
 
+  async patchChangePassword(req, res, next) {
+    try {
+      const { oldPassword, newPassword } = req.body;
+      if(await req.user.isValidPassword(oldPassword)) {
+        await req.user.changePassword(newPassword);
+        res.send({ success: true });
+      } else {
+        next(new Error('Old password incorrect'));
+      }
+    } catch (err) {
+      next(err);
+    }
+  },
+
   async getUserInfoCSV(req, res, next) {
     try {
       const { name, email, phone, address, kin_name } = req.query;

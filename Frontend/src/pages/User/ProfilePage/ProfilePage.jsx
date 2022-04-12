@@ -1,5 +1,5 @@
 import {
-  IconButton,
+  Alert,
   TextField,
   Box,
   Button,
@@ -17,10 +17,10 @@ import { useState } from 'react';
 import InfoIcon from '@mui/icons-material/Info';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+import validator from 'validator'
 
 const theme = createTheme({
   palette: {
@@ -52,54 +52,205 @@ export default function ProfilePage({ user_id }) {
   };
   //
 
+  const [loading, setLoading] = React.useState(false); // TODO: implement loading spinner?
+
   // User Info Table
-  const [userInfo, setUserInfo] = useState({});
+  const [formInfo, setFormInfo] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    street_name: '',
+    city: '',
+    province: '',
+    applicant_dob: ''
+ });
 
-  fetch(`/api/getCustomerInfo/${user_id}`)
-    .then((response) => response.json())
-    .then((data) => setUserInfo(data))
-    .then(console.log(userInfo))
-    .catch((error) => {
-      console.error(error);
-    });
+  const [userInfo, setUserInfo] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    street_name: '',
+    city: '',
+    province: '',
+    applicant_dob: ''
+  });
 
-  function createInfo(subheading, info) {
-    return { subheading, info };
+  function fetchInfo() {
+    return new Promise((resolve) => {
+      fetch(`http://localhost:3000/getCustomerInfo/11`) // TODO: make sure to change to /api and use ${user_id} instead of 11
+          .then(resp => resp.json())
+          .then(data => resolve(data))
+    })
   }
 
-  const rows = [
-    createInfo('Name', { userInfo }.name),
-    createInfo('Email', { userInfo }.name),
-    createInfo('Phone', { userInfo }.phone),
-    createInfo('Street Address', { userInfo }.address),
-    createInfo('City', { userInfo }.city),
-    createInfo('Province', { userInfo }.province),
-    createInfo('Date of Birth \n (MM/DD/YYYY)', { userInfo }.birthdate),
-  ];
-  //
+  React.useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const data = await fetchInfo();
+      setUserInfo({
+            name: data.customerInfo[0].name,
+            email: data.customerInfo[0].email,
+            phone: data.customerInfo[0].phone,
+            street_name: data.customerInfo[0].street_name,
+            city: data.customerInfo[0].city,
+            province: data.customerInfo[0].province,
+            applicant_dob:data.customerInfo[0].applicant_dob.slice(0, 10),
+      });
+      setFormInfo({
+          name: data.customerInfo[0].name,
+          email: data.customerInfo[0].email,
+          phone: data.customerInfo[0].phone,
+          street_name: data.customerInfo[0].street_name,
+          city: data.customerInfo[0].city,
+          province: data.customerInfo[0].province,
+          applicant_dob:data.customerInfo[0].applicant_dob.slice(0, 10),
+      });
+      setLoading(false);
+    })();
+  }, [])
+
+  const [errorStr, setErrorStr] = useState('');
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setErrorStr('')
+
+    if (!validator.isEmail(formInfo.email) | !validator.isMobilePhone(formInfo.phone) | !validator.isDate(formInfo.applicant_dob)) {
+       let errorLst = []
+
+       if (!validator.isEmail(formInfo.email)) {
+          errorLst.push(' email')
+       }
+       
+       if (!validator.isMobilePhone(formInfo.phone)) {
+          errorLst.push(' phone number')
+       }
+       
+       if (!validator.isDate(formInfo.applicant_dob)) {
+          errorLst.push(' date of birth')
+       }
+
+       const converted = errorLst.toString()
+       setErrorStr('Error - Invalid' + converted)
+    } else {
+       setErrorStr('')
+       setEditingInfo(false)
+       changeInfo()
+    }
+  };
+
+  const handleInputChange = (event) => {
+    const { id, value } = event.target;
+    setFormInfo({
+       ...formInfo,
+      [id]: value
+    });
+  };
+
+  const requestOptions = {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+       name: formInfo.name,
+       email: formInfo.email,
+       phone: formInfo.phone,
+       street_name: formInfo.street_name,
+       city: formInfo.city,
+       province: formInfo.province,
+       applicant_dob: formInfo.applicant_dob
+    })
+ };
+
+  const changeInfo = () => {
+    console.log(requestOptions)
+    fetch('http://localhost:3000/updateCustomerProfile/11', requestOptions)
+      .then(response => response.json());
+    setUserInfo({
+      ...formInfo
+    })
+  }
+
+  const [pwErrorStr, setPwErrorStr] = useState('');
+
+  const [passwords, setPasswords] = useState({old: '', new: '', new2: '' });
+     
+  const handlePasswordInputChange = (event) => {
+    const { id, value } = event.target;
+    setPasswords({
+       ...passwords,
+       [id]: value
+    })
+  }
+
+  const handlePasswordSubmit = (event) => {
+    setPwErrorStr('')
+    event.preventDefault()
+    if (passwords.old !== 'old-password') {
+       // TODO - implement verifying password
+       setPwErrorStr('Error: current password incorrect')
+    } else if (passwords.new!== passwords.new2) {
+       setPwErrorStr('Error: passwords do not match')
+    } else {
+       setPwErrorStr('')
+       changePassword()
+       // TODO: check for valid/strong password?
+    }
+  }
+ 
+  const passwordRequestOptions = {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json-patch+json' },
+    body: {
+      oldPassword: passwords.old,
+      newPassword: passwords.new,
+    }
+  };
+
+  const changePassword = () => {
+    console.log(passwordRequestOptions)
+    fetch('http://localhost:3000/api/changePassword', requestOptions)
+      .then(response => {
+        if (response.status !== 200) {
+          setPwErrorStr(response.error)
+        }
+      })
+    // TODO - implement changing password
+  }
 
   //Edit User Info
-  const [editInfoStatus, setEditInfoStatus] = useState(false);
+  const [editingInfo, setEditingInfo] = useState(false);
 
-  const [editPasswordStatus, setEditPasswordStatus] = useState(false);
-  //
+  function cleanKey(str) {
+    if (str === "applicant_dob") {
+        return "date of birth";
+    }
+    else {
+        return str.replace("_", " ")
+    }
+  }
 
-  // Password
-  const [passwordShown, setPasswordShown] = useState(false);
-
-  const togglePasswordVisibility = () => {
-    setPasswordShown(!passwordShown);
-  };
-  //
+  function cleanVal(str) {
+    // formatting/shortening the superlong date-time
+    if (str[4] === '-' && str[7] === '-' && str[10] === 'T' && str[13] === ':' && str[16] === ':' && str.at(-1) === 'Z') {
+        return str.slice(0, 10);
+    }
+    else {
+        return str;
+    }
+  }
 
   return (
     <ThemeProvider theme={theme}>
       <div>
+        <Typography sx={{fontSize: '1.8rem', fontWeight: 600, mt: '75px', mb: '25px'}}>
+          Your Profile
+        </Typography>
+
         <Tabs
-          variant="fullWidth"
           value={value}
           onChange={handleTabs}
           sx={{ mb: '20px' }}
+          centered
         >
           <Tab
             icon={<InfoIcon />}
@@ -115,20 +266,32 @@ export default function ProfilePage({ user_id }) {
         </Tabs>
 
         <TabPanel value={value} index={0}>
-          {editInfoStatus ? (
+          {editingInfo ? (
             <Box
+              component="form"
+              onSubmit={handleSubmit}
               sx={{
                 display: 'inline-flex',
                 flexDirection: 'column',
                 height: 500,
               }}
             >
-              {rows.map((row) => (
+              {Object.entries(userInfo).map((row) => (
                 <TextField
-                  label={row.subheading}
-                  defaultValue={row.info}
-                  size="standard"
-                  sx={{ fontSize: '15px', width: 500 }}
+                  required
+                  id={row[0]}
+                  label={cleanKey(row[0])}
+                  defaultValue={cleanVal(row[1])}
+                  value={userInfo[row[1]]}
+                  onChange={handleInputChange}
+                  size='standard'
+                  variant='standard'
+                  sx={{ 
+                    fontSize: '15px', 
+                    width:500, 
+                    textTransform: 'capitalize', 
+                    mb: '8px',
+                  }} 
                 />
               ))}
               <Box
@@ -136,23 +299,33 @@ export default function ProfilePage({ user_id }) {
                   display: 'inline-flex',
                   justifyContent: 'center',
                   mt: '15px',
+                  mb: '15px',
                 }}
               >
                 <Button
                   variant="outlined"
-                  onClick={() => setEditInfoStatus(false)}
+                  onClick={() => setEditingInfo(false)}
                   sx={{ mr: 1 }}
                 >
                   Cancel
                 </Button>
                 <Button
                   variant="outlined"
-                  onClick={() => setEditInfoStatus(false)}
+                  type='submit'
                   sx={{ ml: 1 }}
                 >
                   Submit
                 </Button>
               </Box>
+              { 
+                errorStr !== '' ? 
+                (
+                  <Alert variant="filled" severity="error">
+                      {errorStr}
+                  </Alert>
+                ) : 
+                null 
+              }
             </Box>
           ) : (
             <Box
@@ -166,24 +339,24 @@ export default function ProfilePage({ user_id }) {
                 <TableContainer>
                   <Table sx={{ minWidth: '500px' }} aria-label="simple table">
                     <TableBody>
-                      {rows.map((row) => (
+                      {Object.entries(userInfo).map((row) => (
                         <TableRow
-                          key={row.subheading}
+                          key={row[0]}
                           sx={{
-                            '&:last-child td, &:last-child th': { border: 0 },
+                            '&:last-child td, &:last-child th': { border: 0 } 
                           }}
                         >
-                          <TableCell
-                            component="th"
-                            scope="row"
+                          <TableCell 
+                            component="th" 
+                            scope="row" 
                             style={{
-                              fontWeight: 600,
-                              fontSize: '15px',
+                              fontSize: '16px',
+                              textTransform: 'capitalize' 
                             }}
                           >
-                            {row.subheading}
+                              {<b>{cleanKey(row[0])}:</b>}
                           </TableCell>
-                          <TableCell align="right">{row.info}</TableCell>
+                          <TableCell align="right" style={{ fontSize: '16px'}}>{cleanVal(row[1])}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -194,7 +367,7 @@ export default function ProfilePage({ user_id }) {
                 <Button
                   variant="outlined"
                   startIcon={<EditIcon />}
-                  onClick={() => setEditInfoStatus(true)}
+                  onClick={() => setEditingInfo(true)}
                   sx={{
                     padding: '7px',
                     width: '200px',
@@ -209,78 +382,75 @@ export default function ProfilePage({ user_id }) {
         </TabPanel>
 
         <TabPanel value={value} index={1}>
-          {editPasswordStatus ? (
             <div>
               <Box sx={{ height: 500 }}>
                 <Box
+                  component="form"
+                  onSubmit={handlePasswordSubmit}
                   sx={{
+                    width: '350px',
                     display: 'inline-flex',
                     flexDirection: 'column',
+                    alignItems: 'flex-end'
                   }}
                 >
                   <TextField
+                    required
                     label="Current Password"
+                    type="password"
                     sx={{
-                      width: '300px',
+                      width: '100%',
                       mt: '20px',
                       mb: '15px',
                     }}
+                    id="old"
+                    value={passwords.old}
+                    onChange={handlePasswordInputChange}
                   />
-                  <TextField label="New Password" sx={{ mb: '15px' }} />
+                  <TextField 
+                    required
+                    label="New Password" 
+                    type="password"
+                    sx={{ 
+                      width: '100%',
+                      mb: '15px'
+                    }} 
+                    id="new"
+                    value={passwords.new}
+                    onChange={handlePasswordInputChange}
+                  />
                   <TextField
                     label="Re-enter New Password"
-                    sx={{ mb: '15px' }}
+                    type="password"
+                    sx={{
+                      width: '100%',
+                      mb: '15px' 
+                    }}
+                    id="new2"
+                    value={passwords.new2}
+                    onChange={handlePasswordInputChange}
                   />
-                </Box>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                  }}
-                >
                   <Button
                     variant="outlined"
-                    onClick={() => setEditPasswordStatus(false)}
-                    sx={{ mr: 1 }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    onClick={() => setEditPasswordStatus(false)}
-                    sx={{ ml: 1 }}
+                    type="submit"
+                    sx={{
+                      width:'40%', 
+                      mb: '15px'
+                    }}
                   >
                     Submit
                   </Button>
+                  { pwErrorStr !== '' ? 
+                    (
+                      <Alert variant="filled" severity="error" sx={{width:'100%'}}>
+                        {pwErrorStr}
+                      </Alert>
+                    ) : 
+                    null 
+                  }
                 </Box>
               </Box>
             </div>
-          ) : (
-            <div>
-              <Box sx={{ height: 500 }}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Typography type={passwordShown ? 'text' : 'password'}>
-                    Password: {userInfo.password}
-                  </Typography>
-                  <IconButton onClick={togglePasswordVisibility}>
-                    {passwordShown ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                  </IconButton>
-                </Box>
-                <Button
-                  variant="outlined"
-                  startIcon={<EditIcon />}
-                  onClick={() => setEditPasswordStatus(true)}
-                >
-                  Change Password
-                </Button>
-              </Box>
-            </div>
-          )}
         </TabPanel>
       </div>
     </ThemeProvider>

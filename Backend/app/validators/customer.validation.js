@@ -50,6 +50,19 @@ const validationSchema = {
     query('address').optional(),
     query('kin_name').optional(),
   ],
+  patchChangePasswordSchema: [
+    body('oldPassword').isString(),
+    body('newPassword').isStrongPassword(),
+  ],
+  updateCustomerProfileSchema: [
+    query('name'),
+    query('email').isEmail(),
+    query('phone').isMobilePhone(),
+    query('street_name'),
+    query('city'),
+    query('province'),
+    query('applicant_dob').isDate()
+  ],
 };
 
 module.exports = validationSchema;
