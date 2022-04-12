@@ -1,9 +1,25 @@
 const Admin = require('../models/admin.model');
 const Chapter = require('../models/chapter.model');
-const Supervisor = require('../models/supervisor.model');
 const logger = require('../logger');
 
 const adminController = {
+  async createAdmin(req, res, next) {
+    const { name, email, phone, password, chapter_id } = req.body;
+    try {
+      const admin = await Admin.create(
+        name,
+        email,
+        phone,
+        password,
+        chapter_id,
+        1
+      );
+      res.json(admin);
+    } catch (err) {
+      next(err);
+    }
+  },
+
   async listAll(req, res, next) {
     try {
       const admins = await Admin.listAll();
@@ -23,30 +39,16 @@ const adminController = {
     }
   },
 
-  async makeSupervisor(req, res, next) {
-    try {
-      const { admin_id } = req.params;
-      const results = await Admin.makeSupervisor(admin_id);
-      res.send(results);
-    } catch (err) {
-      next(err);
-    }
-  },
-  async unsetSupervisor(req, res, next) {
-    try {
-      const { admin_id } = req.params;
-      const results = await Admin.unsetSupervisor(admin_id);
-      res.send(results);
-    } catch (err) {
-      next(err);
-    }
-  },
-
   async makeSuperadmin(req, res, next) {
     try {
       const { admin_id } = req.params;
-      const results = await Admin.makeSuperadmin(admin_id); 
-      res.send(results);
+      const role_id = await Admin.getRole(admin_id);
+      if (role_id == 1) {
+        await Admin.makeSuperadmin(admin_id);
+        res.send({ success: true });
+      } else {
+        next(new Error('Not an admin, cannot set as superadmin.'));
+      }
     } catch (err) {
       next(err);
     }
@@ -55,21 +57,24 @@ const adminController = {
   async unsetSuperadmin(req, res, next) {
     try {
       const { admin_id } = req.params;
-      const results = await Admin.unsetSuperadmin(admin_id);
-      res.send(results);
+      const role_id = await Admin.getRole(admin_id);
+      if (role_id == 2) {
+        await Admin.unsetSuperadmin(admin_id);
+        res.send({ success: true });
+      } else {
+        next(new Error('Not a superadmin, cannot unset superadmin status.'));
+      }
     } catch (err) {
       next(err);
     }
   },
 
-
-  async getByChapter(req, res, next) {
+  async listByChapter(req, res, next) {
     try {
       const { chapter } = req.params;
       const chapter_id = await Chapter.getId(chapter);
-      logger.debug(chapter_id);
-      const results = await Supervisor.listByChapter(chapter_id);
-      res.send(results);
+      const chapterAdmins = await Admin.listByChapter(chapter_id);
+      res.send({ admins: chapterAdmins });
     } catch (err) {
       next(err);
     }
@@ -80,13 +85,17 @@ const adminController = {
       const chapter_name = req.body.name;
       const { admin_id } = req.params;
       const chapter_id = await Chapter.getId(chapter_name);
-      logger.debug(chapter_id);
-      const results = await Supervisor.assignChapter(admin_id, chapter_id);
-      res.send(results);
+      const role_id = await Admin.getRole(admin_id);
+      if (role_id == 1) {
+        await Admin.assignChapter(admin_id, chapter_id);
+        res.send({ success: true });
+      } else {
+        next(new Error('Can only assign chapters to admins or supervisors'));
+      }
     } catch (err) {
       next(err);
     }
-  }
+  },
 };
 
 module.exports = adminController;
