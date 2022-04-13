@@ -170,7 +170,7 @@ Admin.getRole = function (admin_id) {
       function (err, rows) {
         if (err) reject(err);
         else {
-          resolve(JSON.parse(JSON.stringify(rows[0])).role_id);
+          resolve(rows[0].role_id);
         }
       }
     );

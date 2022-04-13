@@ -30,7 +30,7 @@ Chapter.getId = function(chapter_name) {
     sql.query('SELECT chapter_id from chapters where name = ?', [chapter_name], (err, results) => {
       if (err) reject (err);
       else {
-        resolve(JSON.parse(JSON.stringify(results[0])).chapter_id);
+        resolve(results[0].chapter_id);
       }
     });
   });
