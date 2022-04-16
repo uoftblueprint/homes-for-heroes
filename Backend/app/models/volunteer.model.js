@@ -1,5 +1,4 @@
 const sql = require('./db.js');
-const logger = require('../logger');
 
 const Volunteer = function (body) {
   this.name = body.name;
@@ -15,7 +14,7 @@ Volunteer.prototype.create = function () {
     sql.query(
       'INSERT INTO volunteers (name, village, date_joined, role, phone) VALUES (?, ?, ?, ?, ?)',
       [this.name, this.village, this.date_joined, this.role, this.phone],
-      function (err, results) {
+      (err, results) => {
         if (err) reject(err);
         else resolve(results.insertId);
       }
@@ -25,8 +24,8 @@ Volunteer.prototype.create = function () {
 
 // list all volunteers
 Volunteer.listAll = function () {
-  return new Promise(function (resolve, reject) {
-    sql.query('SELECT * FROM volunteers', function (err, rows) {
+  return new Promise((resolve, reject) => {
+    sql.query('SELECT * FROM volunteers', (err, rows) => {
       if (err) reject(err);
       else {
         resolve(rows);
@@ -48,7 +47,7 @@ Volunteer.updateInfo = function (volunteer_id, body) {
         body.phone,
         volunteer_id,
       ],
-      function (err, results) {
+      (err, results) => {
         if (err) reject(err);
         else resolve(volunteer_id);
       }

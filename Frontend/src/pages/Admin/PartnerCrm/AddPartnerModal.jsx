@@ -50,6 +50,7 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
     })
       .then((resp) => {
         setLoading(false);
+        toggleDialog(false);
       })
       .catch(e => {
         const action = key => (

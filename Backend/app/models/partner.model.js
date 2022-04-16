@@ -1,5 +1,4 @@
 const sql = require('./db.js');
-const logger = require('../logger');
 
 // constructor for partners
 const Partner = function (body) {
@@ -24,7 +23,7 @@ Partner.prototype.create = function () {
         this.phone,
         this.email,
       ],
-      function (err, results) {
+      (err, results) => {
         if (err) reject(err);
         else resolve(results.insertId);
       }
@@ -46,7 +45,7 @@ Partner.updateInfo = function (partner_id, body) {
         body.email,
         partner_id,
       ],
-      function (err, results) {
+      (err, results) => {
         if (err) reject(err);
         else resolve(partner_id);
       }
@@ -56,8 +55,8 @@ Partner.updateInfo = function (partner_id, body) {
 
 // list all partners
 Partner.listAll = function () {
-  return new Promise(function (resolve, reject) {
-    sql.query('SELECT * FROM partners', function (err, rows) {
+  return new Promise((resolve, reject) => {
+    sql.query('SELECT * FROM partners', (err, rows) => {
       if (err) reject(err);
       else {
         resolve(rows);

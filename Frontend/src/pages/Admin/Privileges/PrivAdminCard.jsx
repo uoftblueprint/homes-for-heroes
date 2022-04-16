@@ -47,7 +47,7 @@ function stringAvatar(name) {
     sx: {
       bgcolor: stringToColor(name),
     },
-    children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+    children: `${name.split(" ")?.[0]?.[0] || ''}${name.split(" ")?.[1]?.[0] || ''}`,
   };
 }
 
@@ -110,10 +110,10 @@ export default function PrivAdminCard() {
     let active = true;
     setSuperadmins((prevState) =>
       prevState.map((user) => {
-        if (user.admin_id === admin_id) {
+        if (user.user_id === admin_id) {
           return {
             ...user,
-            role_id: 2,
+            role_id: 0,
           };
         }
         return user;
@@ -190,16 +190,16 @@ export default function PrivAdminCard() {
         ) : (
           <List>
             {superadmins
-              .filter((el) => el.role_id === 3)
+              .filter((el) => el.role_id === 2)
               .map((superadmin) => {
                 return (
                   <ListItem
-                    key={superadmin.admin_id}
+                    key={superadmin.user_id}
                     secondaryAction={
                       <Button
                         size="small"
                         onClick={() =>
-                          handleUnsetSuperadmin(superadmin.admin_id)
+                          handleUnsetSuperadmin(superadmin.user_id)
                         }
                         startIcon={<DeleteIcon />}
                         sx={{

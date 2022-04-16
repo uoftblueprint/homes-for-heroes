@@ -52,7 +52,7 @@ function stringAvatar(name) {
     sx: {
       bgcolor: stringToColor(name),
     },
-    children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+    children: `${name.split(" ")?.[0]?.[0] || ''}${name.split(" ")?.[1]?.[0] || ''}`,
   };
 }
 
@@ -68,7 +68,7 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
   React.useEffect(() => {
     if (searchParams !== ''){
     setLoading(true);
-    const url = `http://localhost:3000/admins/getSearchAdmins?name=${searchParams}`;
+    const url = `http://localhost:3000/api/admins/getSearchAdmins?name=${searchParams}`;
   
     fetch(url, {
       headers: {
@@ -110,10 +110,10 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
   const handleSetSupervisor = (admin_id) => {
     setAdmins((prevState) =>
       prevState.map((user) => {
-        if (user.admin_id === admin_id) {
+        if (user.user_id === admin_id) {
           return {
             ...user,
-            role_id: 2,
+            role_id: 1,
             chapter_id: currChapter.chapter_id 
           };
         }
@@ -213,9 +213,9 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
                 admins.map((admin) => {
                 return (
                   <ListItem
-                    key={admin.admin_id}
+                    key={admin.user_id}
                     secondaryAction={
-                      admin.role_id === 2 && admin.chapter_id === currChapter.chapter_id ? (
+                      admin.role_id === 1 && admin.chapter_id === currChapter.chapter_id ? (
                         <Button
                           disabled
                           size="small"
@@ -227,7 +227,7 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
                       ) : (
                       <Button
                         size="small"
-                        onClick={() => handleSetSupervisor(admin.admin_id)}
+                        onClick={() => handleSetSupervisor(admin.user_id)}
                         startIcon={<AddIcon />}
                         sx={{ color: "#B20009", marginLeft: "auto" }}
                       >

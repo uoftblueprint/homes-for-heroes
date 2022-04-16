@@ -52,7 +52,7 @@ function stringAvatar(name) {
     sx: {
       bgcolor: stringToColor(name),
     },
-    children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+    children: `${name.split(" ")?.[0]?.[0] || ''}${name.split(" ")?.[1]?.[0] || ''}`,
   };
 }
 
@@ -68,7 +68,7 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
  React.useEffect(() => {
     if (searchParams !== ''){
     setLoading(true);
-    const url = `http://localhost:3000/admins/getSearchAdmins?name=${searchParams}`;
+    const url = `http://localhost:3000/api/admins/getSearchAdmins?name=${searchParams}`;
   
     fetch(url, {
       headers: {
@@ -117,17 +117,17 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
   const handleSetSuperadmin = (admin_id) => {
     setAdmins((prevState) =>
       prevState.map((user) => {
-        if (user.admin_id === admin_id) {
+        if (user.user_id === admin_id) {
           return {
             ...user,
-            role_id: 3
+            role_id: 2 
           };
         }
         return user;
       })
     )
     setLoading(true);
-    const url = `http://localhost:3000/admins/${admin_id}/makeSupervisor`;
+    const url = `http://localhost:3000/api/admins/${admin_id}/makeSuperadmin`;
 
     fetch(url,{
       method: 'PUT',
@@ -201,9 +201,9 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
               admins.map((admin) => {
               return (
                 <ListItem
-                  key={admin.admin_id}
+                  key={admin.user_id}
                   secondaryAction={
-                    admin.role_id === 3 ? (
+                    admin.role_id === 2 ? (
                       <Button
                         disabled
                         size="small"
@@ -215,7 +215,7 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
                     ) : (
                       <Button
                         size="small"
-                        onClick={() => handleSetSuperadmin(admin.admin_id)} 
+                        onClick={() => handleSetSuperadmin(admin.user_id)}
                         startIcon={<AddIcon />}
                         sx={{ color: "#B20009", marginLeft: "auto" }}
                       >

@@ -1,5 +1,4 @@
 const sql = require('./db.js');
-const logger = require('../logger');
 
 // constructor
 const Supporter = function (body) {
@@ -10,28 +9,27 @@ const Supporter = function (body) {
 };
 
 // add new supporter
-Supporter.prototype.create = function () {
+Supporter.prototype.create = function() {
   return new Promise((resolve, reject) => {
-    sql.query(
-      'INSERT INTO supporters (name, date_gifted, gift_provided, phone) VALUES (?, ?, ?, ?)',
+    sql.query('INSERT INTO supporters (name, date_gifted, gift_provided, phone) VALUES (?, ?, ?, ?)',
       [this.name, this.date_gifted, this.gift_provided, this.phone],
-      function (err, results) {
-        if (err) reject(err);
+      (err, results) => {
+        if (err) reject (err);
         else resolve(results.insertId);
-      }
-    );
+      });
   });
 };
 
 // list all supporters
 Supporter.listAll = function () {
-  return new Promise(function (resolve, reject) {
-    sql.query('SELECT * FROM supporters', function (err, rows) {
-      if (err) reject(err);
-      else {
-        resolve(rows);
-      }
-    });
+  return new Promise((resolve, reject) => {
+    sql.query('SELECT * FROM supporters', 
+      (err, rows) => {
+        if (err) reject (err);
+        else {
+          resolve(rows);
+        }
+      });
   });
 };
 
@@ -62,7 +60,7 @@ Supporter.updateInfo = function (supporter_id, body) {
         body.phone,
         supporter_id,
       ],
-      function (err, results) {
+      (err, results) => {
         if (err) reject(err);
         else resolve(supporter_id);
       }

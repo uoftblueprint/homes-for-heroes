@@ -10,6 +10,7 @@ const volunteerController = {
       next(err);
     }
   },
+<<<<<<< HEAD
 
   async create(req, res, next) {
     try {
@@ -39,6 +40,16 @@ const volunteerController = {
       logger.debug(req.body);
       const updated_id = await Volunteer.updateInfo(volunteer_id, req.body);
       res.json(updated_id);
+=======
+
+  async create(req, res, next) {
+    try {
+      logger.debug(req.body);
+      const new_volunteer = new Volunteer(req.body);
+      const volunteer_id = await new_volunteer.create();
+      logger.debug(volunteer_id);
+      res.json(volunteer_id);
+>>>>>>> origin/main
     } catch (err) {
       next(err);
     }

@@ -12,12 +12,20 @@ const supporterController = {
   },
   async create(req, res, next) {
     try {
+<<<<<<< HEAD
       const new_supporter = new Supporter(req.body);
       const supporter_id = await new_supporter.create();
+=======
+      logger.debug(req.body);
+      const new_supporter = new Supporter(req.body);
+      const supporter_id = await new_supporter.create();
+      logger.debug(supporter_id);
+>>>>>>> origin/main
       res.json(supporter_id);
     } catch (err) {
       next(err);
     }
+<<<<<<< HEAD
   },
   async getSupporterByName(req, res, next) {
     try {
@@ -38,6 +46,8 @@ const supporterController = {
     } catch (err) {
       next(err);
     }
+=======
+>>>>>>> origin/main
   }
 };
 
