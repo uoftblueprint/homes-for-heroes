@@ -3,12 +3,12 @@ const validationSchema = require('../validators/auth.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
 
 module.exports = (app, passport) => {
-  app.post(
-    '/signup',
-    validationSchema.signUpSchema,
-    validationErrorHandler,
-    authController.signUp,
-  );
+  // app.post(
+  //   '/signup',
+  //   validationSchema.signUpSchema,
+  //   validationErrorHandler,
+  //   authController.signUp,
+  // );
 
   app.post(
     '/login',
@@ -18,19 +18,19 @@ module.exports = (app, passport) => {
     authController.login,
   );
 
-  app.get(
-    '/verify/:verificationCode',
-    validationSchema.verifySchema,
-    validationErrorHandler,
-    authController.verify,
-  );
-
   app.get('/logout', authController.logout);
 
   app.post(
-    '/createveteran',
+    '/createVeteran',
     validationSchema.createVeteranSchema,
     validationErrorHandler,
     authController.createVeteran,
+  );
+
+  app.post(
+    '/createAdmin',
+    validationSchema.createAdminSchema,
+    validationErrorHandler,
+    authController.createAdmin,
   );
 };

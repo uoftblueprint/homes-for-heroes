@@ -49,6 +49,14 @@ module.exports = (app) => {
     customers.updateUserInfo,
   );
 
+  app.patch(
+    '/changePassword',
+    isAuthenticated,
+    validationSchema.patchChangePasswordSchema,
+    validationErrorHandler,
+    customers.patchChangePassword,
+  );
+
   app.get(
     '/getUsersInfoCSV',
     validationSchema.getUserInfoCSVSchema,
