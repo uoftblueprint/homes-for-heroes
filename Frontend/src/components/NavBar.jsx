@@ -15,8 +15,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {useSelector} from "react-redux";
-import {selectLoggedIn} from "../redux/userSlice";
+import { useSelector } from 'react-redux';
+import { selectLoggedIn, selectRoleId } from '../redux/userSlice';
+import { ADMIN_ROLE_ID, SUPER_ADMIN_ROLE_ID } from './constants';
 
 const theme = createTheme({
   palette: {
@@ -34,6 +35,7 @@ const Header = (props) => {
   const [open, toggleOpen] = React.useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const authLogin = useSelector(selectLoggedIn);
+  const roleId = useSelector(selectRoleId);
 
   const handleMenuClick = (pageURL) => {
     history.push(pageURL);
@@ -48,33 +50,35 @@ const Header = (props) => {
   let rightMenuItems = [
     {
       menuTitle: 'Login',
-      'pageUrl': '/login',
-    }
+      pageUrl: '/login',
+    },
   ];
 
   if (authLogin) {
-    menuItems = [
-      {
-        menuTitle: 'User CRM',
-        pageURL: '/usercrm',
-      },
-      {
-        menuTitle: 'User Case',
-        pageURL: '/usercase',
-      },
-      {
-        menuTitle: 'Forms',
-        pageURL: '/forms',
-      },
-      {
-        menuTitle: 'Admin Privileges',
-        pageURL: '/admin',
-      },
-      {
-        menuTitle: 'External Relations',
-        pageURL: '/external'
-      }
-    ];
+    if (roleId === ADMIN_ROLE_ID || roleId === SUPER_ADMIN_ROLE_ID) {
+      menuItems = [
+        {
+          menuTitle: 'User CRM',
+          pageURL: '/usercrm',
+        },
+        {
+          menuTitle: 'User Case',
+          pageURL: '/usercase',
+        },
+        {
+          menuTitle: 'Forms',
+          pageURL: '/forms',
+        },
+        {
+          menuTitle: 'Admin Privileges',
+          pageURL: '/admin',
+        },
+        {
+          menuTitle: 'External Relations',
+          pageURL: '/external',
+        },
+      ];
+    }
 
     rightMenuItems = [
       {
@@ -84,7 +88,7 @@ const Header = (props) => {
       {
         menuTitle: 'Logout',
         pageUrl: 'logout',
-      }
+      },
     ];
   }
 
@@ -159,17 +163,17 @@ const Header = (props) => {
                 {rightMenuItems.map((menuItem) => {
                   const { menuTitle, pageUrl } = menuItem;
                   return (
-                      <Button
-                          onClick={() => handleButtonClick(pageUrl)}
-                          sx={{
-                            marginLeft: 'auto',
-                            color: 'white',
-                            fontSize: 16,
-                          }}
-                      >
-                        {menuTitle}
-                      </Button>
-                  )
+                    <Button
+                      onClick={() => handleButtonClick(pageUrl)}
+                      sx={{
+                        marginLeft: 'auto',
+                        color: 'white',
+                        fontSize: 16,
+                      }}
+                    >
+                      {menuTitle}
+                    </Button>
+                  );
                 })}
               </div>
             </>

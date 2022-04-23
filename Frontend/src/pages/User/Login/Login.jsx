@@ -66,17 +66,22 @@ export default function Login() {
         },
         body: JSON.stringify({ email, password }),
       });
-      const { token } = await res.json();
-      console.log(token);
-      dispatch(
-          login({
-            email: email,
-            password: password,
-            loggedIn: true,
-          }),
-      );
-      const { from } = location.state || { from: { pathname: '/' } };
-      history.replace(from);
+      if (res.status === 200) {
+        const { expires, role_id } = await res.json();
+        dispatch(
+            login({
+              email: email,
+              password: password,
+              loggedIn: true,
+              timeout: expires,
+              role_id: role_id,
+            }),
+        );
+        const {from} = location.state || {from: {pathname: '/'}};
+        history.replace(from);
+      } else {
+        console.error(res);
+      }
     } catch (err) {
       console.error(err);
     }

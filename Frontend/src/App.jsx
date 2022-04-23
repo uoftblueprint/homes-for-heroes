@@ -1,6 +1,7 @@
 import './App.css';
 
-import AuthProtectedRoute from './components/AuthProtectedRoute';
+import AuthProtectedRoute from './components/routes/AuthProtectedRoute';
+import AdminProtectedRoute from './components/routes/AdminProtectedRoute';
 import NavBar from './components/NavBar';
 
 import { Route, Switch } from 'react-router-dom';
@@ -34,43 +35,43 @@ function App() {
             from="/"
             render={(props) => <Typography color="black">Home</Typography>}
           />
-          <AuthProtectedRoute
+          <AdminProtectedRoute
             exact
             path="/usercrm"
             render={(props) => <CRM {...props} />}
           />
-          <AuthProtectedRoute
+          <AdminProtectedRoute
             exact
             path="/usercase"
             render={(props) => <CaseList {...props} />}
           />
-          <AuthProtectedRoute exact path="/forms" component={FormTop} />
-          <AuthProtectedRoute
+          <AdminProtectedRoute exact path="/forms" component={FormTop} />
+          <AdminProtectedRoute
             exact
             path="/forms/create"
             component={FormCreate}
           />
-          <AuthProtectedRoute
+          <AdminProtectedRoute
             exact
             path="/forms/view/:formId"
             component={FormView}
           />
-          <AuthProtectedRoute
+          <AdminProtectedRoute
             exact
             path="/forms/edit/:formId"
             component={FormEdit}
           />
-          <AuthProtectedRoute
+          <AdminProtectedRoute
             exact
             path="/admin"
             render={(props) => <Privileges {...props} />}
           />
-          <AuthProtectedRoute
+          <AdminProtectedRoute
             exact
             path="/casenotes/:id"
             render={(props) => <CaseDetail {...props} />}
           />
-          <AuthProtectedRoute
+          <AdminProtectedRoute
             exact
             path="/external/"
             render={(props) => <ExternalRelations {...props} />}
