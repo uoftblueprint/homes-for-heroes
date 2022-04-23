@@ -74,6 +74,7 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
     })
       .then((resp) => {
         if (!resp.ok){
+          setLoading(false);
           throw new Error()
         }
         else{ 

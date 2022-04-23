@@ -50,7 +50,7 @@ function stringAvatar(name) {
     sx: {
       bgcolor: stringToColor(name),
     },
-    children: `${name.split(" ")[0][0]}${name.split(" ")[1][0]}`,
+    children: `${name.split(" ")?.[0]?.[0] || ''}${name.split(" ")?.[1]?.[0] || ''}`,
   };
 }
 
@@ -108,7 +108,7 @@ React.useEffect(() => {
  const handleUnsetSupervisor = (admin_id) => {
     setSupervisors((prevState) =>
       prevState.map((user) => {
-        if (user.admin_id === admin_id) {
+        if (user.user_id === admin_id) {
           return {
             ...user,
             role_id: 0 
@@ -226,7 +226,7 @@ React.useEffect(() => {
                       secondaryAction={
                         <Button
                           size="small"
-                          onClick={() => handleUnsetSupervisor(supervisor.admin_id)}
+                          onClick={() => handleUnsetSupervisor(supervisor.user_id)}
                           startIcon={<DeleteIcon />}
                           sx={{
                             fontWeight: "bold",

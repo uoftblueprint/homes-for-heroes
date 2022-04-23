@@ -18,7 +18,12 @@ export default function AddRowButton({ dialog, setDialog }) {
   const [isLoading, setLoading] = React.useState(false); 
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState(''); 
-  const [emailError, setEmailError] = React.useState(false);
+  const [gender, setGender] = React.useState('M');
+  const [phone, setPhone] = React.useState('');
+  const [name_error, setNameError] = React.useState(false);
+  const [email_error, setEmailError] = React.useState(false);
+  const [gender_error, setGenderError] = React.useState(false);
+  const [phone_error, setPhoneError] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const handleEmailChange = (e) => {
@@ -26,49 +31,77 @@ export default function AddRowButton({ dialog, setDialog }) {
     setEmail(e.target.value);
   }
 
-  const addRow = () => {
-    setLoading(true);
-    const url = `http://localhost:3000/createveteran`;
-
-    fetch(url,{
-      method: 'POST',
-      headers:{
-      'Content-Type':'application/json'
-      },
-      body: JSON.stringify({
-        name: name,
-        email: email,
-      })
-    })
-      .then((resp) => {
-        console.log(resp);
-        setLoading(false);
-        setDialog(false); 
-      })
-      .catch(e => {
-        const action = key => (
-          <Grid>
-            <Button onClick={() => { window.location.reload(); }}>
-              Refresh
-            </Button>
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => { closeSnackbar(key) }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          </Grid>
-        );
-        enqueueSnackbar(
-          'Something went wrong', {
-          variant: 'error',
-          autoHideDuration: 15000,
-          action,
-        })
-      });
+  const fieldsValidated = () => {
+    if (
+    !validator.isEmpty(name) && 
+    validator.isEmail(email) &&
+    validator.isAlpha(gender) &&
+    validator.isMobilePhone(phone)
+    ){
+      return true;
+    }
+    else{
+    setNameError(validator.isEmpty(name));  
+    setEmailError(!validator.isEmail(email));
+    setGenderError(!validator.isAlpha(gender));
+    setPhoneError(!validator.isMobilePhone(phone));
+    return false;
+    }
   }
+
+  const handleAdd = () => {
+    if (fieldsValidated() === true){
+      setLoading(true);
+      const url = `http://localhost:3000/createVeteran`;
+
+      fetch(url,{
+        method: 'POST',
+        headers:{
+        'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          gender: gender,
+          phone: phone
+        })
+      })
+        .then((resp) => {
+          if (!resp.ok){
+            setLoading(false);
+            setDialog(false);
+            throw new Error(); 
+          }
+          else{ 
+          setLoading(false);
+          setDialog(false);
+          }
+        })
+        .catch(e => {
+          const action = key => (
+            <Grid>
+              <Button onClick={() => { window.location.reload(); }}>
+                Refresh
+              </Button>
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => { closeSnackbar(key) }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            </Grid>
+          );
+          enqueueSnackbar(
+            'Something went wrong', {
+            variant: 'error',
+            autoHideDuration: 15000,
+            action,
+          })
+        });
+      }
+    } 
 
   return (
     <Grid sx={{ marginRight: "auto" }}>  
@@ -86,6 +119,8 @@ export default function AddRowButton({ dialog, setDialog }) {
             id="name"
             label="Name"
             value={name}
+            error={name_error}
+            helperText={name_error ? 'Please enter a valid name!' : ''}
             onChange={(e) => setName(e.target.value)}
             fullWidth
             variant="standard" 
@@ -96,15 +131,40 @@ export default function AddRowButton({ dialog, setDialog }) {
             id="email"
             label="Email" 
             value={email}
-            error={emailError}
+            error={email_error}
+            helperText={email ? 'Please enter a valid Email!' : ''}
             onChange={handleEmailChange}
+            fullWidth
+            variant="standard" 
+            /> 
+            <TextField
+            autoFocus
+            margin="dense"
+            id="gender"
+            label="Gender" 
+            value={gender}
+            error={gender_error}
+            helperText={phone_error ? 'Please enter a valid Gender!' : ''}
+            onChange={(e) => setGender(e.target.value)} 
+            fullWidth
+            variant="standard" 
+            /> 
+            <TextField
+            autoFocus
+            margin="dense"
+            id="phone"
+            label="Phone" 
+            value={phone}
+            error={phone_error}
+            helperText={phone_error ? 'Please enter a valid Phone Number!' : ''} 
+            onChange={(e) => setPhone(e.target.value)} 
             fullWidth
             variant="standard" 
             /> 
         </DialogContent>
         }
         <DialogActions>
-          <Button disabled={emailError} onClick={addRow}>Add Veteran</Button>
+          <Button onClick={handleAdd}>Add Veteran</Button>
           <Button onClick={() => setDialog(false)}>Cancel</Button>
         </DialogActions>
       </Dialog> 

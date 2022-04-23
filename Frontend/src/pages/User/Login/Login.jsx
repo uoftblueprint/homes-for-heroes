@@ -93,9 +93,9 @@ export default function Login() {
               id="email"
               label="Email"
               name="Email"
+              value={email}
               autoComplete="Email"
               onChange={handleEmailChange}
-              value={email}
             />
             <TextField
               required

@@ -78,7 +78,8 @@ const handleAdd = () => {
     })
       .then((resp) => {
         if (!resp.ok){
-          throw new Error()
+          setLoading(false);
+          throw new Error();
         }
         else{ 
         setLoading(false);

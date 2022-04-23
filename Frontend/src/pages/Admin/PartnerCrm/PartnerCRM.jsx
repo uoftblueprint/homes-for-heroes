@@ -272,6 +272,7 @@ export default function PartnerCRM({ tab }) {
     })
       .then((resp) => {
         if (!resp.ok){
+          setLoading(false);
           throw new Error(); 
         }
         {
