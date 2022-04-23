@@ -42,13 +42,9 @@ const adminController = {
   async makeSuperadmin(req, res, next) {
     try {
       const { admin_id } = req.params;
-      const role_id = await Admin.getRole(admin_id);
-      if (role_id == 1) {
-        await Admin.makeSuperadmin(admin_id);
-        res.send({ success: true });
-      } else {
-        next(new Error('Not an admin, cannot set as superadmin.'));
-      }
+      //const role_id = await Admin.getRole(admin_id);
+      await Admin.makeSuperadmin(admin_id);
+      res.send({ success: true });
     } catch (err) {
       next(err);
     }
@@ -57,13 +53,9 @@ const adminController = {
   async unsetSuperadmin(req, res, next) {
     try {
       const { admin_id } = req.params;
-      const role_id = await Admin.getRole(admin_id);
-      if (role_id == 2) {
-        await Admin.unsetSuperadmin(admin_id);
-        res.send({ success: true });
-      } else {
-        next(new Error('Not a superadmin, cannot unset superadmin status.'));
-      }
+      // const role_id = await Admin.getRole(admin_id);
+      await Admin.unsetSuperadmin(admin_id);
+      res.send({ success: true });
     } catch (err) {
       next(err);
     }
@@ -71,10 +63,10 @@ const adminController = {
 
   async listByChapter(req, res, next) {
     try {
-      const { chapter } = req.params;
-      const chapter_id = await Chapter.getId(chapter);
+      const { chapter_id } = req.params;
+      //const chapter_id = await Chapter.getId(chapter);
       const chapterAdmins = await Admin.listByChapter(chapter_id);
-      res.send({ admins: chapterAdmins });
+      res.send(chapterAdmins);
     } catch (err) {
       next(err);
     }
@@ -82,16 +74,10 @@ const adminController = {
 
   async assignChapter(req, res, next) {
     try {
-      const chapter_name = req.body.name;
+      const chapter_id = req.body.chapter_id;
       const { admin_id } = req.params;
-      const chapter_id = await Chapter.getId(chapter_name);
-      const role_id = await Admin.getRole(admin_id);
-      if (role_id == 1) {
-        await Admin.assignChapter(admin_id, chapter_id);
-        res.send({ success: true });
-      } else {
-        next(new Error('Can only assign chapters to admins or supervisors'));
-      }
+      await Admin.assignChapter(admin_id, chapter_id);
+      res.send({ success: true });
     } catch (err) {
       next(err);
     }

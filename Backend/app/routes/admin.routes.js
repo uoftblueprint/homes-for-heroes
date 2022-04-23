@@ -29,7 +29,7 @@ module.exports = app => {
     adminController.assignChapter);
 
   app.get(
-    '/admins/:chapter/listByChapter',
+    '/admins/:chapter_id/listByChapter',
     isSuperAdmin,
     validationSchema.listChapterSupervisorsSchema,
     validationErrorHandler,

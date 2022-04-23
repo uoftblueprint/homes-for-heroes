@@ -132,6 +132,22 @@ Admin.makeSuperadmin = function (admin_id) {
   });
 };
 
+Admin.unsetSuperadmin = function (admin_id) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'UPDATE client_users SET role_id = 1 WHERE user_id = ?',
+      [admin_id],
+      (err, rows) => {
+        if (err) reject(err);
+        else {
+          resolve(rows[0]);
+        }
+      }
+    );
+  });
+};
+
+
 
 Admin.assignChapter = function (admin_id, chapter_id) {
   logger.debug(admin_id);
