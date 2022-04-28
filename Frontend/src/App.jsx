@@ -1,11 +1,13 @@
 import './App.css';
 
-import { Route, Switch } from 'react-router-dom';
 import NavBar from './components/NavBar';
+
+import { Route, Switch } from 'react-router-dom';
+
 import FormTop from './pages/User/Form/FormTop.js';
-import FormCreate from "./pages/User/Form/FormCreate";
-import FormView from "./pages/User/Form/FormView";
-import FormEdit from "./pages/User/Form/FormEdit";
+import FormCreate from './pages/User/Form/FormCreate';
+import FormView from './pages/User/Form/FormView';
+import FormEdit from './pages/User/Form/FormEdit';
 
 import CaseList from './pages/Admin/UserCase/CaseList';
 import Login from './pages/User/Login/Login';
@@ -17,6 +19,7 @@ import Home from './components/Home.jsx';
 import FormComplete from './pages/User/Form/FormComplete.js';
 
 import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
+import SignupForm from './components/SignupForm.jsx';
 
 import CaseDetail from './pages/User/CaseDetails/CaseDetail';
 
@@ -39,9 +42,9 @@ function App() {
             render={(props) => <CaseList {...props} />}
           />
           <Route exact path="/forms" component={FormTop} />
-            <Route exact path="/forms/create" component={FormCreate} />
-            <Route exact path="/forms/view/:formId" component={FormView} />
-            <Route exact path="/forms/edit/:formId" component={FormEdit} /> 
+          <Route exact path="/forms/create" component={FormCreate} />
+          <Route exact path="/forms/view/:formId" component={FormView} />
+          <Route exact path="/forms/edit/:formId" component={FormEdit} />
           <Route
             exact
             path="/admin"
@@ -64,10 +67,13 @@ function App() {
             render={(props) => <ProfilePage {...props} />}
           />
           <Route exact path="/login" render={(props) => <Login {...props} />} />
-          {/* <Route path="/Home" component={Home} />
-        <Route path="/CaseDetails" component={CaseDetails} />
-        <Route path="/UserList" component={UserList} />
-        <Route path="Login" component={Login} /> */}
+
+          <Switch>
+            <Route
+              path="/signupform/:jwt"
+              render={(props) => <SignupForm {...props} />}
+            />
+          </Switch>
         </Switch>
       </header>
     </div>

@@ -1,19 +1,23 @@
-const supporter = require('../controllers/supporter.controller');
+const supporterController = require('../controllers/supporter.controller');
 const validationSchema = require('../validators/supporter.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
+const { isSuperAdmin } = require('../auth/helpers');
 
 module.exports = app => {
     
   // list all supporters
   app.get(
-    '/supporters', 
-    supporter.getAllSupporters);
+    '/supporters',
+    supporterController.getAllSupporters
+  );
     
   // create a new supporter
   app.post(
-    '/supporters/create', 
+    '/supporters/create',
+    isSuperAdmin,
     validationSchema.createSupporterSchema,
     validationErrorHandler,
-    supporter.create);
+    supporterController.create
+  );
 };
   

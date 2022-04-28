@@ -36,7 +36,7 @@ export default function PrivCreateAdmin({ caDialog, toggleCaDialog, chapters }) 
   const createAdmin = () => {
     let active = true;
     setLoading(true);
-    const url = `http://localhost:3000/admins/createAdmin`;
+    const url = `http://localhost:3000/api/createAdmin`;
     fetch(url,{
       method: 'POST',
       headers:{

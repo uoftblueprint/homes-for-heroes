@@ -1,7 +1,22 @@
+const supervisorController = require('../controllers/supervisor.controller');
+const { isSuperAdmin } = require('../auth/helpers');
+
 module.exports = app => {
-  const supervisors = require('../controllers/supervisor.controller');
-  
-  app.get('/supervisors/getAll', supervisors.getAll);
-  app.put('/supervisors/:admin_id/assignChapter', supervisors.assignChapter);
-  app.get('/supervisors/:chapter/listByChapter', supervisors.getByChapter);
+  app.get(
+    '/supervisors/getAll',
+    isSuperAdmin,
+    supervisorController.getAll
+  );
+
+  app.put(
+    '/supervisors/:admin_id/assignChapter',
+    isSuperAdmin,
+    supervisorController.assignChapter
+  );
+
+  app.get(
+    '/supervisors/:chapter/listByChapter',
+    isSuperAdmin,
+    supervisorController.getByChapter
+  );
 };

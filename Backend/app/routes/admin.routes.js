@@ -1,50 +1,44 @@
-const admin = require('../controllers/admin.controller');
+const adminController = require('../controllers/admin.controller');
 const validationSchema = require('../validators/admin.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
-const adminController = require('../controllers/admin.controller');
+const { isSuperAdmin } = require('../auth/helpers');
 
 module.exports = app => {
-  app.get('/admins/getAll', admin.listAll);
-  app.get('/admins/getSearchAdmins', admin.getSearchAdmins);
+  app.get('/admins/getAll', isSuperAdmin, adminController.listAll);
+  app.get('/admins/getSearchAdmins', isSuperAdmin, adminController.getSearchAdmins);
 
   app.put(
-    '/admins/:admin_id/makeSupervisor', 
-    validationSchema.makeSupervisorSchema,
-    validationErrorHandler,
-    admin.makeSupervisor);
-
-  app.put(
-    '/admins/:admin_id/unsetSupervisor', 
-    validationSchema.unsetSupervisorSchema,
-    validationErrorHandler,
-    admin.unsetSupervisor);
-  app.put(
-    '/admins/:admin_id/makeSuperadmin', 
+    '/admins/:admin_id/makeSuperadmin',
+    isSuperAdmin,
     validationSchema.makeSuperadminSchema,
     validationErrorHandler,
-    admin.makeSuperadmin);
+    adminController.makeSuperadmin);
 
   app.put(
-    '/admins/:admin_id/unsetSuperadmin', 
+    '/admins/:admin_id/unsetSuperadmin',
+    isSuperAdmin,
     validationSchema.unsetSuperadminSchema,
     validationErrorHandler,
-    admin.unsetSuperadmin);
+    adminController.unsetSuperadmin);
+    
   app.put(
-    '/admins/:admin_id/assignChapter', 
+    '/admins/:admin_id/assignChapter',
+    isSuperAdmin,
     validationSchema.assignChapterSchema,
     validationErrorHandler,
-    admin.assignChapter);
+    adminController.assignChapter);
 
   app.get(
-    '/admins/:chapter/listByChapter', 
+    '/admins/:chapter_id/listByChapter',
+    isSuperAdmin,
     validationSchema.listChapterSupervisorsSchema,
     validationErrorHandler,
-    admin.getByChapter);
+    adminController.getByChapter);
 
   app.post(
     '/admins/createAdmin',
+    isSuperAdmin,
     validationSchema.createAdminSchema,
     validationErrorHandler,
-    adminController.createAdmin,
-  );
+    adminController.createAdmin);
 };
