@@ -22,6 +22,7 @@ import LaunchIcon from "@mui/icons-material/Launch";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { useHistory } from "react-router-dom";
 import validator from "validator";
 
@@ -95,6 +96,7 @@ export default function CRM() {
   const [pageSize, setPageSize] = React.useState(5);
   const [page, setPage] = React.useState(1);
   const [rows, setRows] = React.useState([]);
+  const [deleteRows, setDelete] = React.useState([]);
   const [pageCount, setPageCount] = React.useState(1);
   const [loading, setLoading] = React.useState(false);
   const [searchCategory, setSearchCategory] = React.useState("name");
@@ -462,6 +464,9 @@ export default function CRM() {
           autoHeight
           display="flex"
           direction="row"
+          checkboxSelection
+          editMode="row"
+          onSelectionModelChange={selections => setDelete(selections)}
           className={classes.root}
           pageSize={pageSize}
           getRowId={(row) => row.user_id}
@@ -499,7 +504,7 @@ export default function CRM() {
                       onClick={() => setDialog(true)}
                     >
                       Add Veteran
-                    </Button>
+                    </Button> 
                     <FormControl
                       variant="standard"
                       sx={{ textAlign: "left", m: 1, width: 200 }}
@@ -545,6 +550,13 @@ export default function CRM() {
                       onClick={() => exportCSV(searchParams)}
                     >
                       Export as CSV
+                    </Button>
+                    <Button
+                      sx={{ color: " #FF0000" }}
+                      endIcon={<DeleteForeverIcon />}
+                      onClick={() => setDialog(true)}
+                    >
+                      Delete Veterans
                     </Button>
                   </Grid>
                 </GridToolbarContainer>

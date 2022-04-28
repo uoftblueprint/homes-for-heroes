@@ -31,10 +31,12 @@ export default function AddSupporterModal({ dialog, toggleDialog }) {
   const [date_gifted, setDate] = React.useState(''); 
   const [gift_provided, setProvided] = React.useState('');
   const [phone, setPhone] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [name_error, setNameError] = React.useState(false); 
   const [date_gifted_error, setDateError] = React.useState(false);
   const [gift_provided_error, setGiftError] = React.useState(false);
   const [phone_error, setPhoneError] = React.useState(false);
+  const [email_error, setEmailError] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 const fieldsValidated = () => {
@@ -42,7 +44,8 @@ const fieldsValidated = () => {
   !validator.isEmpty(name) && 
   !validator.isEmpty(date_gifted) &&
   !validator.isEmpty(gift_provided) &&
-  validator.isMobilePhone(phone)
+  validator.isMobilePhone(phone) &&
+  validator.isEmail(email)
   ){
     return true;
   }
@@ -51,6 +54,7 @@ const fieldsValidated = () => {
   setDateError(validator.isEmpty(date_gifted));
   setGiftError(validator.isEmpty(gift_provided));
   setPhoneError(!validator.isMobilePhone(phone));
+  setEmailError(!validator.isEmail(email));
   return false;
   }
 }
@@ -69,7 +73,8 @@ const handleAdd = () => {
         name: name,
         date_gifted: date_gifted,
         gift_provided: gift_provided,
-        phone: phone
+        phone: phone,
+        email: email
       })
     })
       .then((resp) => {
@@ -172,6 +177,18 @@ const handleAdd = () => {
             error={phone_error}
             helperText={phone_error ? 'Please enter a valid Phone Number!' : ''}
             onChange={(e) => setPhone(e.target.value)}
+            fullWidth
+            variant="standard" 
+            /> 
+            <TextField
+            autoFocus
+            margin="dense"
+            id="email"
+            label="Email" 
+            value={email}
+            error={email_error}
+            helperText={email_error ? 'Please enter a valid Email Number!' : ''}
+            onChange={(e) => setEmail(e.target.value)}
             fullWidth
             variant="standard" 
             /> 

@@ -7,6 +7,7 @@ const VolunteerQueryData = function (query_params) {
   this.date_joined = query_params.date_joined;
   this.role = query_params.role;
   this.phone = query_params.phone;
+  this.email = query_params.email;
   this.page = parseInt(query_params.page);
   this.limit = parseInt(query_params.page_size);
   this.offset = (this.page - 1) * this.limit;
@@ -20,6 +21,7 @@ const VolunteerQueryData = function (query_params) {
     this.appendQueryParamKeyword(this.address, 'volunteers.date_joined');
     this.appendQueryParamKeyword(this.role, 'volunteers.role');
     this.appendQueryParamKeyword(this.phone, 'volunteers.phone');
+    this.appendQueryParamKeyword(this.email, 'volunteers.email');
     this.query = this.query ? `WHERE ${this.query}` : this.query;
   };
 
@@ -29,6 +31,7 @@ const VolunteerQueryData = function (query_params) {
     this.appendUpdateParam(this.address, 'volunteers.date_joined');
     this.appendUpdateParam(this.role, 'volunteers.role');
     this.appendUpdateParam(this.phone, 'volunteers.phone');
+    this.appendUpdateParam(this.email, 'volunteers.email');
     this.query = this.query ? `SET ${this.query}` : this.query;
   };
 };

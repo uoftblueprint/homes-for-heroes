@@ -9,13 +9,14 @@ const Partner = function (body) {
   this.village = body.village;
   this.address = body.address;
   this.phone = body.phone;
+  this.email = body.email;
 };
 
 // add new partner
 Partner.prototype.create = function() {
   return new Promise((resolve, reject) => {
-    sql.query('INSERT INTO partners (org_name, city, village, address, phone) VALUES (?)',
-      [[this.name, this.city, this.village, this.address, this.phone]],
+    sql.query('INSERT INTO partners (org_name, city, village, address, phone, email) VALUES (?)',
+      [[this.name, this.city, this.village, this.address, this.phone, this.email]],
       (err, results) => {
         if (err) reject (err);
         else resolve(results.insertId);
@@ -43,7 +44,7 @@ Partner.queryData = function (query_params) {
     const page_query =`SELECT COUNT(*) AS count FROM partners ${q.query}`
     const data_query = ` 
     SELECT
-      partners.partner_id, partners.org_name, partners.city, partners.village, partners.address, partners.phone
+      partners.partner_id, partners.org_name, partners.city, partners.village, partners.address, partners.phone, partners.email
     FROM partners 
       ${q.query}
     LIMIT ${q.offset}, ${q.limit}

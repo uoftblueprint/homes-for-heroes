@@ -107,21 +107,9 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
     } 
   }, [searchParams, svDialog]);
 
-  const handleSetSupervisor = (admin_id) => {
-    setAdmins((prevState) =>
-      prevState.map((user) => {
-        if (user.user_id === admin_id) {
-          return {
-            ...user,
-            role_id: 1,
-            chapter_id: currChapter.chapter_id 
-          };
-        }
-        return user;
-      })
-    )
+  const handleSetSupervisor = (user_id) => { 
     setLoading(true);
-    const url = `http://localhost:3000/admins/${admin_id}/makeSupervisor`;
+    const url = `http://localhost:3000/admins/${user_id}/makeSupervisor`;
 
     fetch(url,{
       method: 'PUT',
@@ -130,7 +118,7 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
       },
     })
       .then((resp) => {
-        fetch(`http://localhost:3000/supervisors/${admin_id}/assignChapter`,{
+        fetch(`http://localhost:3000/supervisors/${user_id}/assignChapter`,{
           method: 'PUT',
           headers:{
           'Content-Type':'application/json'
@@ -139,6 +127,17 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
             id: currChapter.chapter_id
           })
         })
+        setAdmins((prevState) =>
+          prevState.map((user) => {
+            if (user.user_id === user_id) {
+              return {
+                ...user,
+                chapter_id: currChapter.chapter_id
+              };
+            }
+            return user;
+          })
+        )
         setLoading(false);
       })
       .catch(e => {
@@ -215,7 +214,17 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
                   <ListItem
                     key={admin.user_id}
                     secondaryAction={
-                      admin.role_id === 1 && admin.chapter_id === currChapter.chapter_id ? (
+                      admin.role_id === 2 ? (
+                        <Button
+                          disabled
+                          size="small"
+                          startIcon={<CheckIcon />}
+                          sx={{ color: "#BDBDBD", marginLeft: "auto" }}
+                        >
+                          Is a Superadmin 
+                        </Button>
+                      ) :
+                      admin.chapter_id === currChapter.chapter_id ? (
                         <Button
                           disabled
                           size="small"

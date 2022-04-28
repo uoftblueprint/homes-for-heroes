@@ -7,29 +7,65 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from '@mui/material/Typography';
 import Grid from "@mui/material/Grid";
 
-function loadServerRows() {
-  return new Promise((resolve) => {
-    const url = "http://localhost:3000/chapters/getAll";
+import Button from "@mui/material/Button";
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
-    fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then((resp) => resp.json())
-      .then((resp) => { 
-        resolve(resp.chapters); 
-      });
-  });
-}
+import { useSnackbar } from "notistack";
+
+
+
 
 export default function Privileges() {
 
   const [chapters, addChapters] = React.useState([]); 
   const [isLoading, setLoading] = React.useState(true);
-  const [chapterDialog, toggleChapterDialog] = React.useState(false);
+  const [chapterDialog, toggleChapterDialog] = React.useState(false);  
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
+  function loadServerRows() {
+    return new Promise((resolve) => {
+      const url = "http://localhost:3000/chapters/getAll";
+
+      fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      })
+        .then((resp) => resp.json())
+        .then((resp) => {
+          if (resp.chapters.constructor === Array) {
+            resolve(resp.chapters);
+          } else {
+            throw new Error();
+          }
+        })
+        .catch(e => {
+          const action = key => (
+            <Grid>
+              <Button onClick={() => { window.location.reload(); }}>
+                Refresh
+              </Button>
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => { closeSnackbar(key) }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            </Grid>
+          );
+          enqueueSnackbar(
+            'Something went wrong', {
+            variant: 'error',
+            autoHideDuration: 15000,
+            action,
+          })
+        });
+    });
+  }
 
   React.useEffect(() => {
     let active = true;

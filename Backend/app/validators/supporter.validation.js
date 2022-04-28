@@ -11,6 +11,7 @@ const validationSchema = {
     query('phone').optional(),
     query('gift_provided').optional(),
     query('phone').optional(),
+    query('email').optional(),
     query('page').isInt({ min: 0 }),
     query('page_size').isInt({ min: 0 }),
   ],
@@ -19,6 +20,7 @@ const validationSchema = {
     body('*.phone').optional(),
     body('*.gift_provided').optional(),
     body('*.phone').optional(),
+    body('*.email').optional(),
   ],
 };
 

@@ -8,13 +8,14 @@ const Volunteer = function (body) {
   this.date_joined = body.date_joined;
   this.role = body.role;
   this.phone = body.phone;
+  this.email = body.email;
 };
 
 // add new volunteer
 Volunteer.prototype.create = function() {
   return new Promise((resolve, reject) => {
-    sql.query('INSERT INTO volunteers (name, village, date_joined, role, phone) VALUES (?, ?, ?, ?, ?)',
-      [this.name, this.village, this.date_joined, this.role, this.phone],
+    sql.query('INSERT INTO volunteers (name, village, date_joined, role, phone, email) VALUES (?)',
+      [[this.name, this.village, this.date_joined, this.role, this.phone, this.email]],
       (err, results) => {
         if (err) reject (err);
         else resolve(results.insertId);
@@ -42,7 +43,7 @@ Volunteer.queryData = function (query_params) {
       const page_query =`SELECT COUNT(*) AS count FROM volunteers ${q.query}`
       const data_query = ` 
       SELECT
-        volunteers.volunteer_id, volunteers.name, volunteers.village, volunteers.date_joined, volunteers.role, volunteers.phone
+        volunteers.volunteer_id, volunteers.name, volunteers.village, volunteers.date_joined, volunteers.role, volunteers.phone, volunteers.email
       FROM volunteers 
         ${q.query}
       LIMIT ${q.offset}, ${q.limit}

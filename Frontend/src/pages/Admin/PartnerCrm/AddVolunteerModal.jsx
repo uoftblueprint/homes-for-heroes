@@ -31,11 +31,13 @@ export default function AddVolunteerModal({ dialog, toggleDialog }) {
   const [date_joined, setDate] = React.useState('');
   const [role, setRole] = React.useState('');
   const [phone, setPhone] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [name_error, setNameError] = React.useState(false); 
   const [village_error, setVillageError] = React.useState(false);
   const [date_joined_error, setDateError] = React.useState(false);
   const [role_error, setRoleError] = React.useState(false);
   const [phone_error, setPhoneError] = React.useState(false);
+  const [email_error, setEmailError] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 
@@ -45,7 +47,8 @@ const fieldsValidated = () => {
   !validator.isEmpty(village) &&
   !validator.isEmpty(date_joined) &&
   !validator.isEmpty(role) &&
-  validator.isMobilePhone(phone)
+  validator.isMobilePhone(phone),
+  validator.isEmail(email)
   ){
     return true;
   }
@@ -55,6 +58,7 @@ const fieldsValidated = () => {
   setDateError(validator.isEmpty(date_joined));
   setRoleError(validator.isEmpty(role));
   setPhoneError(!validator.isMobilePhone(phone));
+  setEmailError(!validator.isEmail(email));
   return false;
   }
 }
@@ -73,7 +77,8 @@ const handleAdd = () => {
         village: village, 
         date_joined: date_joined,
         role: role,
-        phone: phone
+        phone: phone,
+        email: email
       })
     })
       .then((resp) => {
@@ -161,6 +166,19 @@ const handleAdd = () => {
             error={phone_error}
             helperText={phone_error ? 'Please enter a valid Phone Number!' : ''}
             onChange={(e) => setPhone(e.target.value)}
+            fullWidth
+            variant="standard" 
+            sx={{ mb: 3 }} 
+            /> 
+            <TextField
+            autoFocus
+            margin="dense"
+            id="email"
+            label="Email" 
+            value={email}
+            error={email_error}
+            helperText={email_error ? 'Please enter a valid Email!' : ''}
+            onChange={(e) => setEmail(e.target.value)}
             fullWidth
             variant="standard" 
             sx={{ mb: 3 }} 

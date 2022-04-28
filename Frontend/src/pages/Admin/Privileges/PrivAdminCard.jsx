@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import PrivAdminModal from "./PrivAdminModal";
+import useFetch from "../../../api/useFetch";
 
 import { useSnackbar } from "notistack";
 
@@ -55,59 +56,28 @@ export default function PrivAdminCard() {
   const [adminDialog, toggleAdminDialog] = React.useState(false);
   const [superadmins, setSuperadmins] = React.useState([]);
   const [isLoading, setLoading] = React.useState(false);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { fetchWithError } = useFetch();
 
   React.useEffect(() => {
+    (async () => {
     setLoading(true);
-    const url = `http://localhost:3000/superadmins/getAll`;
+    const endpoint = `superadmins/getAll`;
+    const options = {
+      "Content-Type": "application/json",
+      Accept: "application/json", 
+    }
+    const response = await fetchWithError(endpoint, options); 
+    setSuperadmins(response.superadmin);
+    setLoading(false);
+    })();
 
-    fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then((resp) => resp.json())
-      .then((resp) => {
-        setSuperadmins(resp.superadmin);
-        setLoading(false);
-      })
-      .catch((e) => {
-        const action = (key) => (
-          <Grid>
-            <Button
-              onClick={() => {
-                window.location.reload();
-              }}
-            >
-              Refresh
-            </Button>
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                closeSnackbar(key);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          </Grid>
-        );
-        enqueueSnackbar("Something went wrong", {
-          variant: "error",
-          autoHideDuration: 15000,
-          action,
-        });
-      });
-  }, [adminDialog]);
+    }, [adminDialog]);
 
   const handleAdminOpen = () => {
     toggleAdminDialog(true);
   };
 
   const handleUnsetSuperadmin = (admin_id) => {
-    let active = true;
     setSuperadmins((prevState) =>
       prevState.map((user) => {
         if (user.user_id === admin_id) {
@@ -119,46 +89,17 @@ export default function PrivAdminCard() {
         return user;
       })
     );
-    setLoading(true);
-    const url = `http://localhost:3000/admins/${admin_id}/unsetSuperadmin`;
-
-    fetch(url, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((resp) => {
-        setLoading(false);
-      })
-      .catch((e) => {
-        const action = (key) => (
-          <Grid>
-            <Button
-              onClick={() => {
-                window.location.reload();
-              }}
-            >
-              Refresh
-            </Button>
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                closeSnackbar(key);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          </Grid>
-        );
-        enqueueSnackbar("Something went wrong", {
-          variant: "error",
-          autoHideDuration: 15000,
-          action,
-        });
-      });
+    (async() => {
+      setLoading(true);
+      const endpoint = `admins/${admin_id}/unsetSuperadmin`;
+      const options = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        } 
+      }
+      fetchWithError(endpoint, options);
+      })();
   };
 
   return (
@@ -212,9 +153,9 @@ export default function PrivAdminCard() {
                       </Button>
                     }
                   >
-                    <ListItemAvatar>
+                    {/* <ListItemAvatar>
                       <Avatar {...stringAvatar(superadmin.name)} />
-                    </ListItemAvatar>
+                    </ListItemAvatar> */}
                     <ListItemText primary={superadmin.name} />
                   </ListItem>
                 );

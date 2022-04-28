@@ -231,6 +231,16 @@ export default function SupporterCRM({ tab }) {
         autoHideDuration: 15000,
         action,
       }); 
+    } else if (
+      params.field === "email" &&
+      !validator.isEmail(cellValue)
+    ) {
+      event.defaultMuiPrevented = true;
+      enqueueSnackbar("Please enter a valid email!", {
+        variant: "error",
+        autoHideDuration: 15000,
+        action,
+      }); 
     } else {
       updateCellChanges(params.id, params.field, cellValue);
       updateHighlightCells((prevArray) => [
@@ -350,7 +360,8 @@ export default function SupporterCRM({ tab }) {
           <MenuItem value={"name"}>Name</MenuItem>
           <MenuItem value={"date_gifted"}>Date Gifted</MenuItem>
           <MenuItem value={"gift_provided"}>Gift Provided</MenuItem>
-          <MenuItem value={"phone"}>phone</MenuItem>
+          <MenuItem value={"phone"}>Phone</MenuItem>
+          <MenuItem value={"email"}>Email</MenuItem>
         </Select>
         <TextField
           className={classes.SearchInputField}
@@ -529,6 +540,12 @@ export default function SupporterCRM({ tab }) {
             headerName: "PHONE",
             flex: 1,
           }, 
+          {
+            editable: "true",
+            field: "email",
+            headerName: "EMAIL",
+            flex: 1.5,
+          }
         ]}
         />
       </Box>

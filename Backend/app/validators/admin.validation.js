@@ -14,6 +14,7 @@ const validationSchema = {
   unsetSuperadminSchema: [...admin_id],
   makeSupervisorSchema: [...admin_id],
   unsetSupervisorSchema: [...admin_id],
+  deleteSupervisorSchema: [...admin_id],
   assignChapterSchema: [
     ...admin_id,
     body('name').trim().notEmpty(),

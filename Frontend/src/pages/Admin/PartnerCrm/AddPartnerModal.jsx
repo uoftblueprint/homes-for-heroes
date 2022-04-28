@@ -27,11 +27,13 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
   const [village, setVillage] = React.useState('');
   const [address, setAddress] = React.useState('');
   const [phone, setPhone] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [org_name_error, setNameError] = React.useState(false); 
   const [city_error, setCityError] = React.useState(false);
   const [village_error, setVillageError] = React.useState(false);
   const [address_error, setAddressError] = React.useState(false);
   const [phone_error, setPhoneError] = React.useState(false);
+  const [email_error, setEmailError] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const fieldsValidated = () => {
@@ -40,7 +42,8 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
       !validator.isEmpty(city) &&
       !validator.isEmpty(village) &&
       !validator.isEmpty(address) && 
-      validator.isMobilePhone(phone)
+      validator.isMobilePhone(phone) &&
+      validator.isEmail(email)
     ) {
       return true;
     }
@@ -50,6 +53,7 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
       setVillageError(validator.isEmpty(village));
       setAddressError(validator.isEmpty(address));
       setPhoneError(!validator.isMobilePhone(phone));
+      setEmailError(!validator.isEmail(email));
       return false;
     }
   }
@@ -69,7 +73,8 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
         city: city, 
         village: village,
         address: address,
-        phone: phone
+        phone: phone,
+        email: email,
       }) 
     })
       .then((resp) => {
@@ -169,6 +174,18 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
             error={phone_error}
             helperText={phone_error ? 'Please enter a valid Phone Number!' : ''}
             onChange={(e) => setPhone(e.target.value)}
+            fullWidth
+            variant="standard" 
+            />  
+             <TextField
+            autoFocus
+            margin="dense"
+            id="email"
+            label="Email" 
+            value={email}
+            error={email_error}
+            helperText={email_error ? 'Please enter a valid Email!' : ''}
+            onChange={(e) => setEmail(e.target.value)}
             fullWidth
             variant="standard" 
             />  

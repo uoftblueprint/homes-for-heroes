@@ -241,6 +241,16 @@ export default function VolunteerCRM({ tab }) {
         autoHideDuration: 15000,
         action,
       }); 
+    } else if (
+      params.field === "email" &&
+      !validator.isEmail(cellValue)
+    ) {
+      event.defaultMuiPrevented = true;
+      enqueueSnackbar("Please enter a valid Email!", {
+        variant: "error",
+        autoHideDuration: 15000,
+        action,
+      }); 
     } else {
       updateCellChanges(params.id, params.field, cellValue);
       updateHighlightCells((prevArray) => [
@@ -362,6 +372,7 @@ export default function VolunteerCRM({ tab }) {
           <MenuItem value={"date_joined"}>Date Joined</MenuItem>
           <MenuItem value={"role"}>Role</MenuItem>
           <MenuItem value={"phone"}>Phone</MenuItem>
+          <MenuItem value={"email"}>Email</MenuItem>
         </Select>
         <TextField
           className={classes.SearchInputField}
@@ -544,7 +555,13 @@ export default function VolunteerCRM({ tab }) {
             editable: "true",
             field: "phone",
             headerName: "PHONE",
-            flex: 1
+            flex: 1,
+          },
+          {
+            editable: "true",
+            field: "email",
+            headerName: "EMAIL",
+            flex: 1.5,
           }
           ]}
         />

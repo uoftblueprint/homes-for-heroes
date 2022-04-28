@@ -10,6 +10,7 @@ const validationSchema = {
     query('address').optional(),
     query('village').optional(),
     query('phone').optional(),
+    query('email').optional(),
     query('page').isInt({ min: 0 }),
     query('page_size').isInt({ min: 0 }),
   ],
@@ -19,6 +20,7 @@ const validationSchema = {
     body('*.address').optional(),
     body('*.village').optional(),
     body('*.phone').optional(),
+    body('*.email').optional()
   ],
 };
 

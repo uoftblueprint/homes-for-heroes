@@ -60,8 +60,8 @@ const Header = (props) => {
     },
     {
       menuTitle: 'External Relations',
-      pageURL: '/external'
-    }
+      pageURL: '/external',
+    },
   ];
 
   return (
@@ -96,6 +96,10 @@ const Header = (props) => {
                       </ListItem>
                     );
                   })}
+                  <ListItem onClick={() => handleMenuClick('profile')}>
+                    Profile
+                  </ListItem>
+
                   <ListItem onClick={() => handleMenuClick('login')}>
                     Login
                   </ListItem>

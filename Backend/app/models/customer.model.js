@@ -34,11 +34,22 @@ Customer.prototype.updateUserInfo = function(user_info) {
   });
 };
 
-Customer.prototype.changePassword = async function(password) {
+Customer.prototype.changePassword = function(password) {
   return new Promise((resolve, reject) => {
     const hashedPassword = bcrypt.hashSync(password, 15);
     sql.query('UPDATE client_users SET password = ? WHERE user_id = ?',
       [hashedPassword, this.user_id],
+      (err) => {
+        if (err) reject(err);
+        else resolve(true);
+      });
+  });
+};
+
+Customer.prototype.update = function(name, phone, email) {
+  return new Promise((resolve, reject) => {
+    sql.query('UPDATE client_users SET name = ?, phone = ?, email = ? WHERE user_id = ?',
+      [name, phone, email, this.user_id],
       (err) => {
         if (err) reject(err);
         else resolve(true);
@@ -321,7 +332,6 @@ Customer.queryUserData = function (query_params) {
   });
 };
 
-<<<<<<< HEAD
 Customer.updateUserInfo = function (user_id, query_params) {
   return new Promise((resolve, reject) => {
     const q = new CustomerQueryData(query_params);
@@ -339,7 +349,7 @@ Customer.updateUserInfo = function (user_id, query_params) {
     });
   });
 };
-=======
+
 Customer.updateProfile = function(user_id, body) {
   return new Promise((resolve, reject) => {
     //console.log(query_params);
@@ -378,5 +388,21 @@ Customer.getUserInfoCSV = function(client_name, email, phone, street_name, kin_n
   });
 };
 
->>>>>>> cf4d3cc8ee4a889ff801806e80d9bfb82987bc63
+
+Customer.updateProfile = function(user_id, body) {
+  return new Promise((resolve, reject) => {
+    //console.log(query_params);
+    const cust = new CustomerProfile(user_id, body);
+    const queries = cust.buildQueries();
+    const qry = queries.join(';');
+    // need to update client_users and UserInfo tables separately
+    //sql_qry_c = 'UPDATE client_users SET phone = ? WHERE user_id = ?';
+    sql.query(qry,
+      (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+  });
+};
+
 module.exports = Customer;

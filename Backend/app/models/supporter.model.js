@@ -8,13 +8,14 @@ const Supporter = function (body) {
   this.date_gifted = body.date_gifted;
   this.gift_provided = body.gift_provided;
   this.phone = body.phone;
+  this.email = body.email;
 };
 
 // add new supporter
 Supporter.prototype.create = function() {
   return new Promise((resolve, reject) => {
-    sql.query('INSERT INTO supporters (name, date_gifted, gift_provided, phone) VALUES (?, ?, ?, ?)',
-      [this.name, this.date_gifted, this.gift_provided, this.phone],
+    sql.query('INSERT INTO supporters (name, date_gifted, gift_provided, phone, email) VALUES (?)',
+      [[this.name, this.date_gifted, this.gift_provided, this.phone, this.email]],
       (err, results) => {
         if (err) reject (err);
         else resolve(results.insertId);
@@ -42,7 +43,7 @@ Supporter.queryData = function (query_params) {
       const page_query =`SELECT COUNT(*) AS count FROM supporters ${q.query}`
       const data_query = ` 
       SELECT
-        supporters.supporter_id, supporters.name, supporters.date_gifted, supporters.gift_provided, supporters.phone
+        supporters.supporter_id, supporters.name, supporters.date_gifted, supporters.gift_provided, supporters.phone, supporters.email
       FROM supporters 
         ${q.query}
       LIMIT ${q.offset}, ${q.limit}

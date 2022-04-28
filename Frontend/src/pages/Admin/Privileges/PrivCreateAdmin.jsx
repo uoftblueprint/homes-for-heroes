@@ -45,10 +45,7 @@ export default function PrivCreateAdmin({ caDialog, toggleCaDialog, chapters }) 
       body: JSON.stringify({
         name: name,
         email: email,
-        // phone: phone,
-        // password: password,
-        // address: address,
-        // chapter_id: currChapter.chapter_id
+        chapter_id: currChapter.chapter_id
       })
     })
       .then((resp) => {

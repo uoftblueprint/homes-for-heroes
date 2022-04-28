@@ -11,6 +11,7 @@ const validationSchema = {
     query('date_joined').optional(),
     query('role').optional(),
     query('phone').optional(),
+    query('email').optional(),
     query('page').isInt({ min: 0 }),
     query('page_size').isInt({ min: 0 }),
   ],
@@ -20,6 +21,7 @@ const validationSchema = {
     body('*.date_joined').optional(),
     body('*.role').optional(),
     body('*.phone').optional(),
+    body('*.email').optional(),
   ],
 };
 

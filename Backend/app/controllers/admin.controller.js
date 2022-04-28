@@ -32,10 +32,21 @@ const adminController = {
       next(err);
     }
   },
+
   async unsetSupervisor(req, res, next) {
     try {
       const { admin_id } = req.params;
       const results = await Admin.unsetSupervisor(admin_id);
+      res.send(results);
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  async deleteSupervisor(req, res, next) {
+    try {
+      const { admin_id } = req.params;
+      const results = await Admin.deleteSupervisor(admin_id);
       res.send(results);
     } catch (err) {
       next(err);

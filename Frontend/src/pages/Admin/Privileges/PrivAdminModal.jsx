@@ -114,20 +114,9 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
     toggleAdminDialog(false);
   }
 
-  const handleSetSuperadmin = (admin_id) => {
-    setAdmins((prevState) =>
-      prevState.map((user) => {
-        if (user.user_id === admin_id) {
-          return {
-            ...user,
-            role_id: 2 
-          };
-        }
-        return user;
-      })
-    )
+  const handleSetSuperadmin = (user_id) => { 
     setLoading(true);
-    const url = `http://localhost:3000/api/admins/${admin_id}/makeSuperadmin`;
+    const url = `http://localhost:3000/api/admins/${user_id}/makeSuperadmin`;
 
     fetch(url,{
       method: 'PUT',
@@ -136,6 +125,17 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
       },
     })
       .then((resp) => {
+        setAdmins((prevState) =>
+          prevState.map((user) => {
+            if (user.user_id === user_id) {
+              return {
+                ...user,
+                role_id: 2
+              };
+            }
+            return user;
+          })
+        )
         setLoading(false);
       })
       .catch(e => {

@@ -1,33 +1,37 @@
-const volunteer = require("../controllers/volunteer.controller");
+const volunteerController = require('../controllers/volunteer.controller');
 const validationSchema = require('../validators/volunteer.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
+const { isSuperAdmin } = require('../auth/helpers');
 
 module.exports = app => {
     
-    // list all volunteers
-    app.get(
-        '/volunteers', 
-        volunteer.getAllVolunteers);
+  // list all volunteers
+  app.get(
+    '/volunteers',
+    volunteerController.getAllVolunteers
+  );
 
-    // create a new volunteer
-    app.post(
-        '/volunteers/create', 
-        validationSchema.createVolunteerSchema,
-        validationErrorHandler,
-        volunteer.create);
+  app.get(
+    '/volunteers/getData',
+    validationSchema.getDataSchema,
+    validationErrorHandler,
+    volunteerController.getData);
 
-    app.get(
-        '/volunteers/getData',
-        validationSchema.getDataSchema,
-        validationErrorHandler,
-        volunteer.getData);
+  app.post(
+    '/volunteers/updateInfo',
+    // isAuthenticated,
+    validationSchema.updateInfoSchema,
+    validationErrorHandler,
+    volunteerController.updateInfo,
+  );
 
-    app.post(
-        '/volunteers/updateInfo',
-        // isAuthenticated,
-        validationSchema.updateInfoSchema,
-        validationErrorHandler,
-        volunteer.updateInfo,
-    );
+  // create a new volunteer
+  app.post(
+    '/volunteers/create',
+    // isSuperAdmin,
+    validationSchema.createVolunteerSchema,
+    validationErrorHandler,
+    volunteerController.create
+  );
 };
   

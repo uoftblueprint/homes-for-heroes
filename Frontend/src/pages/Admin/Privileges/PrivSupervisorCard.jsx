@@ -3,6 +3,7 @@ import * as React from "react";
 import PrivSupervisorModal from "./PrivSupervisorModal";
 import PrivCreateAdmin from "./PrivCreateAdmin";
 import PrivChapterModal from './PrivChapterModal';
+import PrivDeleteDialog from './PrivDeleteDialog';
 import { useSnackbar } from "notistack";
 
 import Card from "@mui/material/Card";
@@ -57,6 +58,8 @@ function stringAvatar(name) {
 export default function PrivSupervisorCard({ chapters, chapterDialog, toggleChapterDialog }) {
   const [svDialog, toggleSvDialog] = React.useState(false);
   const [caDialog, toggleCaDialog] = React.useState(false);
+  const [deDialog, toggleDeDialog] = React.useState(false);
+  const [deleteId, setDeleteId] = React.useState(null);
   const [supervisors, setSupervisors] = React.useState([]);
   const [currChapter, setChapter] = React.useState(chapters[0]);
   const [isLoading, setLoading] = React.useState(false);
@@ -75,7 +78,11 @@ React.useEffect(() => {
   })
     .then((resp) => resp.json())
     .then((resp) => {
-      setSupervisors(resp.supervisors);
+      if (resp.supervisors.constructor === Array) {
+        setSupervisors(resp.supervisors);
+      } else {
+        throw new Error();
+      }
       setLoading(false);
     })
     .catch(e => {
@@ -102,57 +109,7 @@ React.useEffect(() => {
         })
     });
 
-}, [currChapter, svDialog, caDialog]);
-
-
- const handleUnsetSupervisor = (admin_id) => {
-    setSupervisors((prevState) =>
-      prevState.map((user) => {
-        if (user.user_id === admin_id) {
-          return {
-            ...user,
-            role_id: 0 
-          };
-        }
-        return user;
-      })
-    )
-    setLoading(true);
-    const url = `http://localhost:3000/admins/${admin_id}/unsetSupervisor`;
-
-    fetch(url,{
-      method: 'PUT',
-      headers:{
-      'Content-Type':'application/json'
-      },
-    })
-      .then((resp) => { 
-        setLoading(false);
-      })
-      .catch(e => {
-        const action = key => (
-          <Grid>
-            <Button onClick={() => { window.location.reload(); }}>
-              Refresh
-            </Button>
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => { closeSnackbar(key) }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          </Grid>
-        );
-        enqueueSnackbar(
-          'Something went wrong', {
-          variant: 'error',
-          autoHideDuration: 15000,
-          action,
-        })
-      });
-  }
+}, [currChapter, svDialog, caDialog, deDialog]); 
 
   const handleSvOpen = () => {
     toggleSvDialog(true);
@@ -193,7 +150,7 @@ React.useEffect(() => {
           blurOnSelect
           value={currChapter}
           options={chapters}
-          getOptionLabel={option => option.name}
+          getOptionLabel={option=> option.name}
           sx={{ width: 250, mt: '20px' }}
           renderInput={(params) => <TextField {...params} label="Location" />}
           onChange={(event, value) => {
@@ -219,14 +176,18 @@ React.useEffect(() => {
            </div>
             : <List>
               {supervisors
-                .filter((el) => el.role_id === 1 && el.chapter_id === currChapter.chapter_id)
+                .filter((el) => el.chapter_id === currChapter.chapter_id)
                 .map((supervisor) => {
                   return (
                     <ListItem
                       secondaryAction={
                         <Button
                           size="small"
-                          onClick={() => handleUnsetSupervisor(supervisor.user_id)}
+                          onClick={() => {
+                            setDeleteId(supervisor.user_id);
+                            toggleDeDialog(true);
+                          }
+                          }
                           startIcon={<DeleteIcon />}
                           sx={{
                             fontWeight: "bold",
@@ -238,9 +199,9 @@ React.useEffect(() => {
                         </Button>
                       }
                     >
-                      <ListItemAvatar>
+                      {/* <ListItemAvatar>
                         <Avatar {...stringAvatar(supervisor.name)} />
-                      </ListItemAvatar>
+                      </ListItemAvatar> */}
                       <ListItemText
                         primary={supervisor.name}
                         secondary={`Supervisor of ${chapters.find(obj => obj.chapter_id === supervisor.chapter_id).name}`}
@@ -254,6 +215,7 @@ React.useEffect(() => {
           <PrivSupervisorModal svDialog={svDialog} toggleSvDialog={toggleSvDialog} currChapter={currChapter} />
           <PrivCreateAdmin caDialog={caDialog} toggleCaDialog={toggleCaDialog} chapters={chapters} />
           <PrivChapterModal chapterDialog={chapterDialog} toggleChapterDialog={toggleChapterDialog} />
+          <PrivDeleteDialog dialog={deDialog} toggleDialog={toggleDeDialog} user_id={deleteId} /> 
         </Card> 
         ) 
 }
