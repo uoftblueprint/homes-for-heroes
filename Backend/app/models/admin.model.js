@@ -110,51 +110,44 @@ Admin.getSearchAdmins = function (name) {
   });
 };
 
-Admin.makeSupervisor = function(admin_id) {
+Admin.makeSuperadmin = function (admin_id) {
   return new Promise((resolve, reject) => {
-    sql.query('UPDATE client_users SET role_id = 1 WHERE user_id = ?',
+    sql.query(
+      'UPDATE client_users SET role_id = 2 WHERE user_id = ?',
       [admin_id],
       (err, rows) => {
-        if (err) reject (err);
-        else resolve(rows[0]);
-      });
+        if (err) reject(err);
+        else {
+          sql.query(
+            'UPDATE admin_users SET chapter_id = NULL WHERE user_id = ?',
+            [admin_id],
+            (err, rows) => {
+              if (err) reject(err);
+              resolve(rows[0]);
+            }
+          );
+        }
+      }
+    );
   });
 };
 
-Admin.makeSuperadmin = function(admin_id) {
-  return new Promise((resolve, reject) => {
-    sql.query('UPDATE client_users SET role_id = 2 WHERE user_id = ?',
-      [admin_id],
-      (err, rows) => {
-        if (err) reject (err);
-        else resolve(rows[0]);
-      });
-  });
-};
-
-Admin.unsetSupervisor = function (admin_id) {
+Admin.unsetSuperadmin = function (admin_id) {
   return new Promise((resolve, reject) => {
     sql.query(
       'UPDATE client_users SET role_id = 1 WHERE user_id = ?',
       [admin_id],
       (err, rows) => {
         if (err) reject(err);
-        else resolve(rows[0]);
-      },
+        else {
+          resolve(rows[0]);
+        }
+      }
     );
   });
 };
 
-Admin.unsetSuperadmin = function(admin_id) {
-  return new Promise((resolve, reject) => {
-    sql.query('UPDATE client_users SET role_id = 1 WHERE user_id = ?',
-      [admin_id],
-      (err, rows) => {
-        if (err) reject (err);
-        else resolve(rows[0]);
-      });
-  });
-};
+
 
 Admin.assignChapter = function (admin_id, chapter_id) {
   logger.debug(admin_id);
@@ -185,5 +178,19 @@ Admin.listByChapter = function(chapter_id) {
 };
 
 
+Admin.getRole = function (admin_id) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'SELECT c.role_id FROM admin_users a INNER JOIN client_users c ON a.user_id = c.user_id WHERE a.user_id = ?',
+      [admin_id],
+      (err, rows) => {
+        if (err) reject(err);
+        else {
+          resolve(rows[0].role_id);
+        }
+      }
+    );
+  });
+};
 
 module.exports = Admin;

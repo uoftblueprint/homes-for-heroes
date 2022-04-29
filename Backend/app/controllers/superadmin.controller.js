@@ -8,7 +8,7 @@ const superadminController = {
     } catch (err) {
       next(err);
     }
-  }
+  },
 };
 
 module.exports = superadminController;
