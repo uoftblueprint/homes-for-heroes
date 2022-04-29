@@ -30,6 +30,20 @@ module.exports = (app, passport) => {
   app.get('/logout', isAuthenticated, authController.logout);
 
   app.post(
+    '/forgotpassword',
+    validationSchema.forgotPasswordSchema,
+    validationErrorHandler,
+    authController.forgotPassword
+  );
+
+  app.post(
+    '/resetpassword',
+    validationSchema.resetPasswordSchema,
+    validationErrorHandler,
+    authController.resetPassword
+  );
+
+  app.post(
     '/createVeteran',
     isPrivileged,
     validationSchema.createVeteranSchema,

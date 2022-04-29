@@ -32,7 +32,9 @@ const validationSchema = {
     body('email').isEmail().normalizeEmail(),
     body('chapter_id').isInt({ min: 0 }),
   ],
-  loginSchema: [body('email').notEmpty(), body('password').notEmpty()],
+  loginSchema: [body('email').isEmail().normalizeEmail().notEmpty(), body('password').notEmpty()],
+  forgotPasswordSchema: [body('email').isEmail().normalizeEmail().notEmpty()],
+  resetPasswordSchema: [body('newPassword').isStrongPassword(), body('token').isJWT()]
 };
 
 module.exports = validationSchema;

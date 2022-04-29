@@ -5,6 +5,9 @@ const {
   issueEmailJWT,
   verifyEmailJWT,
   sendInviteLink,
+  issueResetJWT,
+  verifyResetJWT,
+  sendResetLink
 } = require('../auth/helpers');
 
 const authController = {
@@ -74,6 +77,35 @@ const authController = {
         if (err) logger.error('%o', err);
         else res.redirect('/');
       });
+    } catch (err) {
+      next(err);
+    }
+  },
+  async forgotPassword(req, res, next) {
+    try {
+      const { email } = req.body;
+      const user = await Customer.getByEmail(email);
+      // Generate and send a reset link to the user's email
+      const resetToken = issueResetJWT(user);
+      await sendResetLink(email, resetToken);
+      logger.info('Sent reset link to %s with user id %d', email, user.user_id);
+
+      res.send({ success: true });
+    } catch (err) {
+      next(err);
+    }
+  },
+  async resetPassword(req, res, next) {
+    try {
+      const { newPassword, token } = req.body;
+      // Verify the token
+      const { id } = verifyResetJWT(token);
+      // Grab the user
+      const user = await Customer.getById(id);
+      // Change the user's password
+      await user.changePassword(newPassword);
+
+      res.send({ success: true });
     } catch (err) {
       next(err);
     }
