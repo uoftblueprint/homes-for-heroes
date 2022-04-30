@@ -7,13 +7,12 @@ const connection = mysql.createPool({
   user: dbConfig.USER,
   password: dbConfig.PASSWORD,
   database: dbConfig.DB,
+  multipleStatements: true,
   stringifyObjects: true,
 });
 
 connection.getConnection((err) => {
-  if (err) {
-    return logger.error(err);
-  }
+  if (err) return logger.error(err);
   logger.info('Connected to the MySQL server.');
 });
 

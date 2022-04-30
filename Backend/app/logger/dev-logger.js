@@ -9,8 +9,8 @@ const getDevLogger = () =>
   createLogger({
     level: 'debug',
     format: combine(
-      format.splat(),
-      format.colorize(),
+      format.splat(), // String interpolation splat for %d %s-style messages.
+      format.colorize(), // Add color to format
       timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
       errors({ stack: true }),
       logFormat,

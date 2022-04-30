@@ -1,13 +1,18 @@
 const customers = require('../controllers/customer.controller');
 const validationSchema = require('../validators/customer.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
-const passport = require('passport');
+const { isAuthenticated, isPrivileged } = require('../auth/helpers');
 
 module.exports = (app) => {
-  app.get('/customers', customers.getAllUsers);
+  app.get(
+    '/customers',
+    isPrivileged,
+    customers.getAllUsers
+  );
 
   app.get(
     '/getCases',
+    isPrivileged,
     validationSchema.getCasesSchema,
     validationErrorHandler,
     customers.getCases,
@@ -15,7 +20,7 @@ module.exports = (app) => {
 
   app.get(
     '/getUserData',
-    passport.authenticate('jwt', { failureRedirect: '/login', session: false }),
+    isPrivileged,
     validationSchema.getUserDataSchema,
     validationErrorHandler,
     customers.getUserData,
@@ -23,13 +28,21 @@ module.exports = (app) => {
 
   app.get(
     '/getCustomerInfo/:user_id',
+    isPrivileged,
     validationSchema.getCustomerInfoSchema,
     validationErrorHandler,
     customers.getCustomerInfo,
   );
 
   app.get(
+    '/getCustomerInfo',
+    isAuthenticated,
+    customers.getSelfCustomerInfo,
+  );
+
+  app.get(
     '/customers/:user_id/alertCase',
+    isPrivileged,
     validationSchema.getAlertCaseSchema,
     validationErrorHandler,
     customers.getAlertCase,
@@ -37,13 +50,31 @@ module.exports = (app) => {
 
   app.put(
     '/customers/:user_id/alertCase',
+    isPrivileged,
     validationSchema.setAlertCaseSchema,
     validationErrorHandler,
     customers.setAlertCase,
   );
 
+  app.put(
+    '/userinfo',
+    isAuthenticated,
+    validationSchema.putUserInfoSchema,
+    validationErrorHandler,
+    customers.putUserInfo,
+  );
+
+  app.patch(
+    '/changePassword',
+    isAuthenticated,
+    validationSchema.patchChangePasswordSchema,
+    validationErrorHandler,
+    customers.patchChangePassword,
+  );
+
   app.get(
     '/getUsersInfoCSV',
+    isPrivileged,
     validationSchema.getUserInfoCSVSchema,
     validationErrorHandler,
     customers.getUserInfoCSV,

@@ -22,8 +22,8 @@ CustomForm.prototype.create = function() {
   this.validateNew();
   return new Promise((resolve, reject) => {
     sql.query(
-      'INSERT INTO CustomForm (admin_id, title, form_body, curr_level) VALUES (?)',
-      [[this.admin_id, this.title, this.form_body, this.curr_level]],
+      'INSERT INTO CustomForm (admin_id, title, form_body, curr_level) VALUES (?, ?, ?, ?)',
+      [this.admin_id, this.title, this.form_body, this.curr_level],
       (err, result) => {
         if (err) reject(err);
         else resolve(result.insertId);

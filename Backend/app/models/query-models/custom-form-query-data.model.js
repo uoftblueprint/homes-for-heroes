@@ -9,9 +9,9 @@ const CustomFormQueryData = function(query_params) {
   this.query = '';
 
   this.constructQuery = function() {
-    this.appendQueryParam(this.admin_id, 'Form.admin_id');
-    this.appendQueryParam(this.form_id, 'Form.form_id');
-    this.appendQueryParamNonStr(this.is_final, 'Form.is_final');
+    this.appendQueryParam(this.admin_id, 'form.admin_id');
+    this.appendQueryParam(this.form_id, 'form.form_id');
+    this.appendQueryParamNonStr(this.is_final, 'form.is_final');
     this.query = (this.query) ? `WHERE ${this.query}`: this.query;
   };
 };
