@@ -16,6 +16,8 @@ require('./casenote.routes')(apiRouter);
 require('./auth.routes')(apiRouter, passport);
 require('./oauth.routes')(apiRouter, passport);
 require('./custom-form.routes')(apiRouter);
+require('./superadmin.routes')(apiRouter);
+require('./supervisor.routes')(apiRouter);
 require('./supporter.routes')(apiRouter);
 require('./partner.routes')(apiRouter);
 require('./volunteer.routes')(apiRouter);
