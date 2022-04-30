@@ -48,7 +48,7 @@ export default function Signup() {
   // const handleSubmit = async (event) => {
   //   event.preventDefault();
   //   try {
-  //     const res = await fetch('http://localhost:3000/api/signup', {
+  //     const res = await fetch('/api/signup', {
   //       method: 'POST',
   //       headers: {
   //         Accept: 'application/json',
@@ -67,7 +67,7 @@ export default function Signup() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    fetch('http://localhost:3000/api/signup', {
+    fetch('/api/signup', {
       method: 'POST',
       headers: {
         Accept: 'application/json',

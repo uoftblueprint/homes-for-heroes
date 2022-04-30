@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('./app/logger');
 const catchAllErrorHandler = require('./app/middleware/catch-all-error-handler');
@@ -10,15 +9,7 @@ const db = require('./app/models/db');
 const redisClient = require('./app/redis');
 const session = require('express-session');
 const redisStore = require('connect-redis')(session);
-const passport = require('passport');
 const app = express();
-
-// TODO: set a fixed origin
-const corsOptions = {
-  origin: '*', // temporarily allow any host for testing
-};
-
-app.use(cors(corsOptions));
 
 // Decodes cookies for other middleware
 app.use(cookieParser(process.env.SESSION_SECRET));
@@ -53,17 +44,6 @@ app.use(requestLoggingHandler);
 // Set the api endpoint
 app.use('/api', apiRouter);
 
-require('./app/routes/customer.routes')(app);
-require('./app/routes/casenote.routes')(app);
-require('./app/routes/auth.routes')(app, passport);
-require('./app/routes/custom-form.routes')(app);
-require('./app/routes/admin.routes')(app);
-require('./app/routes/chapter.routes')(app);
-require('./app/routes/supervisor.routes')(app);
-require('./app/routes/superadmin.routes')(app);
-require('./app/routes/supporter.routes')(app);
-require('./app/routes/partner.routes')(app);
-require('./app/routes/volunteer.routes')(app);
 // Serve the React files if in prod mode
 if (process.env.NODE_ENV === 'production') app.use(express.static('public'));
 

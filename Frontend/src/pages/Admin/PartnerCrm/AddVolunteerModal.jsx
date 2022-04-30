@@ -37,7 +37,7 @@ export default function AddVolunteerModal({ dialog, toggleDialog }) {
 const handleAdd = () => {
     let active = true;
     setLoading(true);
-    const url = `http://localhost:3000/api/volunteers/create?`;
+    const url = `/api/volunteers/create?`;
 
     fetch(url,{
       method: 'POST',

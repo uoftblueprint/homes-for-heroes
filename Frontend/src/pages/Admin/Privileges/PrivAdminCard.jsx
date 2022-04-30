@@ -59,7 +59,7 @@ export default function PrivAdminCard() {
 
   React.useEffect(() => {
     setLoading(true);
-    const url = `http://localhost:3000/superadmins/getAll`;
+    const url = `api/superadmins/getAll`;
 
     fetch(url, {
       headers: {
@@ -120,7 +120,7 @@ export default function PrivAdminCard() {
       })
     );
     setLoading(true);
-    const url = `http://localhost:3000/admins/${admin_id}/unsetSuperadmin`;
+    const url = `api/admins/${admin_id}/unsetSuperadmin`;
 
     fetch(url, {
       method: "PUT",
