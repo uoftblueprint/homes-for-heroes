@@ -11,6 +11,7 @@ jest.mock('../../../app/models/custom-form.model', () => ({
 const { res, next, mockClear } = getMockRes();
 const mockError = new Error('error');
 const mockFormParam = { form_id: 1 };
+const mockFormBody = { form_id: 1, title: 'Form', form_body: {}, 'curr_level': 'l1', is_final: false };
 
 
 describe('\'Custom Form Controller unit tests\' ', () => {
@@ -54,16 +55,5 @@ describe('\'Custom Form Controller unit tests\' ', () => {
     expect(CustomForm.publish).toHaveBeenCalledWith(mockFormParam.form_id);
     expect(res.send).toHaveBeenCalledTimes(1);
   });
-
-
-  // test('\'updateCustomForm\' 200', async () => {
-  //   const req = getMockReq({ params: mockFormParam, body: mockFormBody });
-  //   await formController.updateCustomForm(req, res, next);
-  //   expect(next).toHaveBeenLastCalledWith(0);
-  //   expect(CustomForm.constructor).toHaveBeenCalledTimes(1);
-  //   expect(CustomForm.update).toHaveBeenCalledTimes(1);
-  //   expect(res.send).toHaveBeenCalledTimes(1);
-  // });
-
 
 });
