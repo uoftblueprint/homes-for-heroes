@@ -91,13 +91,13 @@ export default function CaseCard() {
   }
 
   useEffect(() => {
-    fetch(`http://localhost:3000/getToDo/${id}`)
+    fetch(`/api/getToDo/${id}`)
       .then((response) => response.json())
       .then((res) => {
         setTodo(res.payload[0].todo.notes);
       });
     fetch(
-      `http://localhost:3000/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`
+      `/api/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`
       )
       .then((response) => response.json())
       .then((res) => {
@@ -106,18 +106,18 @@ export default function CaseCard() {
   }, [])
 
   useEffect(() => {
-    fetch(`http://localhost:3000/getCustomerInfo/${id}/`)
+    fetch(`/api/getCustomerInfo/${id}/`)
       .then((response) => response.json())
       .then((res) => {
         setCurr(res.customerInfo[0]);
       });
-    fetch(`http://localhost:3000/customers/${id}/alertCase`)
+    fetch(`/api/customers/${id}/alertCase`)
       .then((response) => response.json())
       .then((caseNote) => setAlert(caseNote))
       .catch((err) => {
         console.error(err);
       });
-    fetch(`http://localhost:3000/customers/${id}/alertCaseID`)
+    fetch(`/api/customers/${id}/alertCaseID`)
       .then((response) => response.json())
       .then((res) => {
         setAlertCaseId(res.id);
@@ -140,7 +140,7 @@ export default function CaseCard() {
     var nextKey = Object.keys(todo).length;
     let temp = [...todo, {"id": nextKey, "value": body}];
     let payload = JSON.stringify({notes: temp});
-    fetch(`http://localhost:3000/updateToDo/${id}?todo=${payload}`, postOptions)
+    fetch(`/api/updateToDo/${id}?todo=${payload}`, postOptions)
     .then((response) => response.json());
     setTodo(temp);
     handleClose();
@@ -155,7 +155,7 @@ export default function CaseCard() {
     todo.splice(toggledItemIndex, 1)
     
     let payload = JSON.stringify({notes: todo});
-    fetch(`http://localhost:3000/updateToDo/${id}?todo=${payload}`, postOptions)
+    fetch(`/api/updateToDo/${id}?todo=${payload}`, postOptions)
     .then((response) => response.json());
 
     setChecked(newChecked);
@@ -197,12 +197,12 @@ export default function CaseCard() {
   }
 
   const updateCaseNote = () => {
-    fetch(`http://localhost:3000/casenote/${currCaseId}/update?new_note=${newNote}&new_title=${title}`, updateOptions)
+    fetch(`/api/casenote/${currCaseId}/update?new_note=${newNote}&new_title=${title}`, updateOptions)
       .then((response) => response.json())
       .then((res) => console.log(res))
       .then(() => {
         fetch(
-        `http://localhost:3000/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`
+        `/api/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`
         )
         .then((response) => response.json())
         .then((res) => {
@@ -210,7 +210,7 @@ export default function CaseCard() {
         });
       })
       .then(() => {
-        fetch(`http://localhost:3000/customers/${id}/alertCase`)
+        fetch(`/api/customers/${id}/alertCase`)
         .then((response) => response.json())
         .then((caseNote) => setAlert(caseNote))
         .catch((err) => {
@@ -221,12 +221,12 @@ export default function CaseCard() {
   }
 
   const deleteCase = (case_id) => {
-    fetch(`http://localhost:3000/casenote/${case_id}`, deleteOptions)
+    fetch(`/api/casenote/${case_id}`, deleteOptions)
       .then((response) => response.json())
       .then((res) => console.log(res))
       .then(() => {
         fetch(
-        `http://localhost:3000/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`
+        `/api/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`
         )
         .then((response) => response.json())
         .then((res) => {

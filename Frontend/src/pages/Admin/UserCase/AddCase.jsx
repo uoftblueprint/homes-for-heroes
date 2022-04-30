@@ -34,7 +34,7 @@ export default function AddCase () {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       user_id: id,
-      admin_id: 2,
+      admin_id: 3,
       notes: body,
       title: title,
       category: stat,
@@ -43,7 +43,7 @@ export default function AddCase () {
 
   useEffect(() => {
     setNavigation(true);
-    fetch(`http://localhost:3000/getCustomerInfo/${id}/`)
+    fetch(`/api/getCustomerInfo/${id}/`)
       .then((response) => response.json())
       .then((res) => {
         setCurrUser(res.customerInfo[0]);
@@ -69,7 +69,7 @@ export default function AddCase () {
   const handleSubmit = () => {
     let dt = new Date().toLocaleDateString();
     setDate(dt);
-    fetch('http://localhost:3000/casenote', request)
+    fetch('/api/casenote', request)
       .then(response => response.json());
     setNavigation(false);
     history.goBack();
@@ -107,7 +107,7 @@ export default function AddCase () {
       <Grid item xs={12}>
         <Typography sx={{ fontSize: 48, mb: '1px', float:"left", paddingLeft: "150px", paddingBottom: "20px"}}>Case Note for: {currUser.name}</Typography>
       </Grid>
-      <Grid item xs={4}>
+      <Grid item xs={5}>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DesktopDatePicker
             label="Time Picker"

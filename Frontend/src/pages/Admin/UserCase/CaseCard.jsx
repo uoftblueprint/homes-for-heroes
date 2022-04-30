@@ -26,7 +26,7 @@ export default function CaseCard({ user, note }) {
       severity="info"
       sx={{width: '80%', margin: 'auto', textAlign: 'left'}}
       >
-      <AlertTitle>Alert created at {note.last_update} by this admin</AlertTitle>{note.notes}</Alert>
+      <AlertTitle>Alert created at {note.last_update.slice(0, 10)} by this admin</AlertTitle>{note.notes}</Alert>
       </Grid>
       <Grid item xs={6}>
         <Button variant="outlined" size="small" onClick={viewProfile} startIcon={<VisibilityIcon />}>View Full Profile</Button>
