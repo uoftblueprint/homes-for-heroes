@@ -9,7 +9,7 @@ import Grid from "@mui/material/Grid";
 
 function loadServerRows() {
   return new Promise((resolve) => {
-    const url = "http://localhost:3000/chapters/getAll";
+    const url = "api/chapters/getAll";
 
     fetch(url, {
       headers: {
