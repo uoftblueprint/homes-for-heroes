@@ -36,7 +36,7 @@ export default function CaseList() {
 
   const filterUsers = (posts, query) => {
     if (!query) {
-      return posts;
+        return posts;
     }
 
     return posts.filter((post) => {
@@ -46,13 +46,9 @@ export default function CaseList() {
 
   return (
     <>
-      <Typography sx={{ fontSize: 48, mb: '1px' }}>Case Management</Typography>
+      <Typography sx={{ fontSize: 48, mb: '1px'}}>Case Management</Typography>
       <TextField
-        sx={{
-          backgroundColor: '#F7F8F9',
-          width: '75%',
-          marginBottom: '2%',
-        }}
+        sx={{ backgroundColor: '#F7F8F9', width: '75%', marginBottom: '2%'}}
         fullWidth
         variant="outlined"
         placeholder="Search Users"
