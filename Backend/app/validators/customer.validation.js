@@ -12,6 +12,8 @@ const case_id = [
 const validationSchema = {
   getCustomerInfoSchema: [...user_id],
   getAlertCaseSchema: [...user_id],
+  getAlertCaseIDSchema: [...user_id],
+  getToDoSchema: [...user_id],
   setAlertCaseSchema: [...user_id, ...case_id],
   getCasesSchema: [
     query('user_id').isInt({ min: 0 }).withMessage('Invalid user_id'),
@@ -49,6 +51,10 @@ const validationSchema = {
     query('phone').optional(),
     query('address').optional(),
     query('kin_name').optional(),
+  ],
+  putToDoSchema: [
+    param('user_id').isInt({ min: 0 }).withMessage('Invalid user_id'),
+    query('todo').isJSON().isLength({ min: 0 }).withMessage('Invalid To Do list passed'),
   ],
   patchChangePasswordSchema: [
     body('oldPassword').isString(),

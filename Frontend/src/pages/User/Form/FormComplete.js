@@ -12,6 +12,7 @@ import Grid from "@mui/material/Grid";
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import QuestionTypeAnswer from "../../../components/form/QuestionTypeAnswer";
+import FormSubmitButton from "../../../components/form/FormSubmitButton"
 
 function FormComplete() {
 
@@ -157,6 +158,7 @@ function FormComplete() {
 
             {/*Temporary footer space*/}
             <Grid container direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{mb: 12}} />
+            <FormSubmitButton />
 
         </Card>
     )

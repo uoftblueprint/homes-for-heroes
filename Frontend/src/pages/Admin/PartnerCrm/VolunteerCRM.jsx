@@ -62,7 +62,7 @@ const useStyles = makeStyles({
 
 function loadServerRows(searchParams, page, pageSize) {
   return new Promise((resolve) => {
-    let url = "http://localhost:3000/api/volunteers";
+    let url = "/api/volunteers";
 
     // url += `page=${page}`;
     // url += `&page_size=${pageSize}`;
@@ -89,7 +89,7 @@ function loadServerRows(searchParams, page, pageSize) {
 }
 
 function exportCSV(searchParams) {
-  let url = "http://localhost:3000/getUsersInfoCSV?";
+  let url = "api/getUsersInfoCSV?";
 
   searchParams.forEach((element) => url += `&${element.name}=${element.value}`) 
   console.log(url);

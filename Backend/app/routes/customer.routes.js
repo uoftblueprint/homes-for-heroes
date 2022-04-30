@@ -35,11 +35,24 @@ module.exports = (app) => {
   );
 
   app.get(
+    '/getCustomerInfo',
+    isAuthenticated,
+    customers.getSelfCustomerInfo,
+  );
+
+  app.get(
     '/customers/:user_id/alertCase',
     isPrivileged,
     validationSchema.getAlertCaseSchema,
     validationErrorHandler,
     customers.getAlertCase,
+  );
+
+  app.get(
+    '/customers/:user_id/alertCaseID',
+    validationSchema.getAlertCaseIDSchema,
+    validationErrorHandler,
+    customers.getAlertCaseID,
   );
 
   app.put(
@@ -73,4 +86,15 @@ module.exports = (app) => {
     validationErrorHandler,
     customers.getUserInfoCSV,
   );
+  app.get(
+    '/getToDo/:user_id', 
+    validationSchema.getToDoSchema,
+    validationErrorHandler,
+    customers.getToDo
+  );
+  app.post(
+    '/updateToDo/:user_id',
+    validationSchema.putToDoSchema,
+    validationErrorHandler,
+    customers.updateToDo);
 };

@@ -37,7 +37,7 @@ export default function AddRowButton() {
   const addRow = () => {
     let active = true;
     setLoading(true);
-    const url = `http://localhost:3000/createveteran`;
+    const url = `/api/createveteran`;
 
     fetch(url,{
       method: 'POST',

@@ -6,7 +6,7 @@ export default function FormSubmitButton() {
     const history = useHistory()
 
     const handleClick = () => {
-        history.push("/forms")
+        history.push("/")
     }
 
     return (

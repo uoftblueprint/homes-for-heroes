@@ -1,4 +1,4 @@
-const host = `http://${process.env.REACT_APP_HOST}/api`;
+const host = `/api`;
 
 export function createFormAPI(form) {
     const url = `${host}/custom-form/createCustomForm`

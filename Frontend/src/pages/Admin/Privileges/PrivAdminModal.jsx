@@ -68,7 +68,7 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
  React.useEffect(() => {
     if (searchParams !== ''){
     setLoading(true);
-    const url = `http://localhost:3000/api/admins/getSearchAdmins?name=${searchParams}`;
+    const url = `/api/admins/getSearchAdmins?name=${searchParams}`;
   
     fetch(url, {
       headers: {
@@ -127,7 +127,7 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
       })
     )
     setLoading(true);
-    const url = `http://localhost:3000/api/admins/${admin_id}/makeSuperadmin`;
+    const url = `/api/admins/${admin_id}/makeSuperadmin`;
 
     fetch(url,{
       method: 'PUT',

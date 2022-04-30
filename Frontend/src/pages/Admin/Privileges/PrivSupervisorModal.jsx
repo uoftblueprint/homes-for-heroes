@@ -68,7 +68,7 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
   React.useEffect(() => {
     if (searchParams !== ''){
     setLoading(true);
-    const url = `http://localhost:3000/api/admins/getSearchAdmins?name=${searchParams}`;
+    const url = `/api/admins/getSearchAdmins?name=${searchParams}`;
   
     fetch(url, {
       headers: {
@@ -121,7 +121,7 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
       })
     )
     setLoading(true);
-    const url = `http://localhost:3000/admins/${admin_id}/makeSupervisor`;
+    const url = `api/admins/${admin_id}/makeSupervisor`;
 
     fetch(url,{
       method: 'PUT',
@@ -130,7 +130,7 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
       },
     })
       .then((resp) => {
-        fetch(`http://localhost:3000/supervisors/${admin_id}/assignChapter`,{
+        fetch(`api/supervisors/${admin_id}/assignChapter`,{
           method: 'PUT',
           headers:{
           'Content-Type':'application/json'

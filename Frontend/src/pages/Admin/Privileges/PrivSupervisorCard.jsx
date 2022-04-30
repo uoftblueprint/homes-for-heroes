@@ -65,7 +65,7 @@ export default function PrivSupervisorCard({ chapters, chapterDialog, toggleChap
 // When someone adds a new chapter or changes chapter, changes get pushed unless there are none.
 React.useEffect(() => {
   setLoading(true);
-  const url = `http://localhost:3000/supervisors/${currChapter.name}/listByChapter`;
+  const url = `api/supervisors/${currChapter.name}/listByChapter`;
 
   fetch(url, {
     headers: {
@@ -118,7 +118,7 @@ React.useEffect(() => {
       })
     )
     setLoading(true);
-    const url = `http://localhost:3000/admins/${admin_id}/unsetSupervisor`;
+    const url = `api/admins/${admin_id}/unsetSupervisor`;
 
     fetch(url,{
       method: 'PUT',

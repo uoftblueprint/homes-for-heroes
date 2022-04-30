@@ -61,7 +61,7 @@ const authController = {
   },
   async login(req, res) {
     logger.info('User with id %s successfully logged in.', req.user.user_id);
-    res.send({ role_id: req.user.role_id });
+    res.send({ role_id: req.user.role_id, expires: req.session.cookie.expires });
   },
   async logout(req, res, next) {
     try {
