@@ -29,7 +29,7 @@ export default function PrivChapterDialog({ chapterDialog, toggleChapterDialog }
 
 const handleAddChapter = () => {
     setLoading(true);
-    const url = `http://localhost:3000/chapters/create`;
+    const url = `/api/chapters/create`;
 
     fetch(url,{
       method: 'POST',
