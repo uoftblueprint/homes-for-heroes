@@ -33,7 +33,7 @@ module.exports = app => {
     isSuperAdmin,
     validationSchema.listChapterSupervisorsSchema,
     validationErrorHandler,
-    adminController.getByChapter);
+    adminController.listByChapter);
 
   app.post(
     '/admins/createAdmin',

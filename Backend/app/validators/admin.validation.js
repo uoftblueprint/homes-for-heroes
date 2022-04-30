@@ -25,7 +25,6 @@ const validationSchema = {
     body('address').trim().notEmpty(),
     body('chapter_id').isInt({ min: 0 })
   ],
-  listChapterSupervisorsSchema: [...chapter_id],
 };
 
 module.exports = validationSchema;
