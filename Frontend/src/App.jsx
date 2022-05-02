@@ -88,12 +88,10 @@ function App() {
             path="/logout"
             render={(props) => <Logout {...props} />}
           />
-          <Switch>
-            <Route
-              path="/signupform/:jwt"
-              render={(props) => <SignupForm {...props} />}
-            />
-          </Switch>
+          <Route
+            path="/signup/:jwt"
+            render={(props) => <SignupForm {...props} />}
+          />
         </Switch>
       </header>
     </div>
