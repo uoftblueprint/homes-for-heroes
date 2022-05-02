@@ -10,7 +10,7 @@ const helpers = {
       id: user.user_id,
     };
 
-    return jwt.sign(payload, process.env.JWT_EMAIL_SECRET, { expiresIn: '1d' });
+    return jwt.sign(payload, process.env.JWT_EMAIL_SECRET, { expiresIn: '1 month' });
   },
   verifyEmailJWT(token) {
     return jwt.verify(token, process.env.JWT_EMAIL_SECRET);
