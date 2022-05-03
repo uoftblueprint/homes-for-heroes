@@ -1,4 +1,5 @@
 const Supporter = require('../models/supporter.model');
+const Json2csvParser = require('json2csv').Parser;``
 const logger = require('../logger');
 
 const supporterController = {
@@ -44,7 +45,41 @@ const supporterController = {
     } catch (err) {
       next(err);
     }
-  }
+  },
+
+  async delete(req, res) {
+    try {
+      await Promise.all(req.body.rows.map(async (el) => { 
+        Supporter.delete(el)
+      }));
+      res.json({ success: true });
+    } catch (err) {
+      console.error(err);
+      res.status(500);
+      res.send({ error: err });
+    }
+  }, 
+
+  async getCSV(req, res) {
+    try {
+      const info = await Supporter.getCSV(req.query);
+      const infoJson = JSON.parse(JSON.stringify(info));
+      const jsonParser = new Json2csvParser({ header: true });
+      const resultsCSV = jsonParser.parse(infoJson);
+      res.setHeader(
+        'Content-disposition',
+        'attachment; filename=usersInfo.csv',
+      );
+      res.set('Content-Type', 'text/csv');
+      res.send(resultsCSV);
+      logger.info('File successfully downloaded.');
+
+    } catch (err) {
+      console.error(err);
+      res.status(500);
+      res.send({ error: err }); 
+    }
+  },
 };
 
 module.exports = supporterController;

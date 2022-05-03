@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import useFetch from "../../../api/useFetch";
+import useFetch from "../api/useFetch";
 
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -8,6 +8,9 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContentText from "@mui/material/DialogContentText";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
 
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -16,12 +19,10 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 import { CircularProgress } from "@mui/material";
 
-export default function PrivDeleteDialog({ dialog, toggleDialog, user_id }) {
+export default function BaseDeleteDialog({ dialog, deDialogEndpoint, toggleDialog, veterans, setVeterans, names, setNames, demoName}) {
 
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const fullscreen = useMediaQuery(theme.breakpoints.down("md"));
   const [isLoading, setLoading] = React.useState(false);
   const { fetchWithError } = useFetch()
 
@@ -30,22 +31,27 @@ export default function PrivDeleteDialog({ dialog, toggleDialog, user_id }) {
 const handleDelete = (user_id) => {
   (async() => {
       setLoading(true);
-      const endpoint = `admins/${user_id}/deleteSupervisor`;
-      const options = {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        } 
+      const endpoint = deDialogEndpoint;
+      const options =  {
+        method: 'POST',
+        headers:{
+        'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+          rows: veterans
+        })
       }
-      fetchWithError(endpoint, options);
+      await fetchWithError(endpoint, options); 
+      setVeterans([]); 
+      setNames([]);
       setLoading(false);
       toggleDialog(false);
-      })();
+      })(); 
 };
 
   return (
-      <Dialog open={dialog} onClose={() => toggleDialog(false)} PaperProps={{ sx: { width: "50%", height: "30%" } }}>
-        <DialogTitle>Delete this supervisor?</DialogTitle>
+      <Dialog open={dialog} onClose={() => toggleDialog(false)} PaperProps={{ sx: { width: "50%"} }}>
+        <DialogTitle>Delete these {demoName}s?</DialogTitle>
         {isLoading ?
         <div style={{ display: "flex", justifyContent: "center" }}>
         <CircularProgress />
@@ -53,11 +59,18 @@ const handleDelete = (user_id) => {
         :
         <DialogContent>
         <DialogContentText>
-            Deleting this supervisor will remove all information related to the supervisor.
-        </DialogContentText>
-        <DialogContentText>
-            If you would like to assign the supervisor to a different chapter, change the chapter in the options and add the supervisor there.  
-        </DialogContentText>
+            Deleting these {demoName}s will remove all information related to these {demoName}s.
+        </DialogContentText> 
+        <List>
+            {names
+              .map((name) => {
+                return (
+                  <ListItem>
+                    <ListItemText primary={name} />
+                  </ListItem>
+                );
+              })}
+          </List>
         </DialogContent>
         }
         <DialogActions>

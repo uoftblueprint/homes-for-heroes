@@ -100,34 +100,6 @@ const customerController = {
     }
   },
 
-  async getUserInfoCSV(req, res, next) {
-    try {
-      const { name, email, phone, address, kin_name } = req.query;
-      const info = await Customer.getUserInfoCSV(
-        name,
-        email,
-        phone,
-        address,
-        kin_name,
-      );
-      if (info.length !== 0) {
-        const infoJson = JSON.parse(JSON.stringify(info));
-        const jsonParser = new Json2csvParser({ header: true });
-        const resultsCSV = jsonParser.parse(infoJson);
-        res.setHeader(
-          'Content-disposition',
-          'attachment; filename=usersInfo.csv',
-        );
-        res.set('Content-Type', 'text/csv');
-        res.send(resultsCSV);
-        logger.info('File successfully downloaded.');
-      } else {
-        next(new Error('No data to export.'));
-      }
-    } catch (err) {
-      next(err);
-    }
-  },
   async updateUserInfo(req, res) {
     try {
       for (var key in req.body) {
@@ -142,6 +114,40 @@ const customerController = {
       res.send({ error: err });
     }
   },  
+
+  async deleteVeteran(req, res) {
+    try {
+      await Promise.all(req.body.rows.map(async (el) => { 
+        Customer.deleteVeteran(el)
+      }));
+      res.json({ success: true });
+    } catch (err) {
+      console.error(err);
+      res.status(500);
+      res.send({ error: err });
+    }
+  },  
+
+  async getCSV(req, res) {
+    try {
+      const info = await Customer.getCSV(req.query);
+      const infoJson = JSON.parse(JSON.stringify(info));
+      const jsonParser = new Json2csvParser({ header: true });
+      const resultsCSV = jsonParser.parse(infoJson);
+      res.setHeader(
+        'Content-disposition',
+        'attachment; filename=usersInfo.csv',
+      );
+      res.set('Content-Type', 'text/csv');
+      res.send(resultsCSV);
+      logger.info('File successfully downloaded.');
+
+    } catch (err) {
+      console.error(err);
+      res.status(500);
+      res.send({ error: err }); 
+    }
+  },
 };
 
 module.exports = customerController;

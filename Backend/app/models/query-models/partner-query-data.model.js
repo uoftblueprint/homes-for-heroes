@@ -31,7 +31,7 @@ const PartnerQueryData = function (query_params) {
     this.appendUpdateParam(this.village, 'partners.village');
     this.appendUpdateParam(this.address, 'partners.address');
     this.appendUpdateParam(this.phone, 'partners.phone');
-    this.appendUpdateParam(this.email, 'partner.email');
+    this.appendUpdateParam(this.email, 'partners.email');
     this.query = this.query ? `SET ${this.query}` : this.query;
   }
 };

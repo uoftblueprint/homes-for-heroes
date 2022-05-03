@@ -317,7 +317,7 @@ Customer.queryUserData = function (query_params) {
       kin.kin_name, kin.relationship, kin.kin_phone, kin.kin_email
     FROM client_users AS client
       LEFT JOIN UserInfo AS info ON info.user_id = client.user_id
-      LEFT JOIN NextKin AS kin ON kin.user_id = client.user_id
+      LEFT JOIN NextKin AS kin ON kin.user_id = client.user_id 
       ${q.query}
     ORDER BY client.name
     LIMIT ${q.offset}, ${q.limit}
@@ -366,29 +366,6 @@ Customer.updateProfile = function(user_id, body) {
   });
 };
 
-Customer.getUserInfoCSV = function(client_name, email, phone, street_name, kin_name) {
-  return new Promise((resolve, reject) => {
-    var conditions = [];
-    var fields = [];
-    if (client_name) { conditions.push('c.name = ?'); fields.push(client_name); }
-    if (email) { conditions.push('c.email = ?'); fields.push(email); }
-    if (phone) { conditions.push('u.applicant_phone = ?'); fields.push(phone); }
-    if (street_name) { conditions.push('u.street_name = ?'); fields.push(street_name); }
-    if (kin_name) { conditions.push('k.kin_name = ?'); fields.push(kin_name); }
-    var sql_query = `SELECT c.name, c.email,
-      u.gender, u.applicant_phone, u.applicant_dob, u.curr_level, u.city, u.province,
-      k.kin_name, k.relationship, k.kin_phone, k.kin_email
-    FROM client_users AS c
-      LEFT JOIN UserInfo AS u ON u.user_id = c.user_id
-      LEFT JOIN NextKinInfo AS k ON k.user_id = c.user_id ${  conditions.length ? (`WHERE ${  conditions.join( 'AND ')}`) : ''}`;
-    sql.query(sql_query, fields, (err, info) => {
-      if (err) reject(err);
-      resolve(info);
-    });
-  });
-};
-
-
 Customer.updateProfile = function(user_id, body) {
   return new Promise((resolve, reject) => {
     //console.log(query_params);
@@ -402,6 +379,41 @@ Customer.updateProfile = function(user_id, body) {
         if (err) reject(err);
         else resolve(rows);
       });
+  });
+};
+
+Customer.deleteVeteran = function (user_id) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'DELETE FROM client_users WHERE user_id = ? AND role_id = 0',
+      [user_id],
+      (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows[0]);
+      },
+    );
+  });
+};
+
+Customer.getCSV = function (query_params) {
+  return new Promise((resolve, reject) => {
+    const q = new CustomerQueryData(query_params);
+    q.constructQuery();
+    const data_query = ` 
+    SELECT
+      client.user_id, client.name, client.email, client.verified,
+      info.gender, info.applicant_phone, info.applicant_dob, info.curr_level, info.city, info.province,
+      kin.kin_name, kin.relationship, kin.kin_phone, kin.kin_email
+    FROM client_users AS client
+      LEFT JOIN UserInfo AS info ON info.user_id = client.user_id
+      LEFT JOIN NextKin AS kin ON kin.user_id = client.user_id 
+      ${q.query}
+    ORDER BY client.name
+    `;
+    sql.query(data_query, (err, row) => {
+      if (err) reject(err);
+        resolve(row)
+    }); 
   });
 };
 

@@ -20,10 +20,18 @@ module.exports = (app) => {
 
   app.get(
     '/getUserData',
-    // isPrivileged,
+    isPrivileged,
     validationSchema.getUserDataSchema,
     validationErrorHandler,
     customers.getUserData,
+  );
+
+  app.get(
+    '/getVeteranCSV',
+    isPrivileged,
+    validationSchema.getCSVSchema,
+    validationErrorHandler,
+    customers.getCSV,
   );
 
   app.get(
@@ -52,7 +60,7 @@ module.exports = (app) => {
 
   app.post(
     '/updateUserInfo',
-    // isAuthenticated,
+    isAuthenticated,
     validationSchema.updateUserInfoSchema,
     validationErrorHandler,
     customers.updateUserInfo,
@@ -74,11 +82,12 @@ module.exports = (app) => {
     customers.patchChangePassword,
   );
 
-  app.get(
-    '/getUsersInfoCSV',
+  app.post(
+    '/deleteVeteran',
     isPrivileged,
-    validationSchema.getUserInfoCSVSchema,
+    validationSchema.deleteVeteranSchema,
     validationErrorHandler,
-    customers.getUserInfoCSV,
+    customers.deleteVeteran,
   );
+
 };

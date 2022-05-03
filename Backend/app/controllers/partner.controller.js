@@ -1,4 +1,5 @@
 const Partner = require('../models/partner.model');
+const Json2csvParser = require('json2csv').Parser;
 const logger = require('../logger');
 
 
@@ -26,6 +27,7 @@ const partnerController = {
       res.send({ error: err });
     }
   },  
+
   async getAllPartners(req, res, next) {
     try {
       const results = await Partner.listAll();
@@ -34,6 +36,7 @@ const partnerController = {
       next(err);
     }
   },
+
   async create(req, res, next) {
     try {
       logger.debug(req.body);
@@ -44,7 +47,41 @@ const partnerController = {
     } catch (err) {
       next(err);
     }
-  }
+  },
+
+  async delete(req, res) {
+    try {
+      await Promise.all(req.body.rows.map(async (el) => { 
+        Partner.delete(el)
+      }));
+      res.json({ success: true });
+    } catch (err) {
+      console.error(err);
+      res.status(500);
+      res.send({ error: err });
+    }
+  }, 
+
+  async getCSV(req, res) {
+    try {
+      const info = await Partner.getCSV(req.query);
+      const infoJson = JSON.parse(JSON.stringify(info));
+      const jsonParser = new Json2csvParser({ header: true });
+      const resultsCSV = jsonParser.parse(infoJson);
+      res.setHeader(
+        'Content-disposition',
+        'attachment; filename=usersInfo.csv',
+      );
+      res.set('Content-Type', 'text/csv');
+      res.send(resultsCSV);
+      logger.info('File successfully downloaded.');
+
+    } catch (err) {
+      console.error(err);
+      res.status(500);
+      res.send({ error: err }); 
+    }
+  },
 };
 
 module.exports = partnerController;

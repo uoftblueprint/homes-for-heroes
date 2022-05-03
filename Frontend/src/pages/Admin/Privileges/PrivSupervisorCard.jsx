@@ -4,7 +4,8 @@ import PrivSupervisorModal from "./PrivSupervisorModal";
 import PrivCreateAdmin from "./PrivCreateAdmin";
 import PrivChapterModal from './PrivChapterModal';
 import PrivDeleteDialog from './PrivDeleteDialog';
-import { useSnackbar } from "notistack";
+
+import useFetch from "../../../api/useFetch";
 
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -51,69 +52,43 @@ function stringAvatar(name) {
     sx: {
       bgcolor: stringToColor(name),
     },
-    children: `${name.split(" ")[0][0] || ''}${name.split(" ")[1][0] || ''}`,
+    children: `${name.split(" ")?.[0]?.[0] || ''}${name.split(" ")?.[1]?.[0] || ''}`,
   };
 }
 
-export default function PrivSupervisorCard({ chapters, chapterDialog, toggleChapterDialog }) {
+export default function PrivSupervisorCard({ chapters, chapterDialog, toggleChapterDialog, state, update}) {
   const [svDialog, toggleSvDialog] = React.useState(false);
   const [caDialog, toggleCaDialog] = React.useState(false);
   const [deDialog, toggleDeDialog] = React.useState(false);
   const [deleteId, setDeleteId] = React.useState(null);
   const [supervisors, setSupervisors] = React.useState([]);
-  const [currChapter, setChapter] = React.useState(chapters[0]);
+  const [currChapter, setChapter] = React.useState(chapters.length === 0 ? {
+    name: '',
+    chapter_id: null
+  } : 
+  chapters[0]
+  );
   const [isLoading, setLoading] = React.useState(false);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { fetchWithError } = useFetch();
 
 // When someone adds a new chapter or changes chapter, changes get pushed unless there are none.
 React.useEffect(() => {
-  setLoading(true);
-  const url = `http://localhost:3000/supervisors/${currChapter.name}/listByChapter`;
-
-  fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-  })
-    .then((resp) => resp.json())
-    .then((resp) => {
-      if (resp.supervisors.constructor === Array) {
-        setSupervisors(resp.supervisors);
-      } else {
-        throw new Error();
+  (async() => {
+      setLoading(true);
+      const endpoint = `admins/${currChapter.chapter_id}/listByChapter`;
+      const options = {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        }
+      }
+      const response = await fetchWithError(endpoint, options);
+      if (response.constructor === Array) {
+        setSupervisors(response);
       }
       setLoading(false);
-    })
-    .catch(e => {
-      const action = key => (
-        <Grid>
-            <Button onClick={() => { window.location.reload(); }}>
-              Refresh
-            </Button>
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => { closeSnackbar(key) }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton> 
-        </Grid>
-    );
-      enqueueSnackbar(
-        'Something went wrong',{
-          variant: 'error',
-          autoHideDuration: 15000,
-          action,
-        })
-    });
-
-}, [currChapter, svDialog, caDialog, deDialog]); 
-
-  const handleSvOpen = () => {
-    toggleSvDialog(true);
-  }
+      })();
+  }, [currChapter, svDialog, caDialog, deDialog, state]); 
    
    return (
     <Card sx={{ maxWidth: 385, mt: "40px", border: 1 }}>
@@ -127,7 +102,14 @@ React.useEffect(() => {
               sx={{ marginLeft: "auto" }}
             >
               Create Admin
-            </Button>
+            </Button>  
+          <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ textAlign: "left" }}
+            >
+              The following people are chapter supervisors of the selected chapter.
+            </Typography>
             <Button
               size="small"
               onClick={() => toggleChapterDialog(true)}
@@ -136,14 +118,7 @@ React.useEffect(() => {
             >
               Add Chapter 
             </Button>
-          </Grid>
-          <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ textAlign: "left" }}
-            >
-              The following people are chapter supervisors of the selected chapter.
-            </Typography>
+            </Grid>
         <Autocomplete
           disablePortal
           autoHighlight
@@ -163,7 +138,7 @@ React.useEffect(() => {
               <Typography>{currChapter.name} Supervisors</Typography>
               <Button
                 size="small"
-                onClick={handleSvOpen}
+                onClick={() => toggleSvDialog(true)}
                 startIcon={<AddIcon />}
                 sx={{ marginLeft: "auto" }}
               >
@@ -199,9 +174,9 @@ React.useEffect(() => {
                         </Button>
                       }
                     >
-                      {/* <ListItemAvatar>
+                      <ListItemAvatar>
                         <Avatar {...stringAvatar(supervisor.name)} />
-                      </ListItemAvatar> */}
+                      </ListItemAvatar>
                       <ListItemText
                         primary={supervisor.name}
                         secondary={`Supervisor of ${chapters.find(obj => obj.chapter_id === supervisor.chapter_id).name}`}
@@ -213,7 +188,7 @@ React.useEffect(() => {
             }
           </CardContent>
           <PrivSupervisorModal svDialog={svDialog} toggleSvDialog={toggleSvDialog} currChapter={currChapter} />
-          <PrivCreateAdmin caDialog={caDialog} toggleCaDialog={toggleCaDialog} chapters={chapters} />
+          <PrivCreateAdmin caDialog={caDialog} toggleCaDialog={toggleCaDialog} currChapter={currChapter} />
           <PrivChapterModal chapterDialog={chapterDialog} toggleChapterDialog={toggleChapterDialog} />
           <PrivDeleteDialog dialog={deDialog} toggleDialog={toggleDeDialog} user_id={deleteId} /> 
         </Card> 

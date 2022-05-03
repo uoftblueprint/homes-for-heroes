@@ -31,6 +31,13 @@ const validationSchema = {
     query('page').isInt({ min: 0 }),
     query('page_size').isInt({ min: 0 }),
   ],
+  getCSVSchema: [
+    query('name').optional(),
+    query('email').optional(),
+    query('applicant_phone').optional(),
+    query('street_name').optional(),
+    query('kin_name').optional(),
+  ],
   updateUserInfoSchema: [
     //body('gender').isString().isLength({ min: 1, max: 1 }).optional(),
     // body('applicant_dob')
@@ -67,6 +74,9 @@ const validationSchema = {
     query('province'),
     query('applicant_dob').isDate()
   ],
+  deleteVeteranSchema: [
+    body('rows.*').isInt()
+  ]
 };
 
 module.exports = validationSchema;

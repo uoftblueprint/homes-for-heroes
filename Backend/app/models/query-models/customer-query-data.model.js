@@ -26,6 +26,9 @@ const CustomerQueryData = function (query_params) {
   this.query = '';
 
   this.constructQuery = function () {
+    //Get only veteran
+    this.appendQueryParam('0', 'client.role_id');
+
     this.appendQueryParamKeyword(this.client_name, 'client.name');
     this.appendQueryParamKeyword(this.client_email, 'client.email');
     this.appendQueryParamKeyword(this.info_phone, 'info.applicant_phone');

@@ -79,4 +79,34 @@ Partner.updateInfo = function (user_id, query_params) {
   });
 };
 
+Partner.delete = function (user_id) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'DELETE FROM partners WHERE partner_id = ?',
+      [user_id],
+      (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows[0]);
+      },
+    );
+  });
+};
+
+Partner.getCSV = function (query_params) {
+  return new Promise((resolve, reject) => {
+    const q = new PartnerQueryData(query_params);
+    q.constructQuery();
+    const data_query = ` 
+    SELECT
+      partners.partner_id, partners.org_name, partners.city, partners.village, partners.address, partners.phone, partners.email
+    FROM partners 
+      ${q.query}
+    `;
+    sql.query(data_query, (err, row) => {
+      if (err) reject(err);
+        resolve(row)
+    }); 
+  });
+};
+
 module.exports = Partner;

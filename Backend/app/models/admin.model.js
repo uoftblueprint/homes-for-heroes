@@ -45,15 +45,15 @@ Admin.createTemp = function (name, email, chapter_id, role_id = 1) {
     sql.getConnection((err, conn) => {
       if (err) return reject(err);
 
-      conn.beginTransaction((err) => {
+      conn.beginTransaction(async (err) => {
         if (err) return reject(err);
-        const adminCustomer = Customer.createTemp(name, email, role_id, conn); // role_id of 1 (supervisor) by default
+        const adminCustomer = await Customer.createTemp(name, email, role_id, conn); // role_id of 1 (supervisor) by default
         conn.query(
           'INSERT INTO admin_users (user_id, chapter_id) VALUES (?, ?)',
           [adminCustomer.user_id, chapter_id],
-          (err, result) => {
+          (err, result) => { 
             if (err) return conn.rollback(() => reject(err));
-            else if (!result.insertId) return reject(new Error('Could not create admin'));
+            else if (result.insertId) return reject(new Error('Could not create admin'));
 
             conn.commit((err) => {
               if (err) return conn.rollback(() => reject(err));
@@ -110,37 +110,39 @@ Admin.getSearchAdmins = function (name) {
   });
 };
 
-Admin.makeSupervisor = function(admin_id) {
+Admin.makeSuperadmin = function (admin_id) {
   return new Promise((resolve, reject) => {
-    sql.query('UPDATE client_users SET role_id = 1 WHERE user_id = ?',
+    sql.query(
+      'UPDATE client_users SET role_id = 2 WHERE user_id = ?',
       [admin_id],
       (err, rows) => {
-        if (err) reject (err);
-        else resolve(rows[0]);
-      });
+        if (err) reject(err);
+        else {
+          sql.query(
+            'UPDATE admin_users SET chapter_id = NULL WHERE user_id = ?',
+            [admin_id],
+            (err, rows) => {
+              if (err) reject(err);
+              resolve(rows[0]);
+            }
+          );
+        }
+      }
+    );
   });
 };
 
-Admin.makeSuperadmin = function(admin_id) {
-  return new Promise((resolve, reject) => {
-    sql.query('UPDATE client_users SET role_id = 2 WHERE user_id = ?',
-      [admin_id],
-      (err, rows) => {
-        if (err) reject (err);
-        else resolve(rows[0]);
-      });
-  });
-};
-
-Admin.unsetSupervisor = function (admin_id) {
+Admin.unsetSuperadmin = function (admin_id) {
   return new Promise((resolve, reject) => {
     sql.query(
       'UPDATE client_users SET role_id = 1 WHERE user_id = ?',
       [admin_id],
       (err, rows) => {
         if (err) reject(err);
-        else resolve(rows[0]);
-      },
+        else {
+          resolve(rows[0]);
+        }
+      }
     );
   });
 };
@@ -155,17 +157,6 @@ Admin.deleteSupervisor = function (admin_id) {
         else resolve(rows[0]);
       },
     );
-  });
-};
-
-Admin.unsetSuperadmin = function(admin_id) {
-  return new Promise((resolve, reject) => {
-    sql.query('UPDATE client_users SET role_id = 1 WHERE user_id = ?',
-      [admin_id],
-      (err, rows) => {
-        if (err) reject (err);
-        else resolve(rows[0]);
-      });
   });
 };
 
@@ -198,5 +189,19 @@ Admin.listByChapter = function(chapter_id) {
 };
 
 
+Admin.getRole = function (admin_id) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'SELECT c.role_id FROM admin_users a INNER JOIN client_users c ON a.user_id = c.user_id WHERE a.user_id = ?',
+      [admin_id],
+      (err, rows) => {
+        if (err) reject(err);
+        else {
+          resolve(rows[0].role_id);
+        }
+      }
+    );
+  });
+};
 
 module.exports = Admin;

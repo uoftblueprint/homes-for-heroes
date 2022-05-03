@@ -78,4 +78,34 @@ Supporter.updateInfo = function (user_id, query_params) {
   });
 };
 
+Supporter.delete = function (user_id) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'DELETE FROM supporters WHERE supporter_id = ?',
+      [user_id],
+      (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows[0]);
+      },
+    );
+  });
+};
+
+Supporter.getCSV = function (query_params) {
+  return new Promise((resolve, reject) => {
+    const q = new SupporterQueryData(query_params);
+    q.constructQuery();
+    const data_query = ` 
+      SELECT
+        supporters.supporter_id, supporters.name, supporters.date_gifted, supporters.gift_provided, supporters.phone, supporters.email
+      FROM supporters 
+        ${q.query}
+      `;
+    sql.query(data_query, (err, row) => {
+      if (err) reject(err);
+        resolve(row)
+    }); 
+  });
+};``
+
 module.exports = Supporter;

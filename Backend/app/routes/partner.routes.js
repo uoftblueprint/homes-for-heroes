@@ -14,11 +14,19 @@ module.exports = app => {
     '/partners/getData',
     validationSchema.getDataSchema,
     validationErrorHandler,
-    partnerController.getData);
+    partnerController.getData
+    );
+  
+  app.get(
+    '/partners/getCSV',
+    validationSchema.getCSVSchema,
+    validationErrorHandler,
+    partnerController.getCSV
+    );
 
   app.post(
     '/partners/updateInfo',
-    // isAuthenticated,
+    isSuperAdmin,
     validationSchema.updateInfoSchema,
     validationErrorHandler,
     partnerController.updateInfo,
@@ -27,10 +35,18 @@ module.exports = app => {
   // create a new partner
   app.post(
     '/partners/create',
-    // isSuperAdmin,
+    isSuperAdmin,
     validationSchema.createPartnerSchema,
     validationErrorHandler,
     partnerController.create
+  );
+
+  app.post(
+    '/partners/delete',
+    isSuperAdmin,
+    validationSchema.deleteSchema,
+    validationErrorHandler,
+    partnerController.delete,
   );
 };
   

@@ -1,7 +1,6 @@
 import * as React from "react";
 
-import { useSnackbar } from "notistack";
-
+import useFetch from "../../../api/useFetch";
 
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
@@ -24,6 +23,7 @@ import { useTheme } from "@mui/material/styles";
 
 import CheckIcon from "@mui/icons-material/Check";
 import SearchIcon from "@mui/icons-material/Search";
+
 
 // Demo purposes
 
@@ -63,71 +63,41 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
   const [admins, setAdmins] = React.useState([]);
   const [isLoading, setLoading] = React.useState(false);
   const [searchParams, setSearchParams] = React.useState("");
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { fetchWithError } = useFetch();
 
   React.useEffect(() => {
     if (searchParams !== ''){
-    setLoading(true);
-    const url = `http://localhost:3000/api/admins/getSearchAdmins?name=${searchParams}`;
-  
-    fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then((resp) => resp.json())
-      .then((resp) => {
-        setAdmins(resp.admins);
-        setLoading(false);
-      })
-      .catch(e => {
-        const action = key => (
-          <Grid>
-              <Button onClick={() => { window.location.reload(); }}>
-                Refresh
-              </Button>
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={() => { closeSnackbar(key) }}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton> 
-          </Grid>
-      );
-        enqueueSnackbar(
-          'Something went wrong',{
-            variant: 'error',
-            autoHideDuration: 15000,
-            action,
-          })
-      });
-    } 
+    (async() => {
+      setLoading(true);
+      const endpoint = `admins/getSearchAdmins?name=${searchParams}`;
+      const options = {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        }
+      }
+      const response = await fetchWithError(endpoint, options);
+      setAdmins(response.admins);
+      setLoading(false);
+      })(); 
+    }
   }, [searchParams, svDialog]);
 
   const handleSetSupervisor = (user_id) => { 
-    setLoading(true);
-    const url = `http://localhost:3000/admins/${user_id}/makeSupervisor`;
-
-    fetch(url,{
-      method: 'PUT',
-      headers:{
-      'Content-Type':'application/json'
-      },
-    })
-      .then((resp) => {
-        fetch(`http://localhost:3000/supervisors/${user_id}/assignChapter`,{
-          method: 'PUT',
-          headers:{
-          'Content-Type':'application/json'
-          },
-          body: JSON.stringify({
-            id: currChapter.chapter_id
-          })
+    (async() => {
+      setLoading(true);
+      const endpoint = `admins/${user_id}/AssignChapter`;
+      const options = {
+        method: 'PUT',
+        headers:{
+        'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+          chapter_id: currChapter.chapter_id
         })
-        setAdmins((prevState) =>
+      }
+      const response = await fetchWithError(endpoint, options);
+      setAdmins((prevState) =>
           prevState.map((user) => {
             if (user.user_id === user_id) {
               return {
@@ -138,32 +108,10 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
             return user;
           })
         )
-        setLoading(false);
-      })
-      .catch(e => {
-        const action = key => (
-          <Grid>
-            <Button onClick={() => { window.location.reload(); }}>
-              Refresh
-            </Button>
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => { closeSnackbar(key) }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          </Grid>
-        );
-        enqueueSnackbar(
-          'Something went wrong', {
-          variant: 'error',
-          autoHideDuration: 15000,
-          action,
-        })
-      });
-  }
+      setLoading(false);
+      })();
+    }
+
 
   const handleDialogClose = () => {
     // Send SuperAdmin Changes and toggle

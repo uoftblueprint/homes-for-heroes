@@ -15,11 +15,19 @@ module.exports = app => {
     '/volunteers/getData',
     validationSchema.getDataSchema,
     validationErrorHandler,
-    volunteerController.getData);
+    volunteerController.getData
+    );
+
+  app.get(
+    '/volunteers/getCSV',
+    validationSchema.getCSVSchema,
+    validationErrorHandler,
+    volunteerController.getCSV
+    );
 
   app.post(
     '/volunteers/updateInfo',
-    // isAuthenticated,
+    isSuperAdmin,
     validationSchema.updateInfoSchema,
     validationErrorHandler,
     volunteerController.updateInfo,
@@ -28,10 +36,18 @@ module.exports = app => {
   // create a new volunteer
   app.post(
     '/volunteers/create',
-    // isSuperAdmin,
+    isSuperAdmin,
     validationSchema.createVolunteerSchema,
     validationErrorHandler,
     volunteerController.create
+  );
+
+  app.post(
+    '/volunteers/delete',
+    isSuperAdmin,
+    validationSchema.deleteSchema,
+    validationErrorHandler,
+    volunteerController.delete,
   );
 };
   

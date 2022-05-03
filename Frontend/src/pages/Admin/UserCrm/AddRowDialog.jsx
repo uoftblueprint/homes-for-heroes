@@ -14,7 +14,7 @@ import validator from 'validator';
 
 import { useSnackbar } from "notistack";
 
-export default function AddRowButton({ dialog, setDialog }) {
+export default function AddRowButton({ dialog, toggleDialog }) {
   const [isLoading, setLoading] = React.useState(false); 
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState(''); 
@@ -26,10 +26,6 @@ export default function AddRowButton({ dialog, setDialog }) {
   const [phone_error, setPhoneError] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-  const handleEmailChange = (e) => {
-    setEmailError(!validator.isEmail(e.target.value));    
-    setEmail(e.target.value);
-  }
 
   const fieldsValidated = () => {
     if (
@@ -69,12 +65,12 @@ export default function AddRowButton({ dialog, setDialog }) {
         .then((resp) => {
           if (!resp.ok){
             setLoading(false);
-            setDialog(false);
+            toggleDialog(false);
             throw new Error(); 
           }
           else{ 
           setLoading(false);
-          setDialog(false);
+          toggleDialog(false);
           }
         })
         .catch(e => {
@@ -105,7 +101,7 @@ export default function AddRowButton({ dialog, setDialog }) {
 
   return (
     <Grid sx={{ marginRight: "auto" }}>  
-      <Dialog open={dialog} onClose={() => setDialog(false)} PaperProps={{ sx: { width: "50%", height: "100%" } }}>
+      <Dialog open={dialog} onClose={() => toggleDialog(false)} PaperProps={{ sx: { width: "50%", height: "100%" } }}>
         <DialogTitle>Add Veteran</DialogTitle>
         {isLoading ?  
            <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -133,7 +129,7 @@ export default function AddRowButton({ dialog, setDialog }) {
             value={email}
             error={email_error}
             helperText={email ? 'Please enter a valid Email!' : ''}
-            onChange={handleEmailChange}
+            onChange={(e) => setEmail(e.target.value)}
             fullWidth
             variant="standard" 
             /> 
@@ -165,7 +161,7 @@ export default function AddRowButton({ dialog, setDialog }) {
         }
         <DialogActions>
           <Button onClick={handleAdd}>Add Veteran</Button>
-          <Button onClick={() => setDialog(false)}>Cancel</Button>
+          <Button onClick={() => toggleDialog(false)}>Cancel</Button>
         </DialogActions>
       </Dialog> 
     </Grid>

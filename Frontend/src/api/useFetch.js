@@ -54,5 +54,48 @@ export default function useFetch() {
         }); 
       });
     }
-    return { fetchWithError }
+
+    const fetchBlobWithError = (endpoint, options) => {
+      return new Promise((resolve) => {
+      const url = `${host}${endpoint}`;
+      fetch(url, options)
+        .then((resp) => {
+          if (!resp.ok){
+            throw new Error();
+          }
+          else{
+            resolve(resp.blob());
+          }
+        }) 
+        .catch((e) => {
+          const action = (key) => (
+            <Grid>
+              <Button
+                onClick={() => {
+                  window.location.reload();
+                }}
+              >
+                Refresh
+              </Button>
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  closeSnackbar(key);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            </Grid>
+          );
+          enqueueSnackbar("Something went wrong", {
+            variant: "error",
+            autoHideDuration: 15000,
+            action,
+          });
+        }); 
+      });
+    }
+    return { fetchWithError, fetchBlobWithError }
   } 

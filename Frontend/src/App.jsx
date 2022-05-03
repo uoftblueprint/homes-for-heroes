@@ -12,7 +12,9 @@ import FormEdit from './pages/User/Form/FormEdit';
 
 import CaseList from './pages/Admin/UserCase/CaseList';
 import Login from './pages/User/Login/Login';
-import CRM from './pages/Admin/UserCrm/CRM';
+import ForgotPassword from './pages/User/PasswordReset/ForgotPassword';
+import ResetPassword from './pages/User/PasswordReset/ResetPassword';
+import VeteranCRM from './pages/Admin/UserCrm/VeteranCRM';
 import Privileges from './pages/Admin/Privileges/Privileges';
 import ProfilePage from './pages/User/ProfilePage/ProfilePage';
 
@@ -27,7 +29,7 @@ function App() {
       <header className="App-header">
         <NavBar />
         <Switch> 
-          <Route exact path="/" render={(props) => <CRM {...props} />} />
+          <Route exact path="/" render={(props) => <VeteranCRM {...props} />} />
           <Route
             exact
             path="/usercase"
@@ -59,7 +61,8 @@ function App() {
             render={(props) => <ProfilePage {...props} />}
           />
           <Route exact path="/login" render={(props) => <Login {...props} />} />
-
+          <Route exact path="/forgotpassword" render={(props) => <ForgotPassword {...props} />} />
+          <Route exact path="/reset/:jwt" render={(props) => <ResetPassword {...props} />} />
           <Switch>
             <Route
               path="/signupform/:jwt"

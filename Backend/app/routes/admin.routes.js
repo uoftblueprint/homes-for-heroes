@@ -13,20 +13,6 @@ module.exports = app => {
   adminController.getSearchAdmins);
 
   app.put(
-    '/admins/:admin_id/makeSupervisor',
-    // isSuperAdmin,
-    validationSchema.makeSupervisorSchema,
-    validationErrorHandler,
-    adminController.makeSupervisor);
-
-  app.put(
-    '/admins/:admin_id/unsetSupervisor',
-    // isSuperAdmin,
-    validationSchema.unsetSupervisorSchema,
-    validationErrorHandler,
-    adminController.unsetSupervisor);
-
-  app.put(
     '/admins/:admin_id/deleteSupervisor',
     // isSuperAdmin,
     validationSchema.deleteSupervisorSchema,
@@ -46,6 +32,7 @@ module.exports = app => {
     validationSchema.unsetSuperadminSchema,
     validationErrorHandler,
     adminController.unsetSuperadmin);
+    
   app.put(
     '/admins/:admin_id/assignChapter',
     // isSuperAdmin,
@@ -54,9 +41,16 @@ module.exports = app => {
     adminController.assignChapter);
 
   app.get(
-    '/admins/:chapter/listByChapter',
+    '/admins/:chapter_id/listByChapter',
     // isSuperAdmin,
     validationSchema.listChapterSupervisorsSchema,
     validationErrorHandler,
-    adminController.getByChapter);
+    adminController.listByChapter);
+
+  app.post(
+    '/admins/createAdmin',
+    isSuperAdmin,
+    validationSchema.createAdminSchema,
+    validationErrorHandler,
+    adminController.createAdmin);
 };

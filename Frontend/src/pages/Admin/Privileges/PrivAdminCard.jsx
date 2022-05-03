@@ -3,8 +3,6 @@ import * as React from "react";
 import PrivAdminModal from "./PrivAdminModal";
 import useFetch from "../../../api/useFetch";
 
-import { useSnackbar } from "notistack";
-
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Grid from "@mui/material/Grid";
@@ -13,11 +11,10 @@ import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
 import CircularProgress from "@mui/material/CircularProgress";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 import Avatar from "@mui/material/Avatar";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
 
@@ -48,11 +45,11 @@ function stringAvatar(name) {
     sx: {
       bgcolor: stringToColor(name),
     },
-    children: `${name.split(" ")[0][0] || ''}${name.split(" ")[1][0] || ''}`,
+    children: `${name.split(" ")?.[0]?.[0] || ''}${name.split(" ")?.[1]?.[0] || ''}`,
   };
 }
 
-export default function PrivAdminCard() {
+export default function PrivAdminCard({ state, update }) {
   const [adminDialog, toggleAdminDialog] = React.useState(false);
   const [superadmins, setSuperadmins] = React.useState([]);
   const [isLoading, setLoading] = React.useState(false);
@@ -63,15 +60,17 @@ export default function PrivAdminCard() {
     setLoading(true);
     const endpoint = `superadmins/getAll`;
     const options = {
-      "Content-Type": "application/json",
-      Accept: "application/json", 
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      }
     }
     const response = await fetchWithError(endpoint, options); 
     setSuperadmins(response.superadmin);
     setLoading(false);
     })();
 
-    }, [adminDialog]);
+    }, [adminDialog, state]);
 
   const handleAdminOpen = () => {
     toggleAdminDialog(true);
@@ -99,6 +98,8 @@ export default function PrivAdminCard() {
         } 
       }
       fetchWithError(endpoint, options);
+      update(!state);
+      setLoading(false);
       })();
   };
 
@@ -153,9 +154,9 @@ export default function PrivAdminCard() {
                       </Button>
                     }
                   >
-                    {/* <ListItemAvatar>
+                    <ListItemAvatar>
                       <Avatar {...stringAvatar(superadmin.name)} />
-                    </ListItemAvatar> */}
+                    </ListItemAvatar>
                     <ListItemText primary={superadmin.name} />
                   </ListItem>
                 );
@@ -166,6 +167,8 @@ export default function PrivAdminCard() {
       <PrivAdminModal
         adminDialog={adminDialog}
         toggleAdminDialog={toggleAdminDialog}
+        state={state}
+        update={update}
       />
     </Card>
   );

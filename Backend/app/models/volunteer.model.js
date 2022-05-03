@@ -78,4 +78,34 @@ Volunteer.updateInfo = function (user_id, query_params) {
   });
 };
 
+Volunteer.delete = function (user_id) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'DELETE FROM volunteers WHERE volunteer_id = ?',
+      [user_id],
+      (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows[0]);
+      },
+    );
+  });
+};
+
+Volunteer.getCSV = function (query_params) {
+  return new Promise((resolve, reject) => {
+    const q = new VolunteerQueryData(query_params);
+    q.constructQuery();
+    const data_query = ` 
+      SELECT
+        volunteers.volunteer_id, volunteers.name, volunteers.village, volunteers.date_joined, volunteers.role, volunteers.phone, volunteers.email
+      FROM volunteers 
+        ${q.query}
+      `;
+    sql.query(data_query, (err, row) => {
+      if (err) reject(err);
+        resolve(row)
+    }); 
+  });
+};``
+
 module.exports = Volunteer;

@@ -28,7 +28,7 @@ const VolunteerQueryData = function (query_params) {
   this.constructEditQuery = function () {
     this.appendUpdateParam(this.name, 'volunteers.name'); 
     this.appendUpdateParam(this.village, 'volunteers.village');
-    this.appendUpdateParam(this.address, 'volunteers.date_joined');
+    this.appendUpdateParam(this.date_joined, 'volunteers.date_joined');
     this.appendUpdateParam(this.role, 'volunteers.role');
     this.appendUpdateParam(this.phone, 'volunteers.phone');
     this.appendUpdateParam(this.email, 'volunteers.email');
