@@ -5,6 +5,7 @@ const logger = require('../logger');
 const volunteerController = {
   async getAllVolunteers(req, res, next) {
     try {
+      logger.debug(req.query);
       const results = await Volunteer.listAll();
       res.send({ volunteers: results });
     } catch (err) {
@@ -14,6 +15,7 @@ const volunteerController = {
 
     async getData(req, res, next) {
         try {
+          logger.debug(req.query);
             const data = await Volunteer.queryData(req.query);
             res.send(data);
         } catch (err) {
@@ -22,6 +24,7 @@ const volunteerController = {
     },
     async updateInfo(req, res) {
         try {
+          logger.debug(req.body); 
             for (var key in req.body) {
                 if (req.body.hasOwnProperty(key)) {
                     await Volunteer.updateInfo(key, req.body[key]);
@@ -48,6 +51,7 @@ const volunteerController = {
 
   async delete(req, res) {
     try {
+      logger.debug(req.body);
       await Promise.all(req.body.rows.map(async (el) => { 
         Volunteer.delete(el)
       }));
@@ -61,6 +65,7 @@ const volunteerController = {
 
   async getCSV(req, res) {
     try {
+      logger.debug(req.query);
       const info = await Volunteer.getCSV(req.query);
       const infoJson = JSON.parse(JSON.stringify(info));
       const jsonParser = new Json2csvParser({ header: true });

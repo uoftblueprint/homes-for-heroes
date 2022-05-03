@@ -6,6 +6,7 @@ const logger = require('../logger');
 const partnerController = {
     async getData(req, res, next) {
         try {
+            logger.debug(req.query);
             const data = await Partner.queryData(req.query);
             res.send(data);
         } catch (err) {
@@ -15,6 +16,7 @@ const partnerController = {
 
     async updateInfo(req, res) {
     try {
+      logger.debug(req.body);
       for (var key in req.body) {
         if (req.body.hasOwnProperty(key)) {
           await Partner.updateInfo(key, req.body[key]);
@@ -51,6 +53,7 @@ const partnerController = {
 
   async delete(req, res) {
     try {
+      logger.debug(req.body);
       await Promise.all(req.body.rows.map(async (el) => { 
         Partner.delete(el)
       }));
@@ -64,6 +67,7 @@ const partnerController = {
 
   async getCSV(req, res) {
     try {
+      logger.debug(req.query);
       const info = await Partner.getCSV(req.query);
       const infoJson = JSON.parse(JSON.stringify(info));
       const jsonParser = new Json2csvParser({ header: true });

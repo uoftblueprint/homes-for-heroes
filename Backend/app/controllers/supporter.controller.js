@@ -5,25 +5,27 @@ const logger = require('../logger');
 const supporterController = {
 
     async getData(req, res, next) {
-        try {
-            const data = await Supporter.queryData(req.query);
-            res.send(data);
-        } catch (err) {
-            next(err);
-        }
+    try {
+      logger.debug(req.query);
+      const data = await Supporter.queryData(req.query);
+      res.send(data);
+    } catch (err) {
+      next(err);
+    }
     },
 
     async updateInfo(req, res) {
-        try {
-            for (var key in req.body) {
-                if (req.body.hasOwnProperty(key)) {
-                    await Supporter.updateInfo(key, req.body[key]);
-                }
-            }
-            res.json({ success: true });
-        } catch (err) {
-            console.error(err);
-            res.status(500);
+      try {
+        logger.debug(req.body);
+        for (var key in req.body) {
+          if (req.body.hasOwnProperty(key)) {
+            await Supporter.updateInfo(key, req.body[key]);
+          }
+        }
+        res.json({ success: true });
+      } catch (err) {
+        console.error(err);
+        res.status(500);
             res.send({ error: err });
         }
     },
@@ -35,6 +37,7 @@ const supporterController = {
       next(err);
     }
   },
+
   async create(req, res, next) {
     try {
       logger.debug(req.body);
@@ -49,6 +52,7 @@ const supporterController = {
 
   async delete(req, res) {
     try {
+      logger.debug(req.body);
       await Promise.all(req.body.rows.map(async (el) => { 
         Supporter.delete(el)
       }));
@@ -62,6 +66,7 @@ const supporterController = {
 
   async getCSV(req, res) {
     try {
+      logger.debug(req.query);
       const info = await Supporter.getCSV(req.query);
       const infoJson = JSON.parse(JSON.stringify(info));
       const jsonParser = new Json2csvParser({ header: true });
