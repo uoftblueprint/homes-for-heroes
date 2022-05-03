@@ -2,6 +2,8 @@ import * as React from "react";
 
 import PrivAdminModal from "./PrivAdminModal";
 import useFetch from "../../../api/useFetch";
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../../redux/userSlice';
 
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -54,6 +56,7 @@ export default function PrivAdminCard({ state, update }) {
   const [superadmins, setSuperadmins] = React.useState([]);
   const [isLoading, setLoading] = React.useState(false);
   const { fetchWithError } = useFetch();
+  const currentUserId = useSelector(selectUser).user_id;
 
   React.useEffect(() => {
     (async () => {
@@ -131,10 +134,35 @@ export default function PrivAdminCard({ state, update }) {
           </div>
         ) : (
           <List>
-            {superadmins
-              .filter((el) => el.role_id === 2)
+            {superadmins 
               .map((superadmin) => {
                 return (
+                  superadmin.user_id === currentUserId ? 
+                    <ListItem
+                    key={superadmin.user_id}
+                    secondaryAction={
+                      <Button
+                        disabled
+                        size="small"
+                        onClick={() =>
+                          handleUnsetSuperadmin(superadmin.user_id)
+                        } 
+                        sx={{
+                          fontWeight: "bold",
+                          color: "#C91C1C",
+                          marginLeft: "auto",
+                        }}
+                      >
+                        Current User 
+                      </Button>
+                    }
+                  >
+                    <ListItemAvatar>
+                      <Avatar {...stringAvatar(superadmin.name)} />
+                    </ListItemAvatar>
+                    <ListItemText primary={superadmin.name} />
+                  </ListItem>
+                :
                   <ListItem
                     key={superadmin.user_id}
                     secondaryAction={
@@ -158,7 +186,7 @@ export default function PrivAdminCard({ state, update }) {
                       <Avatar {...stringAvatar(superadmin.name)} />
                     </ListItemAvatar>
                     <ListItemText primary={superadmin.name} />
-                  </ListItem>
+                  </ListItem> 
                 );
               })}
           </List>

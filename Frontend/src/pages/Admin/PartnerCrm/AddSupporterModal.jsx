@@ -62,7 +62,7 @@ const fieldsValidated = () => {
 const handleAdd = () => {
   if (fieldsValidated() === true){
     setLoading(true);
-    const url = `http://localhost:3000/api/supporters/create?`;
+    const url = `/api/supporters/create?`;
 
     fetch(url,{
       method: 'POST',

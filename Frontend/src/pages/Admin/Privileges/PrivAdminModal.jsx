@@ -1,9 +1,5 @@
 import * as React from "react";
 
-import fetchWithError from "../../../api/useFetch";
-
-
-
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import ListItem from "@mui/material/ListItem";
@@ -117,7 +113,7 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog, state, 
    return (
     <Dialog
           maxWidth="sm"
-          fullWidth
+          fullWidth    
           fullScreen={fullscreen}
           open={adminDialog}
           onClose={handleDialogClose}

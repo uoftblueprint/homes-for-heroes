@@ -1,4 +1,4 @@
-const host = `http://localhost:3000/api`;
+const host = `/api`;
 
 export function createFormAPI(form) {
     const url = `${host}/custom-form/createCustomForm`

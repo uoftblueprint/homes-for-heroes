@@ -61,7 +61,7 @@ const handleDelete = (user_id) => {
         </DialogContent>
         }
         <DialogActions>
-          <Button sx={{color: '#FF0000'}} onClick={handleDelete}>Delete</Button>
+          <Button sx={{color: '#FF0000'}} onClick={() => handleDelete(user_id)}>Delete</Button>
           <Button onClick={() => toggleDialog(false)}>Cancel</Button>
         </DialogActions>
       </Dialog>

@@ -36,7 +36,7 @@ export default function ForgotPassword() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const res = await fetch('http://localhost:3000/api/forgotpassword', {
+      const res = await fetch('api/forgotpassword', {
         method: 'POST',
         headers: {
           Accept: 'application/json',

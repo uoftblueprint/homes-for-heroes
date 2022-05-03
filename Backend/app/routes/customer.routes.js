@@ -43,6 +43,12 @@ module.exports = (app) => {
   );
 
   app.get(
+    '/getCustomerInfo',
+    isAuthenticated,
+    customers.getSelfCustomerInfo,
+  );
+
+  app.get(
     '/customers/:user_id/alertCase',
     isPrivileged,
     validationSchema.getAlertCaseSchema,

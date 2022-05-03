@@ -65,7 +65,7 @@ const fieldsValidated = () => {
 const handleAdd = () => {
   if (fieldsValidated() === true){ 
     setLoading(true);
-    const url = `http://localhost:3000/api/volunteers/create?`;
+    const url = `/api/volunteers/create?`;
 
     fetch(url,{
       method: 'POST',

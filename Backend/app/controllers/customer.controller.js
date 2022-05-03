@@ -15,6 +15,17 @@ const customerController = {
     }
   },
 
+  async getSelfCustomerInfo(req, res, next) {
+    try {
+      const { user_id } = req.user;
+      logger.info('User id: %d', user_id);
+      const info = await Customer.getCustomerInfo(user_id);
+      res.send({ customerInfo: info });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   async getAllUsers(req, res, next) {
     try {
       const results = await Customer.retrieveAll();

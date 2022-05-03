@@ -61,7 +61,7 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
   const handleAdd = () => {
     if (fieldsValidated() === true){
     setLoading(true);
-    const url = `http://localhost:3000/api/partners/create?`;
+    const url = `/api/partners/create?`;
 
     fetch(url,{
       method: 'POST',

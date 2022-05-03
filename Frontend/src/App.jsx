@@ -1,8 +1,10 @@
 import './App.css';
 
+import AuthProtectedRoute from './components/routes/AuthProtectedRoute';
+import AdminProtectedRoute from './components/routes/AdminProtectedRoute';
 import NavBar from './components/NavBar';
 
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 
 import FormTop from './pages/User/Form/FormTop.js';
@@ -15,6 +17,7 @@ import Login from './pages/User/Login/Login';
 import ForgotPassword from './pages/User/PasswordReset/ForgotPassword';
 import ResetPassword from './pages/User/PasswordReset/ResetPassword';
 import VeteranCRM from './pages/Admin/UserCrm/VeteranCRM';
+import Logout from './pages/User/Login/Logout';
 import Privileges from './pages/Admin/Privileges/Privileges';
 import ProfilePage from './pages/User/ProfilePage/ProfilePage';
 
@@ -27,35 +30,56 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <NavBar />
-        <Switch> 
-          <Route exact path="/" render={(props) => <VeteranCRM {...props} />} />
+        <NavBar /> 
+        <Switch>
           <Route
+            exact
+            from="/"
+            render={(props) => <Typography color="black">Home</Typography>}
+          />
+          <AdminProtectedRoute
+            exact
+            path="/usercrm"
+            render={(props) => <VeteranCRM {...props} />}
+          />
+          <AdminProtectedRoute
             exact
             path="/usercase"
             render={(props) => <CaseList {...props} />}
           />
-          <Route exact path="/forms" component={FormTop} />
-          <Route exact path="/forms/create" component={FormCreate} />
-          <Route exact path="/forms/view/:formId" component={FormView} />
-          <Route exact path="/forms/edit/:formId" component={FormEdit} />
-          <Route
+          <AdminProtectedRoute exact path="/forms" component={FormTop} />
+          <AdminProtectedRoute
+            exact
+            path="/forms/create"
+            component={FormCreate}
+          />
+          <AdminProtectedRoute
+            exact
+            path="/forms/view/:formId"
+            component={FormView}
+          />
+          <AdminProtectedRoute
+            exact
+            path="/forms/edit/:formId"
+            component={FormEdit}
+          />
+          <AdminProtectedRoute
             exact
             path="/admin"
             render={(props) => <Privileges {...props} />}
           />
-          <Route
+          <AdminProtectedRoute
             exact
             path="/casenotes/:id"
             render={(props) => <CaseDetail {...props} />}
           />
-          <Route
+          <AdminProtectedRoute
             exact
             path="/external/"
             render={(props) => <ExternalRelations {...props} />}
           />
           {/* temp profile page: */}
-          <Route
+          <AuthProtectedRoute
             exact
             path="/profile"
             render={(props) => <ProfilePage {...props} />}
@@ -63,12 +87,15 @@ function App() {
           <Route exact path="/login" render={(props) => <Login {...props} />} />
           <Route exact path="/forgotpassword" render={(props) => <ForgotPassword {...props} />} />
           <Route exact path="/reset/:jwt" render={(props) => <ResetPassword {...props} />} />
-          <Switch>
-            <Route
-              path="/signupform/:jwt"
-              render={(props) => <SignupForm {...props} />}
-            />
-          </Switch>
+          <AuthProtectedRoute
+            exact
+            path="/logout"
+            render={(props) => <Logout {...props} />}
+          />
+          <Route
+            path="/signup/:jwt"
+            render={(props) => <SignupForm {...props} />}
+          />
         </Switch>
       </header>
     </div>

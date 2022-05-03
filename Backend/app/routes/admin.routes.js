@@ -5,44 +5,44 @@ const { isSuperAdmin } = require('../auth/helpers');
 
 module.exports = app => {
   app.get('/admins/getAll', 
-  // isSuperAdmin, 
+  isSuperAdmin, 
   adminController.listAll);
 
   app.get('/admins/getSearchAdmins', 
-  // isSuperAdmin, 
+  isSuperAdmin, 
   adminController.getSearchAdmins);
 
   app.put(
     '/admins/:admin_id/deleteSupervisor',
-    // isSuperAdmin,
+    isSuperAdmin,
     validationSchema.deleteSupervisorSchema,
     validationErrorHandler,
     adminController.deleteSupervisor);
 
   app.put(
     '/admins/:admin_id/makeSuperadmin',
-    // isSuperAdmin,
+    isSuperAdmin,
     validationSchema.makeSuperadminSchema,
     validationErrorHandler,
     adminController.makeSuperadmin);
 
   app.put(
     '/admins/:admin_id/unsetSuperadmin',
-    // isSuperAdmin,
+    isSuperAdmin,
     validationSchema.unsetSuperadminSchema,
     validationErrorHandler,
     adminController.unsetSuperadmin);
     
   app.put(
     '/admins/:admin_id/assignChapter',
-    // isSuperAdmin,
+    isSuperAdmin,
     validationSchema.assignChapterSchema,
     validationErrorHandler,
     adminController.assignChapter);
 
   app.get(
     '/admins/:chapter_id/listByChapter',
-    // isSuperAdmin,
+    isSuperAdmin,
     validationSchema.listChapterSupervisorsSchema,
     validationErrorHandler,
     adminController.listByChapter);

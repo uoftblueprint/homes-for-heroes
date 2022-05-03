@@ -7,7 +7,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 
 //Change to process.env.host
-const host = `http://localhost:3000/`;
+const host = `api/`;
 
 export default function useFetch() {
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();

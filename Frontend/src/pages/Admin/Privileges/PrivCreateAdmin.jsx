@@ -60,7 +60,9 @@ export default function PrivCreateAdmin({ caDialog, toggleCaDialog, currChapter 
           chapter_id: currChapter.chapter_id
         })
       }
-      fetchWithError(endpoint, options); 
+      await fetchWithError(endpoint, options); 
+      setName('');
+      setEmail('');
       setLoading(false);
       toggleCaDialog(false);
     }
@@ -83,7 +85,7 @@ export default function PrivCreateAdmin({ caDialog, toggleCaDialog, currChapter 
            </div>
             : 
         <DialogContent
-          sx={{ minHeight: 500 }}
+          sx={{ minHeight: 300 }}
         >
          <TextField
             autoFocus
@@ -104,7 +106,7 @@ export default function PrivCreateAdmin({ caDialog, toggleCaDialog, currChapter 
             label="Email" 
             value={email}
             error={email_error}
-            helperText={email ? 'Please enter a valid Email!' : ''}
+            helperText={email_error ? 'Please enter a valid Email!' : ''}
             onChange={(e) => setEmail(e.target.value)}
             fullWidth
             variant="standard" 
