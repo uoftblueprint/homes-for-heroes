@@ -1,14 +1,28 @@
 import './App.css';
 
+import AuthProtectedRoute from './components/routes/AuthProtectedRoute';
+import AdminProtectedRoute from './components/routes/AdminProtectedRoute';
 import NavBar from './components/NavBar';
-import CaseList from './components/CaseList';
+
 import { Route, Switch } from 'react-router-dom';
-import Login from './components/Login.jsx';
-import CRM from './components/CRM.jsx';
-import Privileges from './components/Privileges.jsx';
-import ProfilePage from './components/ProfilePage.jsx';
-import { Typography } from '@mui/material';
-import CaseDetail from './components/CaseDetail';
+import Typography from '@mui/material/Typography';
+
+import FormTop from './pages/User/Form/FormTop.js';
+import FormCreate from './pages/User/Form/FormCreate';
+import FormView from './pages/User/Form/FormView';
+import FormEdit from './pages/User/Form/FormEdit';
+
+import CaseList from './pages/Admin/UserCase/CaseList';
+import Login from './pages/User/Login/Login';
+import Logout from './pages/User/Login/Logout';
+import CRM from './pages/Admin/UserCrm/CRM';
+import Privileges from './pages/Admin/Privileges/Privileges';
+import ProfilePage from './pages/User/ProfilePage/ProfilePage';
+
+import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
+import SignupForm from './components/SignupForm.jsx';
+
+import CaseDetail from './pages/User/CaseDetails/CaseDetail';
 
 function App() {
   return (
@@ -21,38 +35,63 @@ function App() {
             from="/"
             render={(props) => <Typography color="black">Home</Typography>}
           />
-          <Route exact path="/usercrm" render={(props) => <CRM {...props} />} />
-          <Route
+          <AdminProtectedRoute
+            exact
+            path="/usercrm"
+            render={(props) => <CRM {...props} />}
+          />
+          <AdminProtectedRoute
             exact
             path="/usercase"
             render={(props) => <CaseList {...props} />}
           />
-          <Route
+          <AdminProtectedRoute exact path="/forms" component={FormTop} />
+          <AdminProtectedRoute
             exact
-            path="/forms"
-            render={(props) => <Typography color="black">Forms</Typography>}
+            path="/forms/create"
+            component={FormCreate}
           />
-          <Route
+          <AdminProtectedRoute
+            exact
+            path="/forms/view/:formId"
+            component={FormView}
+          />
+          <AdminProtectedRoute
+            exact
+            path="/forms/edit/:formId"
+            component={FormEdit}
+          />
+          <AdminProtectedRoute
             exact
             path="/admin"
             render={(props) => <Privileges {...props} />}
           />
-          <Route
+          <AdminProtectedRoute
             exact
             path="/casenotes/:id"
             render={(props) => <CaseDetail {...props} />}
           />
+          <AdminProtectedRoute
+            exact
+            path="/external/"
+            render={(props) => <ExternalRelations {...props} />}
+          />
           {/* temp profile page: */}
-          <Route
+          <AuthProtectedRoute
             exact
             path="/profile"
             render={(props) => <ProfilePage {...props} />}
           />
           <Route exact path="/login" render={(props) => <Login {...props} />} />
-          {/* <Route path="/Home" component={Home} />
-        <Route path="/CaseDetails" component={CaseDetails} />
-        <Route path="/UserList" component={UserList} />
-        <Route path="Login" component={Login} /> */}
+          <AuthProtectedRoute
+            exact
+            path="/logout"
+            render={(props) => <Logout {...props} />}
+          />
+          <Route
+            path="/signup/:jwt"
+            render={(props) => <SignupForm {...props} />}
+          />
         </Switch>
       </header>
     </div>

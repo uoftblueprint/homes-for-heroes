@@ -1,6 +1,9 @@
 const sql = require('./db.js');
+// const CustomerQueryData = require('./customer-query-data.model.js');
+const CustomerProfile = require('./customer-profile.model');
+const UserInfo = require('./userinfo.model');
 const CustomerQueryData = require('./query-models/customer-query-data.model.js');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
 
 // constructor
 const Customer = function (customer) {
@@ -9,13 +12,16 @@ const Customer = function (customer) {
   this.email = customer.email;
   this.password = customer.password;
   this.phone = customer.phone;
+  this.role_id = customer.role_id;
   this.alert_case_id = customer.alert_case_id;
+  this.verified = customer.verified;
+  this.oauth = customer.oauth;
 };
 
-Customer.prototype.isValidPassword = async function(password) {
-  if(!this.password) return false;
+Customer.prototype.isValidPassword = async function (password) {
+  if (!this.password) return false;
   return await bcrypt.compare(password, this.password);
-}
+};
 
 Customer.prototype.updateUserInfo = function(user_info) {
   return new Promise((resolve, reject) => {
@@ -28,36 +34,78 @@ Customer.prototype.updateUserInfo = function(user_info) {
   });
 };
 
-
-Customer.create = function (name, phone, email, password) {
+Customer.prototype.changePassword = function(password) {
   return new Promise((resolve, reject) => {
     const hashedPassword = bcrypt.hashSync(password, 15);
-    sql.query(
-      'INSERT INTO client_users (name, phone, email, password, verified, oauth) VALUES (?, ?, ?, ?, FALSE, FALSE)',
-      [name, phone, email, hashedPassword],
+    sql.query('UPDATE client_users SET password = ? WHERE user_id = ?',
+      [hashedPassword, this.user_id],
       (err) => {
         if (err) reject(err);
-        else {
-          sql.query('SELECT LAST_INSERT_ID() as user_id', (err, rows) => {
-            if (err) reject(err);
-            else {
-              // eslint-disable-next-line prefer-destructuring
-              const [ user_id ] = rows;
-              resolve(
-                new Customer({
-                  user_id: user_id,
-                  name: name,
-                  email: email,
-                  phone: phone,
-                  verified: false,
-                  oauth: false,
-                }),
-              );
-            }
-          });
-        }
-      },
-    );
+        else resolve(true);
+      });
+  });
+};
+
+Customer.prototype.update = function(name, phone, email) {
+  return new Promise((resolve, reject) => {
+    sql.query('UPDATE client_users SET name = ?, phone = ?, email = ? WHERE user_id = ?',
+      [name, phone, email, this.user_id],
+      (err) => {
+        if (err) reject(err);
+        else resolve(true);
+      });
+  });
+};
+
+Customer.create = function (name, phone, email, password, role_id = 0, conn = null) {
+  return new Promise((resolve, reject) => {
+    let txn = true;
+    if (conn === null) {
+      conn = sql;
+      txn = false;
+    }
+    const hashedPassword = bcrypt.hashSync(password, 15);
+    conn.query(
+      'INSERT INTO client_users (name, phone, email, password, role_id, verified, oauth) VALUES (?, ?, ?, ?, ?, FALSE, FALSE)',
+      [name, phone, email, hashedPassword, role_id],
+      (err, result) => {
+        if (err) return txn ? conn.rollback(() => reject(err)) : reject(err);
+        resolve(
+          new Customer({
+            user_id: result.insertId,
+            name: name,
+            email: email,
+            phone: phone,
+            verified: true,
+            oauth: false,
+          }),
+        );
+      });
+  });
+};
+
+Customer.createTemp = function (name, email, role_id = 0, conn = null) {
+  return new Promise((resolve, reject) => {
+    let txn = true;
+    if (conn === null) {
+      conn = sql;
+      txn = false;
+    }
+    conn.query(
+      'INSERT INTO client_users (name, email, role_id, verified, oauth) VALUES (?, ?, ?, FALSE, FALSE)',
+      [name, email, role_id],
+      (err, result) => {
+        if (err) return txn ? conn.rollback(() => reject(err)) : reject(err);
+        resolve(
+          new Customer({
+            user_id: result.insertId,
+            name: name,
+            email: email,
+            verified: false,
+            oauth: false,
+          }),
+        );
+      });
   });
 };
 
@@ -66,25 +114,19 @@ Customer.createOAuth = function (name, email) {
     sql.query(
       'INSERT INTO client_users (name, email, verified, oauth) VALUES (?, ?, TRUE, TRUE)',
       [name, email],
-      (err) => {
+      (err, result) => {
         if (err) reject(err);
         else {
-          sql.query('SELECT LAST_INSERT_ID() as user_id', (err, rows) => {
-            if (err) reject(err);
-            else {
-              // eslint-disable-next-line prefer-destructuring
-              const [ user_id ] = rows[0];
-              resolve(
-                new Customer({
-                  user_id: user_id,
-                  name: name,
-                  email: email,
-                  verified: true,
-                  oauth: true,
-                }),
-              );
-            }
-          });
+          if (err) return reject(err);
+          resolve(
+            new Customer({
+              user_id: result.insertId,
+              name: name,
+              email: email,
+              verified: true,
+              oauth: true,
+            }),
+          );
         }
       },
     );
@@ -105,16 +147,18 @@ Customer.verify = function (user_id) {
 };
 
 Customer.getByEmail = function (email) {
-  return new Promise(function (resolve, reject) {
-    sql.query('SELECT * FROM client_users WHERE email = ? LIMIT 1',
-    [email],
-    function(err, rows) {
-      if (err) reject(err);
-      else if(!rows[0]) resolve(undefined);
-      else resolve(new Customer(rows[0]));
-    });
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'SELECT * FROM client_users WHERE email = ? LIMIT 1',
+      [email],
+      (err, rows) => {
+        if (err) reject(err);
+        else if (!rows[0]) reject(new Error('User not found'));
+        else resolve(new Customer(rows[0]));
+      },
+    );
   });
-}
+};
 
 Customer.getById = function (user_id) {
   return new Promise((resolve, reject) => {
@@ -130,27 +174,26 @@ Customer.getById = function (user_id) {
   });
 };
 
-Customer.getCustomerInfo = function(user_id) {
+Customer.getCustomerInfo = function (user_id) {
   return new Promise((resolve, reject) => {
-    const query = 
-    `select c.name, c.email, c.phone, u.street_name, 
+    const query = `SELECT c.name, c.email, c.phone, u.street_name, 
     u.city, u.province, u.applicant_dob 
-    from client_users as c inner join UserInfo as u 
-    on c.user_id = u.user_id where c.user_id = ?`
-      sql.query(query, [user_id], function(err, userInfo) {
-          if (err) reject(err);
-          resolve(userInfo);
-      });
+    FROM client_users AS c INNER JOIN UserInfo AS u 
+    ON c.user_id = u.user_id WHERE c.user_id = ?`;
+    sql.query(query, [user_id], (err, userInfo) => {
+      if (err) reject(err);
+      else resolve(userInfo);
+    });
   });
 };
 
 Customer.retrieveAll = function () {
-  return new Promise(function (resolve, reject) {
-    sql.query('SELECT * FROM client_users', function (err, rows) {
+  return new Promise((resolve, reject) => {
+    sql.query('SELECT * FROM client_users', (err, rows) => {
       if (err) reject(err);
       else {
         const customers = [];
-        rows.forEach(row => {
+        rows.forEach((row) => {
           delete row['password'];
           customers.push(new Customer(row));
         });
@@ -161,89 +204,58 @@ Customer.retrieveAll = function () {
 };
 
 Customer.getAlertCaseId = function (user_id) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     sql.query(
       'SELECT alert_case_id FROM client_users WHERE user_id = ?',
       [user_id],
-      function (err, rows) {
+      (err, rows) => {
         if (err) reject(err);
         else if (rows[0] === undefined) reject('User does not exist.');
         else resolve(rows[0].alert_case_id);
-      }
+      },
     );
   });
 };
 
 Customer.getAlertCase = function (user_id) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     sql.query(
       'SELECT cases.* FROM client_users INNER JOIN cases ON client_users.alert_case_id = cases.case_id WHERE client_users.user_id = ?',
       [user_id],
-      function (err, rows) {
+      (err, rows) => {
         if (err) reject(err);
         else if (rows[0] === undefined) reject('Alert note does not exist.');
         else resolve(rows[0]);
-      }
+      },
     );
   });
 };
 
 Customer.setAlertCaseId = function (user_id, case_id) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     sql.query(
       'UPDATE client_users SET alert_case_id = ? WHERE user_id = ?',
       [case_id, user_id],
-      function (err, rows) {
+      (err, rows) => {
         if (err) reject(err);
         else resolve(rows[0]);
-      }
+      },
     );
   });
 };
 
-Customer.getCases = function(user_id, start_date, end_date) {
+Customer.getCases = function (user_id, start_date, end_date) {
   return new Promise((resolve, reject) => {
-      sql.query("SELECT * FROM cases WHERE user_id = ? AND date(last_update) between ? and ?", 
+    sql.query(
+      'SELECT * FROM cases WHERE user_id = ? AND date(last_update) BETWEEN ? AND ?',
       [user_id, start_date, end_date],
-      function(err, cases) {
-          if (err) reject(err);
-          resolve(cases);
-      });
+      (err, cases) => {
+        if (err) reject(err);
+        resolve(cases);
+      },
+    );
   });
 };
-
-Customer.getToDo = function(user_id) {
-  return new Promise((resolve, reject) => {
-      sql.query("SELECT todo FROM client_users WHERE user_id = ?", 
-      [user_id],
-      function(err, cases) {
-          if (err) reject(err);
-          resolve(cases);
-      });
-  });
-};
-
-Customer.updateToDo = function(user_id, todo) {
-  return new Promise((resolve, reject) => {
-      sql.query("UPDATE client_users SET todo = ? WHERE user_id = ?", 
-      [todo, user_id],
-      function(err, cases) {
-          if (err) reject(err);
-          resolve(cases);
-      });
-  });
-};
-
-// Customer.deleteToDo = function(user_id) {
-//   return new Promise((resolve, reject) => {
-//       sql.query("SELECT * FROM cases WHERE user_id = ? AND date(last_update) between ? and ?", 
-//       [user_id, start_date, end_date],
-//       function(err, cases) {
-//           if (err) reject(err);
-//           resolve(cases);
-//       });
-//   });
-// };
 
 Customer.getUserInfoCSV = function (
   client_name,
@@ -311,6 +323,22 @@ Customer.queryUserData = function (query_params) {
       if (err) reject(err);
       resolve(row);
     });
+  });
+};
+
+Customer.updateProfile = function(user_id, body) {
+  return new Promise((resolve, reject) => {
+    //console.log(query_params);
+    const cust = new CustomerProfile(user_id, body);
+    const queries = cust.buildQueries();
+    const qry = queries.join(';');
+    // need to update client_users and UserInfo tables separately
+    //sql_qry_c = 'UPDATE client_users SET phone = ? WHERE user_id = ?';
+    sql.query(qry,
+      (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows);
+      });
   });
 };
 

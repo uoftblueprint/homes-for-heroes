@@ -1,33 +1,82 @@
-const form = require('../controllers/custom-form.controller');
-const validationSchema = require('../validators/custom-form.validation');
+const customers = require('../controllers/customer.controller');
+const validationSchema = require('../validators/customer.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
+const { isAuthenticated, isPrivileged } = require('../auth/helpers');
 
-<<<<<<< HEAD
 module.exports = (app) => {
   app.get(
-    '/custom-form/get/:form_id',
-    validationSchema.getCustomFormSchema,
-    validationErrorHandler,
-    form.getCustomForm,
+    '/customers',
+    isPrivileged,
+    customers.getAllUsers
   );
-=======
-    app.get('/custom-form/get/:form_id', form.getCustomForm);
-    app.put('/custom-form/put/:form_id', form.updateCustomForm);
-    app.get('/custom-form/queryAllAdminForms/:admin_id', form.queryAllAdminForms);
-    app.post('/custom-form/createCustomForm', form.createCustomForm);
-    app.post('/custom-form/publish', form.publishForm);
->>>>>>> 1bb9f99 (form create, edit, and view)
 
-  app.post(
-    '/custom-form/createCustomForm',
-    validationSchema.createCustomFormSchema,
-    validationErrorHandler,
-    form.createCustomForm,
-  );
   app.get(
-    '/custom-form/queryCustomForms',
-    validationSchema.queryCustomForms,
+    '/getCases',
+    isPrivileged,
+    validationSchema.getCasesSchema,
     validationErrorHandler,
-    form.queryCustomForms,
+    customers.getCases,
+  );
+
+  app.get(
+    '/getUserData',
+    isPrivileged,
+    validationSchema.getUserDataSchema,
+    validationErrorHandler,
+    customers.getUserData,
+  );
+
+  app.get(
+    '/getCustomerInfo/:user_id',
+    isPrivileged,
+    validationSchema.getCustomerInfoSchema,
+    validationErrorHandler,
+    customers.getCustomerInfo,
+  );
+
+  app.get(
+    '/getCustomerInfo',
+    isAuthenticated,
+    customers.getSelfCustomerInfo,
+  );
+
+  app.get(
+    '/customers/:user_id/alertCase',
+    isPrivileged,
+    validationSchema.getAlertCaseSchema,
+    validationErrorHandler,
+    customers.getAlertCase,
+  );
+
+  app.put(
+    '/customers/:user_id/alertCase',
+    isPrivileged,
+    validationSchema.setAlertCaseSchema,
+    validationErrorHandler,
+    customers.setAlertCase,
+  );
+
+  app.put(
+    '/userinfo',
+    isAuthenticated,
+    validationSchema.putUserInfoSchema,
+    validationErrorHandler,
+    customers.putUserInfo,
+  );
+
+  app.patch(
+    '/changePassword',
+    isAuthenticated,
+    validationSchema.patchChangePasswordSchema,
+    validationErrorHandler,
+    customers.patchChangePassword,
+  );
+
+  app.get(
+    '/getUsersInfoCSV',
+    isPrivileged,
+    validationSchema.getUserInfoCSVSchema,
+    validationErrorHandler,
+    customers.getUserInfoCSV,
   );
 };

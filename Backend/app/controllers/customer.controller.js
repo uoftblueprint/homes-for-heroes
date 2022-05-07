@@ -15,6 +15,17 @@ const customerController = {
     }
   },
 
+  async getSelfCustomerInfo(req, res, next) {
+    try {
+      const { user_id } = req.user;
+      logger.info('User id: %d', user_id);
+      const info = await Customer.getCustomerInfo(user_id);
+      res.send({ customerInfo: info });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   async getAllUsers(req, res, next) {
     try {
       const results = await Customer.retrieveAll();
@@ -51,7 +62,7 @@ const customerController = {
       next(err);
     }
   },
-
+  
   async getUserData(req, res, next) {
     try {
       const user_data = await Customer.queryUserData(req.query);
@@ -60,6 +71,31 @@ const customerController = {
       next(err);
     }
   },
+
+  async putUserInfo(req, res, next) {
+    try {
+      const user_info = req.body;
+      await req.user.updateUserInfo(user_info);
+      res.send({ success: true });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  async patchChangePassword(req, res, next) {
+    try {
+      const { oldPassword, newPassword } = req.body;
+      if(await req.user.isValidPassword(oldPassword)) {
+        await req.user.changePassword(newPassword);
+        res.send({ success: true });
+      } else {
+        next(new Error('Old password incorrect'));
+      }
+    } catch (err) {
+      next(err);
+    }
+  },
+
   async getUserInfoCSV(req, res, next) {
     try {
       const { name, email, phone, address, kin_name } = req.query;

@@ -1,4 +1,4 @@
-const host = 'http://localhost:3000';
+const host = `/api`;
 
 export function createFormAPI(form) {
     const url = `${host}/custom-form/createCustomForm`
@@ -15,8 +15,8 @@ export function createFormAPI(form) {
     })
 }
 
-export function fetchCustomFormsAPI(admin_id) {
-    const url = `${host}/custom-form/queryAllAdminForms/${admin_id}`
+export function fetchCustomFormsAPI() {
+    const url = `${host}/custom-form/queryAllAdminForms`
 
     return new Promise((resolve, reject) => {
         fetch(url)
@@ -27,7 +27,6 @@ export function fetchCustomFormsAPI(admin_id) {
 
 export function fetchFormByIdAPI(formId) {
     const url = `${host}/custom-form/get/${formId}`
-    // TODO check if form is owned by admin?
     return new Promise((resolve, reject) => {
         fetch(url)
             .then(r => resolve(r.json()))
@@ -35,14 +34,14 @@ export function fetchFormByIdAPI(formId) {
     })
 }
 
-export function publishFormAPI(form) {
+export function publishFormAPI(formId) {
     const url = `${host}/custom-form/publish`
 
     return new Promise((resolve, reject) => {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(form)
+            body: JSON.stringify({form_id: formId})
         };
         fetch(url, requestOptions)
             .then(response => resolve(response))

@@ -13,6 +13,10 @@ import {
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+import { useDispatch, useSelector } from 'react-redux';
+import { login, selectLoggedIn } from '../../../redux/userSlice';
+import { useHistory, useLocation } from 'react-router-dom';
+
 const theme = createTheme({
   palette: {
     background: {
@@ -28,8 +32,20 @@ const theme = createTheme({
 });
 
 export default function Login() {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const dispatch = useDispatch();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const location = useLocation();
+  const history = useHistory();
+
+  const authLogin = useSelector(selectLoggedIn);
+
+  if (authLogin) {
+    const { from } = location.state || { from: { pathname: '/' } };
+    history.replace(from);
+  }
 
   function handleEmailChange(e) {
     setEmail(e.target.value);
@@ -42,7 +58,7 @@ export default function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const res = await fetch('http://localhost:3000/api/login', {
+      const res = await fetch('/api/login', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -50,8 +66,22 @@ export default function Login() {
         },
         body: JSON.stringify({ email, password }),
       });
-      const { token } = await res.json();
-      console.log(token);
+      if (res.status === 200) {
+        const { expires, role_id } = await res.json();
+        dispatch(
+            login({
+              email: email,
+              password: password,
+              loggedIn: true,
+              timeout: expires,
+              role_id: role_id,
+            }),
+        );
+        const {from} = location.state || {from: {pathname: '/'}};
+        history.replace(from);
+      } else {
+        console.error(res);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -93,9 +123,9 @@ export default function Login() {
               id="email"
               label="Email"
               name="Email"
+              value={email}
               autoComplete="Email"
               onChange={handleEmailChange}
-              value={email}
             />
             <TextField
               required
