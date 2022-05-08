@@ -16,9 +16,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
-import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
-import LaunchIcon from "@mui/icons-material/Launch";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
@@ -56,10 +54,6 @@ const useStyles = makeStyles({
     },
     "& .MuiDataGrid-iconSeparator": {
       display: "none",
-    },
-    "& .MuiDataGrid-cell": {
-      borderRight: "none",
-      borderBottom: "none !important",
     },
     "& .MuiDataGrid-footerContainer": {
       display: "none",
@@ -150,7 +144,12 @@ export default function BaseCRM({
         action,
       });
     } else {
-      updateCellChanges(params.id, params.field, params.value);
+      if (params.field === 'date_gifted' || params.field === 'date_joined'){
+        updateCellChanges(params.id, params.field, params.value.toISOString().split('T')[0]);
+      }
+      else{
+        updateCellChanges(params.id, params.field, params.value);
+      }
       updateHighlightCells((prevArray) => [
         ...prevArray,
         { id: params.id, field: params.field },

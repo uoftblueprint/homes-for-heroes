@@ -66,6 +66,7 @@ export default function VeteranCRM() {
           editable: "true",
           validationMethod: (e) => {return !validator.isAlphanumeric(e)},
           status: "true",
+          type: 'singleSelect',
           field: "curr_level",
           headerName: "STATUS",
           flex: 1,

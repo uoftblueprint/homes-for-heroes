@@ -48,7 +48,7 @@ export default function AddRowButton({ dialog, toggleDialog }) {
   const handleAdd = () => {
     if (fieldsValidated() === true){
       setLoading(true);
-      const url = `http://localhost:3000/createVeteran`;
+      const url = `/api/createVeteran`;
 
       fetch(url,{
         method: 'POST',
