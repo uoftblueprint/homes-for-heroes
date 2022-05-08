@@ -77,13 +77,16 @@ export default function ResetPassword() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await fetch('http://localhost:3000/api/resetPassword', {
+      await fetch('/api/resetPassword', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ password, jwt }),
+        body: JSON.stringify({ 
+          newPassword: password, 
+          token:jwt 
+        }),
       });
     } catch (err) {
       console.error(err);

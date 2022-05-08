@@ -4,19 +4,19 @@ const { isSuperAdmin } = require('../auth/helpers');
 module.exports = app => {
   app.get(
     '/supervisors/getAll',
-    // isSuperAdmin,
+    isSuperAdmin,
     supervisorController.getAll
   );
 
   app.put(
     '/supervisors/:admin_id/assignChapter',
-    // isSuperAdmin,
+    isSuperAdmin,
     supervisorController.assignChapter
   );
 
   app.get(
     '/supervisors/:chapter/listByChapter',
-    // isSuperAdmin,
+    isSuperAdmin,
     supervisorController.getByChapter
   );
 };
