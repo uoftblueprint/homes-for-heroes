@@ -5,12 +5,12 @@ import AdminProtectedRoute from './components/routes/AdminProtectedRoute';
 import NavBar from './components/NavBar';
 
 import { Route, Switch } from 'react-router-dom';
-import Typography from '@mui/material/Typography';
 
 import FormTop from './pages/User/Form/FormTop.js';
 import FormCreate from './pages/User/Form/FormCreate';
 import FormView from './pages/User/Form/FormView';
 import FormEdit from './pages/User/Form/FormEdit';
+import FormComplete from './pages/User/Form/FormComplete';
 
 import CaseList from './pages/Admin/UserCase/CaseList';
 import Login from './pages/User/Login/Login';
@@ -62,6 +62,11 @@ function App() {
             path="/forms/edit/:formId"
             component={FormEdit}
           />
+          <AuthProtectedRoute
+            exact
+            path="/forms/complete/:formId"
+            render={(props) => <FormComplete {...props} />}
+          />
           <AdminProtectedRoute
             exact
             path="/admin"
@@ -88,11 +93,6 @@ function App() {
             exact
             path="/logout"
             render={(props) => <Logout {...props} />}
-          />
-          <AuthProtectedRoute
-            exact
-            path="/forms/complete/:formId"
-            render={(props) => <FormEdit {...props} />}
           />
           <Route
             path="/signup/:jwt"
