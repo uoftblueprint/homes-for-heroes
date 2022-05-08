@@ -1,82 +1,46 @@
-const customers = require('../controllers/customer.controller');
-const validationSchema = require('../validators/customer.validation');
+const formController = require('../controllers/custom-form.controller');
+const validationSchema = require('../validators/custom-form.validation');
 const validationErrorHandler = require('../middleware/validation-error-handler');
 const { isAuthenticated, isPrivileged } = require('../auth/helpers');
 
 module.exports = (app) => {
   app.get(
-    '/customers',
-    isPrivileged,
-    customers.getAllUsers
-  );
-
-  app.get(
-    '/getCases',
-    isPrivileged,
-    validationSchema.getCasesSchema,
-    validationErrorHandler,
-    customers.getCases,
-  );
-
-  app.get(
-    '/getUserData',
-    isPrivileged,
-    validationSchema.getUserDataSchema,
-    validationErrorHandler,
-    customers.getUserData,
-  );
-
-  app.get(
-    '/getCustomerInfo/:user_id',
-    isPrivileged,
-    validationSchema.getCustomerInfoSchema,
-    validationErrorHandler,
-    customers.getCustomerInfo,
-  );
-
-  app.get(
-    '/getCustomerInfo',
+    '/custom-form/get/:form_id',
     isAuthenticated,
-    customers.getSelfCustomerInfo,
-  );
-
-  app.get(
-    '/customers/:user_id/alertCase',
-    isPrivileged,
-    validationSchema.getAlertCaseSchema,
+    validationSchema.getCustomFormSchema,
     validationErrorHandler,
-    customers.getAlertCase,
+    formController.getCustomForm,
   );
 
   app.put(
-    '/customers/:user_id/alertCase',
-    isPrivileged,
-    validationSchema.setAlertCaseSchema,
-    validationErrorHandler,
-    customers.setAlertCase,
-  );
-
-  app.put(
-    '/userinfo',
+    '/custom-Form/put/:form_id',
     isAuthenticated,
-    validationSchema.putUserInfoSchema,
+    validationSchema.updateCustomFormSchema,
     validationErrorHandler,
-    customers.putUserInfo,
-  );
-
-  app.patch(
-    '/changePassword',
-    isAuthenticated,
-    validationSchema.patchChangePasswordSchema,
-    validationErrorHandler,
-    customers.patchChangePassword,
+    formController.updateCustomForm,
   );
 
   app.get(
-    '/getUsersInfoCSV',
+    '/custom-Form/queryAllAdminForms',
     isPrivileged,
-    validationSchema.getUserInfoCSVSchema,
     validationErrorHandler,
-    customers.getUserInfoCSV,
+    formController.queryAllAdminForms
   );
+
+  app.post(
+    '/custom-form/createCustomForm',
+    isPrivileged,
+    validationSchema.createCustomFormSchema,
+    validationErrorHandler,
+    formController.createCustomForm,
+  );
+
+  app.post(
+    '/custom-Form/publish',
+    isPrivileged,
+    validationSchema.publishFormSchema,
+    validationErrorHandler,
+    formController.publishForm
+  );
+
 };

@@ -2,6 +2,8 @@ import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {fetchFormByIdAPI, updateFormAPI} from "../../../api/formAPI";
 import FormBuilder from "../../../components/form/FormBuilder";
+import Grid from "@mui/material/Grid";
+import FormSubmitButton from "../../../components/form/FormSubmitButton";
 
 function FormEdit() {
 
@@ -45,13 +47,21 @@ function FormEdit() {
     }
 
     return (
-        <FormBuilder
-            title={title}
-            level={level}
-            questions={questions}
-            saveDraft={updateForm}
-            err={false}
-        />
+        <Grid
+            container
+            direction="column"
+            justifyContent="center"
+            alignItems="flex-start"
+        >
+            <FormBuilder
+                title={title}
+                level={level}
+                questions={questions}
+                saveDraft={updateForm}
+                err={false}
+            />
+            <FormSubmitButton />
+        </Grid>
     )
 }
 

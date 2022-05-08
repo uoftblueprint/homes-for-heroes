@@ -18,6 +18,7 @@ import Logout from './pages/User/Login/Logout';
 import CRM from './pages/Admin/UserCrm/CRM';
 import Privileges from './pages/Admin/Privileges/Privileges';
 import ProfilePage from './pages/User/ProfilePage/ProfilePage';
+import Home from './pages/User/Home/Home.jsx';
 
 import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
 import SignupForm from './components/SignupForm.jsx';
@@ -33,7 +34,7 @@ function App() {
           <Route
             exact
             from="/"
-            render={(props) => <Typography color="black">Home</Typography>}
+            render={(props) => <Home {...props} />}
           />
           <AdminProtectedRoute
             exact
@@ -87,6 +88,11 @@ function App() {
             exact
             path="/logout"
             render={(props) => <Logout {...props} />}
+          />
+          <AuthProtectedRoute
+            exact
+            path="/forms/complete/:formId"
+            render={(props) => <FormEdit {...props} />}
           />
           <Route
             path="/signup/:jwt"
