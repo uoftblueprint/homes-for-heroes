@@ -14,8 +14,10 @@ import FormEdit from './pages/User/Form/FormEdit';
 
 import CaseList from './pages/Admin/UserCase/CaseList';
 import Login from './pages/User/Login/Login';
+import ForgotPassword from './pages/User/PasswordReset/ForgotPassword';
+import ResetPassword from './pages/User/PasswordReset/ResetPassword';
+import VeteranCRM from './pages/Admin/UserCrm/VeteranCRM';
 import Logout from './pages/User/Login/Logout';
-import CRM from './pages/Admin/UserCrm/CRM';
 import Privileges from './pages/Admin/Privileges/Privileges';
 import ProfilePage from './pages/User/ProfilePage/ProfilePage';
 
@@ -28,7 +30,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <NavBar />
+        <NavBar /> 
         <Switch>
           <Route
             exact
@@ -38,7 +40,7 @@ function App() {
           <AdminProtectedRoute
             exact
             path="/usercrm"
-            render={(props) => <CRM {...props} />}
+            render={(props) => <VeteranCRM {...props} />}
           />
           <AdminProtectedRoute
             exact
@@ -83,6 +85,8 @@ function App() {
             render={(props) => <ProfilePage {...props} />}
           />
           <Route exact path="/login" render={(props) => <Login {...props} />} />
+          <Route exact path="/forgotpassword" render={(props) => <ForgotPassword {...props} />} />
+          <Route exact path="/reset/:jwt" render={(props) => <ResetPassword {...props} />} />
           <AuthProtectedRoute
             exact
             path="/logout"

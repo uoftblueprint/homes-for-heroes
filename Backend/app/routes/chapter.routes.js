@@ -8,8 +8,9 @@ module.exports = app => {
 
   app.post(
     '/chapters/create',
+    isSuperAdmin,
     validationSchema.createChapterSchema,
     validationErrorHandler,
-    chapters.create
+    chapterController.create
   );
 };

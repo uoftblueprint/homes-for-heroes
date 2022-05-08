@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import useFetch from "../../../api/useFetch";
+
 import PrivAdminCard from "./PrivAdminCard"
 import PrivSupervisorCard from "./PrivSupervisorCard";
 
@@ -7,57 +9,50 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from '@mui/material/Typography';
 import Grid from "@mui/material/Grid";
 
-function loadServerRows() {
-  return new Promise((resolve) => {
-    const url = "api/chapters/getAll";
 
-    fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then((resp) => resp.json())
-      .then((resp) => { 
-        resolve(resp.chapters); 
-      });
-  });
-}
 
 export default function Privileges() {
 
   const [chapters, addChapters] = React.useState([]); 
   const [isLoading, setLoading] = React.useState(true);
-  const [chapterDialog, toggleChapterDialog] = React.useState(false);
+  const [chapterDialog, toggleChapterDialog] = React.useState(false);  
+  const [state, update] = React.useState(false);
+  const { fetchWithError } = useFetch();
+  
 
 
   React.useEffect(() => {
-    let active = true;
-
-    (async () => {
+    (async() => {
       setLoading(true);
-      const newChapters = await loadServerRows();
-      if (!active) {
-        return;
+      const endpoint = `chapters/getAll`;
+      const options = {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        }
       }
-      addChapters(newChapters);
+      const response = await fetchWithError(endpoint, options);
+      if (response.chapters.constructor === Array){ 
+        addChapters(response.chapters);
+      }
       setLoading(false);
-    })();
-
-    return () => {
-      active = false;
-    };
+      })();
   }, [chapterDialog]);
 
 
-  return isLoading ? <CircularProgress /> : (
+  return (
     <>
       <Typography sx={{ fontSize: 48, mb: '1px' }}>
         Admin Privileges
       </Typography>
-      <Grid container display="flex" justifyContent="center">
-        <PrivAdminCard />
-        <PrivSupervisorCard chapters={chapters} chapterDialog={chapterDialog} toggleChapterDialog={toggleChapterDialog} />
+      <Grid container display="flex" justifyContent="center"> 
+        {isLoading ? <CircularProgress />
+        :
+        <>
+        <PrivAdminCard state={state} update={update} />
+        <PrivSupervisorCard chapters={chapters} chapterDialog={chapterDialog} toggleChapterDialog={toggleChapterDialog} state={state} update={update}/>
+        </>
+        }
       </Grid>
     </>
   );

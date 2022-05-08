@@ -49,9 +49,9 @@ return(
         overScanSlideBefore={0}
       >
 
-          <PartnerCrm /> 
-          <VolunteerCrm />
-          <SupporterCrm />
+          <PartnerCrm tab={value}/> 
+          <VolunteerCrm tab={value}/>
+          <SupporterCrm tab={value}/>
 
 
       </SwipeableViews>
