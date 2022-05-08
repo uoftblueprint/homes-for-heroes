@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('./app/logger');
 const catchAllErrorHandler = require('./app/middleware/catch-all-error-handler');
@@ -11,13 +10,6 @@ const redisClient = require('./app/redis');
 const session = require('express-session');
 const redisStore = require('connect-redis')(session);
 const app = express();
-
-// TODO: set a fixed origin
-const corsOptions = {
-  origin: '*', // temporarily allow any host for testing
-};
-
-app.use(cors(corsOptions));
 
 // Decodes cookies for other middleware
 app.use(cookieParser(process.env.SESSION_SECRET));

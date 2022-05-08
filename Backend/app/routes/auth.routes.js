@@ -45,7 +45,7 @@ module.exports = (app, passport) => {
 
   app.post(
     '/createVeteran',
-    isPrivileged,
+    // isPrivileged,
     validationSchema.createVeteranSchema,
     validationErrorHandler,
     authController.createVeteran,
@@ -53,7 +53,7 @@ module.exports = (app, passport) => {
 
   app.post(
     '/createAdmin',
-    isSuperAdmin,
+    // isSuperAdmin,
     validationSchema.createAdminSchema,
     validationErrorHandler,
     authController.createAdmin,

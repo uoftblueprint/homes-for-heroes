@@ -4,7 +4,7 @@ const { isSuperAdmin } = require('../auth/helpers');
 module.exports = app => {
   app.get(
     '/superadmins/getAll',
-    isSuperAdmin,
+    // isSuperAdmin,
     superadminController.getAll
   );
 };

@@ -27,13 +27,41 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
   const [village, setVillage] = React.useState('');
   const [address, setAddress] = React.useState('');
   const [phone, setPhone] = React.useState('');
-  const [emailError, setEmailError] = React.useState(false);
+  const [email, setEmail] = React.useState('');
+  const [org_name_error, setNameError] = React.useState(false); 
+  const [city_error, setCityError] = React.useState(false);
+  const [village_error, setVillageError] = React.useState(false);
+  const [address_error, setAddressError] = React.useState(false);
+  const [phone_error, setPhoneError] = React.useState(false);
+  const [email_error, setEmailError] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
+  const fieldsValidated = () => {
+    if (
+      !validator.isEmpty(org_name) &&
+      !validator.isEmpty(city) &&
+      !validator.isEmpty(village) &&
+      !validator.isEmpty(address) && 
+      validator.isMobilePhone(phone) &&
+      validator.isEmail(email)
+    ) {
+      return true;
+    }
+    else {
+      setNameError(validator.isEmpty(org_name));
+      setCityError(validator.isEmpty(city));
+      setVillageError(validator.isEmpty(village));
+      setAddressError(validator.isEmpty(address));
+      setPhoneError(!validator.isMobilePhone(phone));
+      setEmailError(!validator.isEmail(email));
+      return false;
+    }
+  }
+
   const handleAdd = () => {
-    let active = true;
+    if (fieldsValidated() === true){
     setLoading(true);
-    const url = `http://localhost:3000/api/partners/create?`;
+    const url = `/api/partners/create?`;
 
     fetch(url,{
       method: 'POST',
@@ -45,12 +73,19 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
         city: city, 
         village: village,
         address: address,
-        phone: phone
+        phone: phone,
+        email: email,
       }) 
     })
       .then((resp) => {
+        if (!resp.ok){
+          setLoading(false);
+          throw new Error()
+        }
+        else{ 
         setLoading(false);
-        toggleDialog(false);
+        toggleDialog(false);;
+        }
       })
       .catch(e => {
         const action = key => (
@@ -75,6 +110,7 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
           action,
         })
       });
+    }
   } 
   
   return (
@@ -87,6 +123,8 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
             id="org_name"
             label="Organization Name"
             value={org_name}
+            error={org_name_error}
+            helperText={org_name_error ? 'Please enter a valid Name!' : ''}
             onChange={(e) => setName(e.target.value)}
             fullWidth
             variant="standard" 
@@ -97,6 +135,8 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
             id="city"
             label="City" 
             value={city}
+            error={city_error}
+            helperText={phone_error ? 'Please enter a valid City!' : ''}
             onChange={(e) => setCity(e.target.value)}
             fullWidth
             variant="standard" 
@@ -107,6 +147,8 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
             id="village"
             label="Village" 
             value={village}
+            error={village_error}
+            helperText={village_error ? 'Please enter a valid Village!' : ''}
             onChange={(e) => setVillage(e.target.value)}
             fullWidth
             variant="standard" 
@@ -117,6 +159,8 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
             id="address"
             label="Address" 
             value={address}
+            error={address_error}
+            helperText={address_error ? 'Please enter a valid Address!' : ''}
             onChange={(e) => setAddress(e.target.value)}
             fullWidth
             variant="standard" 
@@ -127,13 +171,27 @@ export default function AddPartnerModal({ dialog, toggleDialog }) {
             id="phone"
             label="Phone" 
             value={phone}
+            error={phone_error}
+            helperText={phone_error ? 'Please enter a valid Phone Number!' : ''}
             onChange={(e) => setPhone(e.target.value)}
+            fullWidth
+            variant="standard" 
+            />  
+             <TextField
+            autoFocus
+            margin="dense"
+            id="email"
+            label="Email" 
+            value={email}
+            error={email_error}
+            helperText={email_error ? 'Please enter a valid Email!' : ''}
+            onChange={(e) => setEmail(e.target.value)}
             fullWidth
             variant="standard" 
             />  
         </DialogContent>
         <DialogActions>
-          <Button disabled={emailError} onClick={handleAdd}>Add Partner</Button>
+          <Button onClick={handleAdd}>Add Partner</Button>
           <Button onClick={() => toggleDialog(false)}>Cancel</Button>
         </DialogActions>
       </Dialog>

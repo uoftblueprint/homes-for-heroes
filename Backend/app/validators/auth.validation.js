@@ -26,6 +26,13 @@ const validationSchema = {
   createVeteranSchema: [
     body('name').trim().notEmpty().escape(),
     body('email').isEmail().normalizeEmail(),
+    body('gender').optional(),
+    body('phone').isMobilePhone(),
+  ],
+  createAdminSchema: [
+    body('name').trim().notEmpty().escape(),
+    body('email').isEmail().normalizeEmail(),
+    body('chapter_id').isInt({ min: 0 }),
   ],
   createAdminSchema: [
     body('name').trim().notEmpty().escape(),

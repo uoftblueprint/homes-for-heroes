@@ -1,8 +1,9 @@
 import * as React from "react";
 
 import PrivAdminModal from "./PrivAdminModal";
-
-import { useSnackbar } from "notistack";
+import useFetch from "../../../api/useFetch";
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../../redux/userSlice';
 
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -12,11 +13,10 @@ import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
 import CircularProgress from "@mui/material/CircularProgress";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 import Avatar from "@mui/material/Avatar";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/DeleteOutline";
 
@@ -51,63 +51,35 @@ function stringAvatar(name) {
   };
 }
 
-export default function PrivAdminCard() {
+export default function PrivAdminCard({ state, update }) {
   const [adminDialog, toggleAdminDialog] = React.useState(false);
   const [superadmins, setSuperadmins] = React.useState([]);
   const [isLoading, setLoading] = React.useState(false);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { fetchWithError } = useFetch();
+  const currentUserId = useSelector(selectUser).user_id;
 
   React.useEffect(() => {
+    (async () => {
     setLoading(true);
-    const url = `http://localhost:3000/superadmins/getAll`;
-
-    fetch(url, {
+    const endpoint = `superadmins/getAll`;
+    const options = {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-      },
-    })
-      .then((resp) => resp.json())
-      .then((resp) => {
-        setSuperadmins(resp.superadmin);
-        setLoading(false);
-      })
-      .catch((e) => {
-        const action = (key) => (
-          <Grid>
-            <Button
-              onClick={() => {
-                window.location.reload();
-              }}
-            >
-              Refresh
-            </Button>
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                closeSnackbar(key);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          </Grid>
-        );
-        enqueueSnackbar("Something went wrong", {
-          variant: "error",
-          autoHideDuration: 15000,
-          action,
-        });
-      });
-  }, [adminDialog]);
+      }
+    }
+    const response = await fetchWithError(endpoint, options); 
+    setSuperadmins(response.superadmin);
+    setLoading(false);
+    })();
+
+    }, [adminDialog, state]);
 
   const handleAdminOpen = () => {
     toggleAdminDialog(true);
   };
 
   const handleUnsetSuperadmin = (admin_id) => {
-    let active = true;
     setSuperadmins((prevState) =>
       prevState.map((user) => {
         if (user.user_id === admin_id) {
@@ -119,53 +91,26 @@ export default function PrivAdminCard() {
         return user;
       })
     );
-    setLoading(true);
-    const url = `http://localhost:3000/admins/${admin_id}/unsetSuperadmin`;
-
-    fetch(url, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((resp) => {
-        setLoading(false);
-      })
-      .catch((e) => {
-        const action = (key) => (
-          <Grid>
-            <Button
-              onClick={() => {
-                window.location.reload();
-              }}
-            >
-              Refresh
-            </Button>
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => {
-                closeSnackbar(key);
-              }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          </Grid>
-        );
-        enqueueSnackbar("Something went wrong", {
-          variant: "error",
-          autoHideDuration: 15000,
-          action,
-        });
-      });
+    (async() => {
+      setLoading(true);
+      const endpoint = `admins/${admin_id}/unsetSuperadmin`;
+      const options = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        } 
+      }
+      fetchWithError(endpoint, options);
+      update(!state);
+      setLoading(false);
+      })();
   };
 
   return (
     <Card sx={{ maxWidth: 385, mt: "40px", mr: "30px", border: 1 }}>
       <CardContent>
         <Grid container display="flex" direction="row" justify="space-evenly">
-          <Typography>System Admins</Typography>
+          <Typography>Superadmins</Typography>
           <Button
             size="small"
             onClick={handleAdminOpen}
@@ -180,7 +125,7 @@ export default function PrivAdminCard() {
           color="text.secondary"
           sx={{ textAlign: "left" }}
         >
-          System administrators have access to all areas of this application.
+          Superadministrators have access to all areas of this application.
           There must always be at least one.
         </Typography>
         {isLoading ? (
@@ -189,10 +134,35 @@ export default function PrivAdminCard() {
           </div>
         ) : (
           <List>
-            {superadmins
-              .filter((el) => el.role_id === 2)
+            {superadmins 
               .map((superadmin) => {
                 return (
+                  superadmin.user_id === currentUserId ? 
+                    <ListItem
+                    key={superadmin.user_id}
+                    secondaryAction={
+                      <Button
+                        disabled
+                        size="small"
+                        onClick={() =>
+                          handleUnsetSuperadmin(superadmin.user_id)
+                        } 
+                        sx={{
+                          fontWeight: "bold",
+                          color: "#C91C1C",
+                          marginLeft: "auto",
+                        }}
+                      >
+                        Current User 
+                      </Button>
+                    }
+                  >
+                    <ListItemAvatar>
+                      <Avatar {...stringAvatar(superadmin.name)} />
+                    </ListItemAvatar>
+                    <ListItemText primary={superadmin.name} />
+                  </ListItem>
+                :
                   <ListItem
                     key={superadmin.user_id}
                     secondaryAction={
@@ -216,7 +186,7 @@ export default function PrivAdminCard() {
                       <Avatar {...stringAvatar(superadmin.name)} />
                     </ListItemAvatar>
                     <ListItemText primary={superadmin.name} />
-                  </ListItem>
+                  </ListItem> 
                 );
               })}
           </List>
@@ -225,6 +195,8 @@ export default function PrivAdminCard() {
       <PrivAdminModal
         adminDialog={adminDialog}
         toggleAdminDialog={toggleAdminDialog}
+        state={state}
+        update={update}
       />
     </Card>
   );

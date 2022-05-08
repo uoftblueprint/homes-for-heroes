@@ -1,75 +1,66 @@
 import * as React from "react";
 
-import { useSnackbar } from "notistack";
-
-
-import Grid from "@mui/material/Grid";
+import useFetch from "../../../api/useFetch";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import IconButton from '@mui/material/IconButton';
+import CircularProgress from "@mui/material/CircularProgress";
 import { useTheme } from "@mui/material/styles";
-import CloseIcon from '@mui/icons-material/Close';
 import useMediaQuery from "@mui/material/useMediaQuery";
 import TextField from "@mui/material/TextField";
 
- 
+import validator from "validator"; 
 
 export default function PrivChapterDialog({ chapterDialog, toggleChapterDialog }) {
 
 
   const theme = useTheme();
   const fullscreen = useMediaQuery(theme.breakpoints.down("md"));
-  const [chapterName, setChapterName] = React.useState(""); 
+  const [name, setName] = React.useState(""); 
+  const [name_error, setNameError] = React.useState(false);
   const [isLoading, setLoading] = React.useState(false);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { fetchWithError } = useFetch();
 
-const handleAddChapter = () => {
-    setLoading(true);
-    const url = `http://localhost:3000/chapters/create`;
 
-    fetch(url,{
-      method: 'POST',
-      headers:{
-      'Content-Type':'application/json'
-      },
-      body: JSON.stringify({
-        name: chapterName 
-      })
-    })
-      .then((resp) => {
-        setLoading(false);
-        toggleChapterDialog(false);
-      })
-      .catch(e => {
-        const action = key => (
-          <Grid>
-            <Button onClick={() => { window.location.reload(); }}>
-              Refresh
-            </Button>
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => { closeSnackbar(key) }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          </Grid>
-        );
-        enqueueSnackbar(
-          'Something went wrong', {
-          variant: 'error',
-          autoHideDuration: 15000,
-          action,
-        })
-      });
+
+  const fieldsValidated = () => {
+    if (
+    validator.isAlpha(name)
+    )
+    {
+      return true;
+    }
+    else{
+    setNameError(!validator.isAlpha(name));  
+    return false;
+    }
   }
 
-return (
+  const handleAddChapter = () => {
+    (async() => {
+      if (fieldsValidated() === true){
+      setLoading(true);
+      const endpoint = `chapters/create`;
+      const options =  {
+        method: 'POST',
+        headers:{
+        'Content-Type':'application/json'
+        },
+        body: JSON.stringify({
+          name: name 
+        })
+      }
+      const response = await fetchWithError(endpoint, options); 
+      setLoading(false);
+      toggleChapterDialog(false);
+      }
+      })(); 
+  }
+
+return ( 
   <>
  <Dialog
           maxWidth="sm"
@@ -79,17 +70,26 @@ return (
           onClose={() => toggleChapterDialog(false)}
         >
           <DialogTitle>Add Chapter</DialogTitle>
+          {isLoading ?  
+           <div style={{ display: 'flex', justifyContent: 'center' }}>
+             <CircularProgress />
+           </div>
+            : 
           <DialogContent>
           <TextField 
           label="Chapter Name" 
           variant='standard' 
-          value={chapterName} 
-          onChange={(e) => setChapterName(e.target.value)} />
+          value={name} 
+          error={name_error}
+          helperText={name_error ? 'Please enter a valid chapter!' : ''}
+          onChange={(e) => setName(e.target.value)} />
           </DialogContent>
+          }
           <DialogActions>
             <Button onClick={handleAddChapter}>
               Add Chapter
             </Button>
+            <Button onClick={() => toggleChapterDialog(false)}>Cancel</Button>
           </DialogActions>
         </Dialog>         
   </>
