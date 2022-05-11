@@ -15,6 +15,7 @@ CREATE TABLE UserInfo (
     city CHAR(255) NOT NULL,
     province CHAR(3) NOT NULL,
     referral CHAR(255),
+    demographic CHAR(255),
     CONSTRAINT FOREIGN KEY (user_id) REFERENCES client_users(user_id)
 );
 

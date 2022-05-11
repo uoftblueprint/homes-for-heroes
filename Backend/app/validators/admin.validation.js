@@ -12,9 +12,10 @@ const chapter_id = [
 const validationSchema = {
   makeSuperadminSchema: [...admin_id],
   unsetSuperadminSchema: [...admin_id],
+  deleteSupervisorSchema: [...admin_id],
   assignChapterSchema: [
     ...admin_id,
-    body('name').trim().notEmpty(),
+    body('chapter_id').trim().notEmpty(),
   ],
   listChapterSupervisorsSchema: [...chapter_id],
   createAdminSchema: [

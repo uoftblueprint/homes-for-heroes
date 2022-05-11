@@ -6,7 +6,7 @@ SET FOREIGN_KEY_CHECKS=0;
 
 DROP TABLE IF EXISTS admin_users;
 CREATE TABLE IF NOT EXISTS admin_users (
-    user_id INT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
     chapter_id INT DEFAULT NULL,
     PRIMARY KEY (user_id),
     FOREIGN KEY (user_id)
