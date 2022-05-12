@@ -2,7 +2,6 @@ const Partner = require('../models/partner.model');
 const Json2csvParser = require('json2csv').Parser;
 const logger = require('../logger');
 
-
 const partnerController = {
   async getData(req, res, next) {
     try {
@@ -24,7 +23,7 @@ const partnerController = {
       }
       res.json({ success: true });
     } catch (err) {
-      next(err)
+      next(err);
     }
   },
 
