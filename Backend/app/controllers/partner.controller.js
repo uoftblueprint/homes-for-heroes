@@ -4,17 +4,17 @@ const logger = require('../logger');
 
 
 const partnerController = {
-    async getData(req, res, next) {
-        try {
-            logger.debug(req.query);
-            const data = await Partner.queryData(req.query);
-            res.send(data);
-        } catch (err) {
-            next(err);
-        }
-    },
+  async getData(req, res, next) {
+    try {
+      logger.debug(req.query);
+      const data = await Partner.queryData(req.query);
+      res.send(data);
+    } catch (err) {
+      next(err);
+    }
+  },
 
-    async updateInfo(req, res) {
+  async updateInfo(req, res, next) {
     try {
       logger.debug(req.body);
       for (var key in req.body) {
@@ -24,11 +24,9 @@ const partnerController = {
       }
       res.json({ success: true });
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err)
     }
-  },  
+  },
 
   async getAllPartners(req, res, next) {
     try {
@@ -51,21 +49,21 @@ const partnerController = {
     }
   },
 
-  async delete(req, res) {
+  async delete(req, res, next) {
     try {
       logger.debug(req.body);
-      await Promise.all(req.body.rows.map(async (el) => { 
-        Partner.delete(el)
-      }));
+      await Promise.all(
+        req.body.rows.map(async (el) => {
+          Partner.delete(el);
+        })
+      );
       res.json({ success: true });
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
-  }, 
+  },
 
-  async getCSV(req, res) {
+  async getCSV(req, res, next) {
     try {
       logger.debug(req.query);
       const info = await Partner.getCSV(req.query);
@@ -74,16 +72,13 @@ const partnerController = {
       const resultsCSV = jsonParser.parse(infoJson);
       res.setHeader(
         'Content-disposition',
-        'attachment; filename=usersInfo.csv',
+        'attachment; filename=usersInfo.csv'
       );
       res.set('Content-Type', 'text/csv');
       res.send(resultsCSV);
       logger.info('File successfully downloaded.');
-
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err }); 
+      next(err);
     }
   },
 };

@@ -13,30 +13,28 @@ const volunteerController = {
     }
   },
 
-    async getData(req, res, next) {
-        try {
-          logger.debug(req.query);
-            const data = await Volunteer.queryData(req.query);
-            res.send(data);
-        } catch (err) {
-            next(err);
+  async getData(req, res, next) {
+    try {
+      logger.debug(req.query);
+      const data = await Volunteer.queryData(req.query);
+      res.send(data);
+    } catch (err) {
+      next(err);
+    }
+  },
+  async updateInfo(req, res, next) {
+    try {
+      logger.debug(req.body);
+      for (var key in req.body) {
+        if (req.body.hasOwnProperty(key)) {
+          await Volunteer.updateInfo(key, req.body[key]);
         }
-    },
-    async updateInfo(req, res) {
-        try {
-          logger.debug(req.body); 
-            for (var key in req.body) {
-                if (req.body.hasOwnProperty(key)) {
-                    await Volunteer.updateInfo(key, req.body[key]);
-                }
-            }
-            res.json({ success: true });
-        } catch (err) {
-            console.error(err);
-            res.status(500);
-            res.send({ error: err });
-        }
-    },
+      }
+      res.json({ success: true });
+    } catch (err) {
+      next(err);
+    }
+  },
   async create(req, res, next) {
     try {
       logger.debug(req.body);
@@ -49,21 +47,21 @@ const volunteerController = {
     }
   },
 
-  async delete(req, res) {
+  async delete(req, res, next) {
     try {
       logger.debug(req.body);
-      await Promise.all(req.body.rows.map(async (el) => { 
-        Volunteer.delete(el)
-      }));
+      await Promise.all(
+        req.body.rows.map(async (el) => {
+          Volunteer.delete(el);
+        })
+      );
       res.json({ success: true });
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
-  }, 
+  },
 
-  async getCSV(req, res) {
+  async getCSV(req, res, next) {
     try {
       logger.debug(req.query);
       const info = await Volunteer.getCSV(req.query);
@@ -72,16 +70,13 @@ const volunteerController = {
       const resultsCSV = jsonParser.parse(infoJson);
       res.setHeader(
         'Content-disposition',
-        'attachment; filename=usersInfo.csv',
+        'attachment; filename=usersInfo.csv'
       );
       res.set('Content-Type', 'text/csv');
       res.send(resultsCSV);
       logger.info('File successfully downloaded.');
-
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err }); 
+      next(err);
     }
   },
 };
