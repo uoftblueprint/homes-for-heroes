@@ -1,7 +1,7 @@
 const { getMockReq, getMockRes } = require('@jest-mock/express');
-const superadminController = require('../../app/controllers/superadmin.controller');
-const Superadmin = require('../../app/models/superadmin.model');
-jest.mock('../../app/models/superadmin.model');
+const superadminController = require('../../../app/controllers/superadmin.controller');
+const Superadmin = require('../../../app/models/superadmin.model');
+jest.mock('../../../app/models/superadmin.model');
 
 Superadmin.mockImplementation(() => {
   return {
@@ -10,6 +10,7 @@ Superadmin.mockImplementation(() => {
 });
 
 const { res, next, mockClear } = getMockRes();
+const mockError = new Error('error');
 
 describe('Superadmin Controller unit tests', () => {
   beforeEach(() => {
@@ -30,9 +31,9 @@ describe('Superadmin Controller unit tests', () => {
 
   test('should give an error when listing all superadmins', async () => {
     const req = getMockReq();
-    Superadmin.listAll.mockRejectedValue(new Error('mock error'));
+    Superadmin.listAll.mockRejectedValue(mockError);
     await superadminController.getAll(req, res, next);
-    expect(next).toHaveBeenCalledWith(new Error('mock error'));
+    expect(next).toHaveBeenCalledWith(mockError);
     expect(res.send).toHaveBeenCalledTimes(0);
   });
 });

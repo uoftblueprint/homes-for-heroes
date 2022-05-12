@@ -1,7 +1,7 @@
 const { getMockReq, getMockRes } = require('@jest-mock/express');
-const adminController = require('../../app/controllers/admin.controller');
-const Admin = require('../../app/models/admin.model');
-jest.mock('../../app/models/admin.model');
+const adminController = require('../../../app/controllers/admin.controller');
+const Admin = require('../../../app/models/admin.model');
+jest.mock('../../../app/models/admin.model');
 
 Admin.mockImplementation(() => {
   return {
@@ -16,7 +16,7 @@ Admin.mockImplementation(() => {
 const { res, next, clearMockRes } = getMockRes();
 const mockAdminId = { admin_id: 1 };
 const mockChapterId = { chapter_id: 1 };
-
+const mockError = new Error('error');
 
 describe('Admin Controller unit tests', () => {
   beforeEach(() => {
@@ -38,9 +38,9 @@ describe('Admin Controller unit tests', () => {
 
   test('should give an error when listing all admins', async () => {
     const req = getMockReq();
-    Admin.listAll.mockRejectedValue(new Error('mock error'));
+    Admin.listAll.mockRejectedValue(mockError);
     await adminController.listAll(req, res, next);
-    expect(next).toHaveBeenCalledWith(new Error('mock error'));
+    expect(next).toHaveBeenCalledWith(mockError);
     expect(res.send).toHaveBeenCalledTimes(0);
   });
 
@@ -58,9 +58,9 @@ describe('Admin Controller unit tests', () => {
 
   test('should give an error when listing all admins of a chapter', async () => {
     const req = getMockReq({ params: mockChapterId });
-    Admin.listByChapter.mockRejectedValue(new Error('mock error'));
+    Admin.listByChapter.mockRejectedValue(mockError);
     await adminController.listByChapter(req, res, next);
-    expect(next).toHaveBeenCalledWith(new Error('mock error'));
+    expect(next).toHaveBeenCalledWith(mockError);
     expect(res.send).toHaveBeenCalledTimes(0);
   })
 
@@ -70,14 +70,13 @@ describe('Admin Controller unit tests', () => {
     expect(Admin.makeSuperadmin).toHaveBeenCalledTimes(1);
     expect(Admin.makeSuperadmin).toHaveBeenCalledWith(mockAdminId.admin_id);
     expect(res.send).toHaveBeenCalledTimes(1);
-    // mock response???
   });
 
   test('should give an error when setting superadmin status of an admin', async () => {
     const req = getMockReq({ params: mockAdminId });
-    Admin.makeSuperadmin.mockRejectedValue(new Error('mock error'));
+    Admin.makeSuperadmin.mockRejectedValue(mockError);
     await adminController.makeSuperadmin(req, res, next);
-    expect(next).toHaveBeenCalledWith(new Error('mock error'));
+    expect(next).toHaveBeenCalledWith(mockError);
     expect(res.send).toHaveBeenCalledTimes(0);
   })
 
@@ -91,9 +90,9 @@ describe('Admin Controller unit tests', () => {
 
   test('should give an error when unsetting superadmin status of an admin', async () => {
     const req = getMockReq({ params: mockAdminId });
-    Admin.unsetSuperadmin.mockRejectedValue(new Error('mock error'));
+    Admin.unsetSuperadmin.mockRejectedValue(mockError);
     await adminController.unsetSuperadmin(req, res, next);
-    expect(next).toHaveBeenCalledWith(new Error('mock error'));
+    expect(next).toHaveBeenCalledWith(mockError);
     expect(res.send).toHaveBeenCalledTimes(0);
   });
 
@@ -109,9 +108,9 @@ describe('Admin Controller unit tests', () => {
 
   test('should give an error when assining chapter to an admin', async () => {
     const req = getMockReq({ params: mockAdminId, body: mockChapterId });
-    Admin.assignChapter.mockRejectedValue(new Error('mock error'));
+    Admin.assignChapter.mockRejectedValue(mockError);
     await adminController.assignChapter(req, res, next);
-    expect(next).toHaveBeenCalledWith(new Error('mock error'));
+    expect(next).toHaveBeenCalledWith(mockError);
     expect(res.send).toHaveBeenCalledTimes(0);
   })
 });
