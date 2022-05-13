@@ -26,7 +26,7 @@ Customer.prototype.isValidPassword = async function (password) {
 
 Customer.prototype.changePassword = function(password) {
   return new Promise((resolve, reject) => {
-    const hashedPassword = bcrypt.hashSync(password, 15);
+    const hashedPassword = bcrypt.hashSync(password, 12);
     sql.query('UPDATE client_users SET password = ? WHERE user_id = ?',
       [hashedPassword, this.user_id],
       (err) => {
