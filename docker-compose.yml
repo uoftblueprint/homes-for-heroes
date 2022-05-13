@@ -21,6 +21,8 @@ services:
         #dockerfile: Frontend.Dockerfile
     ports:
       - "3006:3006"
+    environment:
+      BACKEND_HOST: backend
     env_file:
       - .env
   
