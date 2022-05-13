@@ -18,7 +18,7 @@ const QueryData = function() {
   }
 
   this.appendUpdateParam = function(param, column) {
-    if (!param) return;
+    if (param === null || param === undefined) return;
     const sub = `${column} = "${param}"`;
     this.query = (this.query) ? `${this.query}, ${sub}` : sub;
   };
