@@ -86,7 +86,7 @@ const customerController = {
         res.send(user_data);
       }
       else{
-        throw Error;
+        next(new Error('Insufficient Permissions'));
       } 
     } catch (err) {
       next(err);

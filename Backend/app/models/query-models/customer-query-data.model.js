@@ -37,6 +37,7 @@ const CustomerQueryData = function (query_params) {
 
   // final query
   this.query = '';
+  this.queryArray = [];
 
   this.constructQuery = function () {
     //Get only veteran

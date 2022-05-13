@@ -155,7 +155,7 @@ Admin.listByChapter = function(chapter_id) {
 Admin.getRole = function (admin_id) {
   return new Promise((resolve, reject) => {
     sql.query(
-      'SELECT c.role_id FROM client_users AS c WHERE c.user_id = ?',
+      'SELECT * FROM client_users WHERE user_id = ?',
       [admin_id],
       (err, rows) => {
         if (err) reject(err);

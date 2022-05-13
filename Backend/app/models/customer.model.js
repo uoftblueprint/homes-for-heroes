@@ -255,9 +255,9 @@ Customer.queryUserData = function (query_params) {
     ORDER BY client.name
     LIMIT ${q.offset}, ${q.limit}
     `;
-    sql.query(page_query, (error, page) => { 
+    sql.query(page_query, q.queryArray, (error, page) => { 
       if (error) reject(error);
-      sql.query(data_query, (err, row) => {
+      sql.query(data_query, q.queryArray, (err, row) => {
         if (err) reject(err);
           resolve([page[0],row])
       }); 
@@ -269,7 +269,6 @@ Customer.updateUserInfo = function (user_id, query_params) {
   return new Promise((resolve, reject) => {
     const q = new CustomerQueryData(query_params);
     q.constructEditQuery();
-    console.log(q);
     const data_query = `   
     UPDATE client_users AS client
       LEFT JOIN UserInfo AS info ON info.user_id = client.user_id
@@ -277,7 +276,7 @@ Customer.updateUserInfo = function (user_id, query_params) {
     ${q.query}
     WHERE client.user_id = ${user_id} 
     `;
-    sql.query(data_query, (error, info) => { 
+    sql.query(data_query, q.queryArray, (error, info) => { 
       if (error) reject(error); 
         resolve(info)
     });
@@ -330,7 +329,7 @@ Customer.getCSV = function (query_params) {
       ${q.query}
     ORDER BY client.name
     `;
-    sql.query(data_query, (err, row) => {
+    sql.query(data_query, q.queryArray, (err, row) => {
       if (err) reject(err);
         resolve(row)
     }); 
