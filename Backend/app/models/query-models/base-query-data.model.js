@@ -15,9 +15,9 @@ const QueryData = function() {
 
   this.appendQueryParamKeyword = function(param, column) {
     if (param == null) return;
-    const sub = `${column} LIKE %?%`;
+    const sub = `${column} LIKE ?`;
     this.query = (this.query) ? `${this.query} AND ${sub}` : sub;
-    this.queryArray.push(param);
+    this.queryArray.push(`%${param}%`);
   }
 
   this.appendUpdateParam = function(param, column) {

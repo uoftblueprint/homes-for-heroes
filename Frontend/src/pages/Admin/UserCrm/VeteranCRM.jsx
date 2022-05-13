@@ -126,7 +126,7 @@ export default function VeteranCRM() {
         {
           editable: "true",
           sanitize: (e) => {return e.toString()},
-          validationMethod: (e) => {return !validator.isAlphanumeric(e.toString())},
+          validationMethod: (e) => {return !(e > 0) || !(e < 5)},
           status: "true", 
           type: 'number',
           field: "curr_level",
