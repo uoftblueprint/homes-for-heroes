@@ -1,9 +1,11 @@
 import { useHistory } from "react-router-dom";
 import { createFormAPI } from "../../../api/formAPI";
 import FormBuilder from "../../../components/form/FormBuilder";
+import {useState} from "react";
 
 function FormCreate() {
     const history = useHistory();
+    const [errors, setErrors] = useState([]);
 
     const level = {
         l1: false,
@@ -16,13 +18,21 @@ function FormCreate() {
         (async () => {
             const res = await createFormAPI(formBody)
             if (res.status !== 200) {
-                // TODO error handling
-                alert("Error!")
+                if (res.status === 400) {
+                    alert('Input error, please reference the form for incorrect entries')
+                    setErrors((await res.json()).errors);
+                } else {
+                    const er = await res.json();
+                    console.log(er);
+                    alert(er.error);
+                }
             } else {
                 history.push("/forms")
             }
         })();
     }
+
+    console.log(errors);
 
     return (
         <FormBuilder
@@ -30,7 +40,7 @@ function FormCreate() {
             level={level}
             questions={[]}
             saveDraft={createDraft}
-            err={true}
+            err={errors}
         />
     )
 }
