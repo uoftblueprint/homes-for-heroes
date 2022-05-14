@@ -24,7 +24,8 @@ import ProfilePage from './pages/User/ProfilePage/ProfilePage';
 import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
 import SignupForm from './components/SignupForm.jsx';
 
-import CaseDetail from './pages/User/CaseDetails/CaseDetail';
+import CaseDetail from './pages/Admin/UserCase/CaseDetail.jsx';
+import AddCase from './pages/Admin/UserCase/AddCase';
 
 function App() {
   return (
@@ -74,6 +75,11 @@ function App() {
             render={(props) => <CaseDetail {...props} />}
           />
           <AdminProtectedRoute
+            exact
+            path="/addcase/:id"
+            render={(props) => <AddCase {...props} />}
+          />
+          <Route
             exact
             path="/external/"
             render={(props) => <ExternalRelations {...props} />}
