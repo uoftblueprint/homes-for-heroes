@@ -14,8 +14,10 @@ import FormComplete from './pages/User/Form/FormComplete';
 
 import CaseList from './pages/Admin/UserCase/CaseList';
 import Login from './pages/User/Login/Login';
+import ForgotPassword from './pages/User/PasswordReset/ForgotPassword';
+import ResetPassword from './pages/User/PasswordReset/ResetPassword';
+import VeteranCRM from './pages/Admin/UserCrm/VeteranCRM';
 import Logout from './pages/User/Login/Logout';
-import CRM from './pages/Admin/UserCrm/CRM';
 import Privileges from './pages/Admin/Privileges/Privileges';
 import ProfilePage from './pages/User/ProfilePage/ProfilePage';
 import Home from './pages/User/Home/Home.jsx';
@@ -23,13 +25,14 @@ import Home from './pages/User/Home/Home.jsx';
 import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
 import SignupForm from './components/SignupForm.jsx';
 
-import CaseDetail from './pages/User/CaseDetails/CaseDetail';
+import CaseDetail from './pages/Admin/UserCase/CaseDetail.jsx';
+import AddCase from './pages/Admin/UserCase/AddCase';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <NavBar />
+        <NavBar /> 
         <Switch>
           <Route
             exact
@@ -39,7 +42,7 @@ function App() {
           <AdminProtectedRoute
             exact
             path="/usercrm"
-            render={(props) => <CRM {...props} />}
+            render={(props) => <VeteranCRM {...props} />}
           />
           <AdminProtectedRoute
             exact
@@ -79,6 +82,11 @@ function App() {
           />
           <AdminProtectedRoute
             exact
+            path="/addcase/:id"
+            render={(props) => <AddCase {...props} />}
+          />
+          <Route
+            exact
             path="/external/"
             render={(props) => <ExternalRelations {...props} />}
           />
@@ -89,6 +97,8 @@ function App() {
             render={(props) => <ProfilePage {...props} />}
           />
           <Route exact path="/login" render={(props) => <Login {...props} />} />
+          <Route exact path="/forgotpassword" render={(props) => <ForgotPassword {...props} />} />
+          <Route exact path="/reset/:jwt" render={(props) => <ResetPassword {...props} />} />
           <AuthProtectedRoute
             exact
             path="/logout"

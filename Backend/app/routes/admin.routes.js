@@ -4,8 +4,20 @@ const validationErrorHandler = require('../middleware/validation-error-handler')
 const { isSuperAdmin } = require('../auth/helpers');
 
 module.exports = app => {
-  app.get('/admins/getAll', isSuperAdmin, adminController.listAll);
-  app.get('/admins/getSearchAdmins', isSuperAdmin, adminController.getSearchAdmins);
+  app.get('/admins/getAll', 
+  isSuperAdmin, 
+  adminController.listAll);
+
+  app.get('/admins/getSearchAdmins', 
+  isSuperAdmin, 
+  adminController.getSearchAdmins);
+
+  app.put(
+    '/admins/:admin_id/deleteSupervisor',
+    isSuperAdmin,
+    validationSchema.deleteSupervisorSchema,
+    validationErrorHandler,
+    adminController.deleteSupervisor);
 
   app.put(
     '/admins/:admin_id/makeSuperadmin',

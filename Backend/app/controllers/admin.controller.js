@@ -35,6 +35,16 @@ const adminController = {
     } catch (err) {
       next(err);
     }
+  }, 
+
+  async deleteSupervisor(req, res, next) {
+    try {
+      const { admin_id } = req.params;
+      const results = await Admin.deleteSupervisor(admin_id);
+      res.send(results);
+    } catch (err) {
+      next(err);
+    }
   },
 
   async makeSuperadmin(req, res, next) {
@@ -62,7 +72,6 @@ const adminController = {
   async listByChapter(req, res, next) {
     try {
       const { chapter_id } = req.params;
-      //const chapter_id = await Chapter.getId(chapter);
       const chapterAdmins = await Admin.listByChapter(chapter_id);
       res.send(chapterAdmins);
     } catch (err) {

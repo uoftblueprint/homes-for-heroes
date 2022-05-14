@@ -1,9 +1,5 @@
 import * as React from "react";
 
-import { useSnackbar } from "notistack";
-
-
-import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import ListItem from "@mui/material/ListItem";
@@ -13,9 +9,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import IconButton from '@mui/material/IconButton';
-
-import CloseIcon from '@mui/icons-material/Close';
 import Avatar from "@mui/material/Avatar";
 import AddIcon from "@mui/icons-material/Add";
 import TextField from "@mui/material/TextField";
@@ -24,6 +17,7 @@ import { useTheme } from "@mui/material/styles";
 
 import CheckIcon from "@mui/icons-material/Check";
 import SearchIcon from "@mui/icons-material/Search";
+import useFetch from "../../../api/useFetch";
 
 // Demo purposes
 
@@ -56,55 +50,31 @@ function stringAvatar(name) {
   };
 }
 
-export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
+export default function PrivAdminModal({ adminDialog, toggleAdminDialog, state, update}) {
  
   const theme = useTheme();
   const fullscreen = useMediaQuery(theme.breakpoints.down("md"));
   const [admins, setAdmins] = React.useState([]);
   const [isLoading, setLoading] = React.useState(false);
   const [searchParams, setSearchParams] = React.useState("");
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { fetchWithError } = useFetch();
 
  React.useEffect(() => {
     if (searchParams !== ''){
-    setLoading(true);
-    const url = `/api/admins/getSearchAdmins?name=${searchParams}`;
-  
-    fetch(url, {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then((resp) => resp.json())
-      .then((resp) => {
-        setAdmins(resp.admins);
-        setLoading(false);
-      })
-      .catch(e => {
-        const action = key => (
-          <Grid>
-              <Button onClick={() => { window.location.reload(); }}>
-                Refresh
-              </Button>
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={() => { closeSnackbar(key) }}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton> 
-          </Grid>
-      );
-        enqueueSnackbar(
-          'Something went wrong',{
-            variant: 'error',
-            autoHideDuration: 15000,
-            action,
-          })
-      });
-    } 
+    (async() => {
+      setLoading(true);
+      const endpoint = `admins/getSearchAdmins?name=${searchParams}`;
+      const options =  {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        }
+      }
+      const response = await fetchWithError(endpoint, options);
+      setAdmins(response.admins);
+      setLoading(false);
+      })(); 
+    }
   }, [searchParams, adminDialog]);
 
   const handleDialogClose = () => {
@@ -114,58 +84,36 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog }) {
     toggleAdminDialog(false);
   }
 
-  const handleSetSuperadmin = (admin_id) => {
-    setAdmins((prevState) =>
-      prevState.map((user) => {
-        if (user.user_id === admin_id) {
-          return {
-            ...user,
-            role_id: 2 
-          };
-        }
-        return user;
-      })
-    )
-    setLoading(true);
-    const url = `/api/admins/${admin_id}/makeSuperadmin`;
-
-    fetch(url,{
-      method: 'PUT',
-      headers:{
-      'Content-Type':'application/json'
-      },
-    })
-      .then((resp) => {
-        setLoading(false);
-      })
-      .catch(e => {
-        const action = key => (
-          <Grid>
-            <Button onClick={() => { window.location.reload(); }}>
-              Refresh
-            </Button>
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => { closeSnackbar(key) }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          </Grid>
-        );
-        enqueueSnackbar(
-          'Something went wrong', {
-          variant: 'error',
-          autoHideDuration: 15000,
-          action,
-        })
-      });
-  }
+  const handleSetSuperadmin = (user_id) => { 
+    (async() => {
+      setLoading(true);
+      const endpoint = `admins/${user_id}/makeSuperadmin`;
+      const options =  {
+        method: 'PUT',
+        headers:{
+        'Content-Type':'application/json'
+        },
+      }
+      const response = await fetchWithError(endpoint, options);
+      setAdmins((prevState) =>
+          prevState.map((user) => {
+            if (user.user_id === user_id) {
+              return {
+                ...user,
+                role_id: 2
+              };
+            }
+            return user;
+          })
+        )
+      update(!state);
+      setLoading(false);
+      })(); 
+    } 
    return (
     <Dialog
           maxWidth="sm"
-          fullWidth
+          fullWidth    
           fullScreen={fullscreen}
           open={adminDialog}
           onClose={handleDialogClose}

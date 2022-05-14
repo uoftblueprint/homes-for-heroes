@@ -16,6 +16,29 @@ const caseNoteController = {
       next(err);
     }
   },
+  async update(req, res) {
+    try {
+      const { case_id } = req.params;
+      const { new_note, new_title } = req.query;
+      await CaseNote.updateNote(case_id, new_note, new_title);
+      res.send({ new_note: new_note });
+    } catch (err) {
+      // TODO error handling
+      res.status(500);
+      res.send({ error: err });
+    }
+  },
+  async delete(req, res) {
+    try {
+      const { case_id } = req.params;
+      await CaseNote.deleteNote(case_id);
+      res.send({ success: true });
+    } catch (err) {
+      // TODO error handling
+      res.status(500);
+      res.send({ error: err });
+    }
+  },
 };
 
 module.exports = caseNoteController;

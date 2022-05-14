@@ -7,6 +7,7 @@ module.exports = app => {
 
   app.post(
     '/chapters/create',
+    isSuperAdmin,
     validationSchema.createChapterSchema,
     validationErrorHandler,
     chapterController.create

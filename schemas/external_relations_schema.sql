@@ -10,6 +10,7 @@ CREATE TABLE partners (
     village CHAR(255),
     address CHAR(255),
     phone CHAR(255),
+    email VARCHAR(255) NOT NULL UNIQUE,
     PRIMARY KEY (partner_id)
 );
 
@@ -21,6 +22,7 @@ CREATE TABLE volunteers (
     date_joined DATE NOT NULL,
     role CHAR(255) NOT NULL,
     phone CHAR(255),
+    email VARCHAR(255) NOT NULL UNIQUE,
     PRIMARY KEY (volunteer_id)
 );
 
@@ -31,5 +33,6 @@ CREATE TABLE supporters (
     date_gifted DATE NOT NULL,
     gift_provided CHAR(255) NOT NULL,
     phone CHAR(255),
+    email VARCHAR(255) NOT NULL UNIQUE,
     PRIMARY KEY (supporter_id)
 );
