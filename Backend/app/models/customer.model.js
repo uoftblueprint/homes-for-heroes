@@ -257,6 +257,27 @@ Customer.getCases = function (user_id, start_date, end_date) {
   });
 };
 
+Customer.getToDo = function(user_id) {
+  return new Promise((resolve, reject) => {
+    sql.query('SELECT todo FROM client_users WHERE user_id = ?', 
+      [user_id],
+      (err, cases) => {
+        if (err) reject(err);
+        resolve(cases);
+      });
+  });
+};
+
+Customer.updateToDo = function(user_id, todo) {
+  return new Promise((resolve, reject) => {
+    sql.query('UPDATE client_users SET todo = ? WHERE user_id = ?', 
+      [todo, user_id],
+      (err, cases) => {
+        if (err) reject(err);
+        resolve(cases);
+      });
+  });
+};
 
 Customer.queryUserData = function (query_params) {
   return new Promise((resolve, reject) => {

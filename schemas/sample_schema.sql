@@ -54,6 +54,12 @@ VALUES
   ("Munster",49),
   ("Ulster",50);
 
+
+INSERT INTO cases VALUES
+(1, 2,'Alert Case Note 1', 0, 'This is Case Note 1', now(), 1),
+(2, 2, 'Alert Case Note 2', 0, 'This is Case Note 2', now(), 2),
+(3, 2, 'Alert Case Note 3', 0, NULL, now(), 3);
+
 INSERT INTO `client_users` (`name`,`email`,`role_id`,`verified`,`oauth`)
 VALUES
   ("Stone Rivera","elementum.purus@hotmail.org",0,0,0),

@@ -43,6 +43,15 @@ const customerController = {
       next(err);
     }
   },
+  async getAlertCaseID(req, res, next) {
+    try {
+      const { user_id } = req.params;
+      const alert_case_id = await Customer.getAlertCaseId(user_id);
+      res.send({ id : alert_case_id });
+    } catch (err) {
+      next(err);
+    }
+  },
   async setAlertCase(req, res, next) {
     try {
       const { user_id } = req.params;
@@ -62,17 +71,35 @@ const customerController = {
       next(err);
     }
   },
-  
   async getUserData(req, res, next) {
     try {
-      console.log(req.query)
       const user_data = await Customer.queryUserData(req.query);
       res.send(user_data);
     } catch (err) {
       next(err);
     }
   },
-
+  async getToDo(req, res, next) {
+    try {
+      const { user_id } = req.params;
+      const todo = await Customer.getToDo(user_id);
+      res.send({ payload: todo });
+      logger.info('Retrieved to-do successfully.');
+    } catch (err) {
+      next(err);
+    }
+  },
+  async updateToDo(req, res, next) {
+    try {
+      const { user_id } = req.params;
+      const { todo } = req.query;
+      await Customer.updateToDo(user_id, todo);
+      res.send('Updated');
+      logger.info('Updated to-do successfully.');
+    } catch (err) {
+      next(err);
+    }
+  },
   async putUserInfo(req, res, next) {
     try {
       const user_info = req.body;
