@@ -180,10 +180,10 @@ CREATE TABLE IF NOT EXISTS volunteers (
     volunteer_id INT NOT NULL AUTO_INCREMENT,
     name CHAR(255) NOT NULL,
     village CHAR(255),
-    date_joined DATE NOT NULL,
+    date_joined DATE NOT NULL,                                                                                   
     role CHAR(255) NOT NULL,
     phone CHAR(255),
-    email VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,                                                                             
     PRIMARY KEY (volunteer_id)
 );
 

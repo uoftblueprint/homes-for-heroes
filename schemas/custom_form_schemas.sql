@@ -1,4 +1,3 @@
-CREATE SCHEMA IF NOT EXISTS homes_for_heroes;
 
 USE homes_for_heroes;
 
@@ -13,7 +12,7 @@ CREATE TABLE IF NOT EXISTS CustomForm (
     CONSTRAINT FOREIGN KEY (admin_id) REFERENCES admin_users(user_id)
 );
 
-CREATE TABLE  IF NOT EXISTS  Questionnaire (
+CREATE TABLE IF NOT EXISTS  Questionnaire (
     questionnaire_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     form_id INT NOT NULL,
