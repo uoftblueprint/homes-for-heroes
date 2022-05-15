@@ -20,6 +20,9 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../../redux/userSlice';
+
 import validator from 'validator'
 
 const theme = createTheme({
@@ -77,9 +80,11 @@ export default function ProfilePage({ user_id }) {
     applicant_dob: ''
   });
 
+  const currentUserId = useSelector(selectUser).user_id;
+
   function fetchInfo() {
     return new Promise((resolve) => {
-      fetch(`/api/getCustomerInfo`, {
+      fetch(`/api/getCustomerInfo/${currentUserId}`, {
         method: 'GET',
         credentials: 'include'
       })

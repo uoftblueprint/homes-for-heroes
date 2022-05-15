@@ -45,15 +45,15 @@ Admin.createTemp = function (name, email, chapter_id, role_id = 1) {
     sql.getConnection((err, conn) => {
       if (err) return reject(err);
 
-      conn.beginTransaction((err) => {
+      conn.beginTransaction(async (err) => {
         if (err) return reject(err);
-        const adminCustomer = Customer.createTemp(name, email, role_id, conn); // role_id of 1 (supervisor) by default
+        const adminCustomer = await Customer.createTemp(name, email, role_id, conn); // role_id of 1 (supervisor) by default
         conn.query(
           'INSERT INTO admin_users (user_id, chapter_id) VALUES (?, ?)',
           [adminCustomer.user_id, chapter_id],
-          (err, result) => {
+          (err, result) => { 
             if (err) return conn.rollback(() => reject(err));
-            else if (!result.insertId) return reject(new Error('Could not create admin'));
+            else if (result.insertId) return reject(new Error('Could not create admin'));
 
             conn.commit((err) => {
               if (err) return conn.rollback(() => reject(err));
@@ -147,7 +147,18 @@ Admin.unsetSuperadmin = function (admin_id) {
   });
 };
 
-
+Admin.deleteSupervisor = function (admin_id) {
+  return new Promise((resolve, reject) => {
+    sql.query(
+      'DELETE FROM client_users WHERE user_id = ?',
+      [admin_id],
+      (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows[0]);
+      },
+    );
+  });
+};
 
 Admin.assignChapter = function (admin_id, chapter_id) {
   logger.debug(admin_id);
