@@ -69,7 +69,6 @@ function FormTop() {
                     (async () => {
                         const res = await publishFormAPI(params.row.form_id)
                         if (res.status !== 200) {
-                        //    TODO error handling
                             alert("Error publishing!")
                         } else {
                             setRefreshKey(refreshKey => refreshKey + 1)
