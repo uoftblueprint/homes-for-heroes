@@ -1,13 +1,11 @@
 const { getMockReq, getMockRes } = require('@jest-mock/express');
 const superadminController = require('../../../app/controllers/superadmin.controller');
 const Superadmin = require('../../../app/models/superadmin.model');
-jest.mock('../../../app/models/superadmin.model');
 
-Superadmin.mockImplementation(() => {
-  return {
-    listAll: jest.fn(),
-  };
-});
+jest.mock('../../../app/models/superadmin.model', () => ({
+  listAll: jest.fn(),
+}));
+
 
 const { res, next, mockClear } = getMockRes();
 const mockError = new Error('error');

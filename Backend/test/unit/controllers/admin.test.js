@@ -1,17 +1,15 @@
 const { getMockReq, getMockRes } = require('@jest-mock/express');
 const adminController = require('../../../app/controllers/admin.controller');
 const Admin = require('../../../app/models/admin.model');
-jest.mock('../../../app/models/admin.model');
 
-Admin.mockImplementation(() => {
-  return {
-    listAll: jest.fn(),
-    listByChapter: jest.fn(),
-    makeSuperadmin: jest.fn(),
-    unsetSuperadmin: jest.fn(),
-    assignChapter: jest.fn(),
-  };
-});
+jest.mock('../../../app/models/admin.model', () => ({
+  listAll: jest.fn(),
+  listByChapter: jest.fn(),
+  makeSuperadmin: jest.fn(),
+  unsetSuperadmin: jest.fn(),
+  assignChapter: jest.fn(),
+}));
+
 
 const { res, next, clearMockRes } = getMockRes();
 const mockAdminId = { admin_id: 1 };

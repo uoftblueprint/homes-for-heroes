@@ -1,9 +1,8 @@
 const { getMockReq, getMockRes } = require('@jest-mock/express');
 const chapterController = require('../../../app/controllers/chapter.controller');
 const Chapter = require('../../../app/models/chapter.model');
-jest.mock('../../../app/models/chapter.model');
 
-Chapter.mockImplementation(() => ({
+jest.mock('../../../app/models/chapter.model', () => ({
   listAll: jest.fn(),
 }));
 
