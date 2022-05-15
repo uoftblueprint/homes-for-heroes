@@ -3,7 +3,9 @@ import * as React from "react";
 import PrivSupervisorModal from "./PrivSupervisorModal";
 import PrivCreateAdmin from "./PrivCreateAdmin";
 import PrivChapterModal from './PrivChapterModal';
-import { useSnackbar } from "notistack";
+import PrivDeleteDialog from './PrivDeleteDialog';
+
+import useFetch from "../../../api/useFetch";
 
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -54,109 +56,39 @@ function stringAvatar(name) {
   };
 }
 
-export default function PrivSupervisorCard({ chapters, chapterDialog, toggleChapterDialog }) {
+export default function PrivSupervisorCard({ chapters, chapterDialog, toggleChapterDialog, state, update}) {
   const [svDialog, toggleSvDialog] = React.useState(false);
   const [caDialog, toggleCaDialog] = React.useState(false);
+  const [deDialog, toggleDeDialog] = React.useState(false);
+  const [deleteId, setDeleteId] = React.useState(null);
   const [supervisors, setSupervisors] = React.useState([]);
-  const [currChapter, setChapter] = React.useState(chapters[0]);
+  const [currChapter, setChapter] = React.useState(chapters.length === 0 ? {
+    name: '',
+    chapter_id: null
+  } : 
+  chapters[0]
+  );
   const [isLoading, setLoading] = React.useState(false);
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { fetchWithError } = useFetch();
 
 // When someone adds a new chapter or changes chapter, changes get pushed unless there are none.
 React.useEffect(() => {
-  setLoading(true);
-  const url = `http://localhost:3000/supervisors/${currChapter.name}/listByChapter`;
-
-  fetch(url, {
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-  })
-    .then((resp) => resp.json())
-    .then((resp) => {
-      setSupervisors(resp.supervisors);
-      setLoading(false);
-    })
-    .catch(e => {
-      const action = key => (
-        <Grid>
-            <Button onClick={() => { window.location.reload(); }}>
-              Refresh
-            </Button>
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => { closeSnackbar(key) }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton> 
-        </Grid>
-    );
-      enqueueSnackbar(
-        'Something went wrong',{
-          variant: 'error',
-          autoHideDuration: 15000,
-          action,
-        })
-    });
-
-}, [currChapter, svDialog, caDialog]);
-
-
- const handleUnsetSupervisor = (admin_id) => {
-    setSupervisors((prevState) =>
-      prevState.map((user) => {
-        if (user.user_id === admin_id) {
-          return {
-            ...user,
-            role_id: 0 
-          };
+  (async() => {
+      setLoading(true);
+      const endpoint = `admins/${currChapter.chapter_id}/listByChapter`;
+      const options = {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
         }
-        return user;
-      })
-    )
-    setLoading(true);
-    const url = `http://localhost:3000/admins/${admin_id}/unsetSupervisor`;
-
-    fetch(url,{
-      method: 'PUT',
-      headers:{
-      'Content-Type':'application/json'
-      },
-    })
-      .then((resp) => { 
-        setLoading(false);
-      })
-      .catch(e => {
-        const action = key => (
-          <Grid>
-            <Button onClick={() => { window.location.reload(); }}>
-              Refresh
-            </Button>
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              size="small"
-              onClick={() => { closeSnackbar(key) }}
-            >
-              <CloseIcon fontSize="inherit" />
-            </IconButton>
-          </Grid>
-        );
-        enqueueSnackbar(
-          'Something went wrong', {
-          variant: 'error',
-          autoHideDuration: 15000,
-          action,
-        })
-      });
-  }
-
-  const handleSvOpen = () => {
-    toggleSvDialog(true);
-  }
+      }
+      const response = await fetchWithError(endpoint, options);
+      if (response.constructor === Array) {
+        setSupervisors(response);
+      }
+      setLoading(false);
+      })();
+  }, [currChapter, svDialog, caDialog, deDialog, state]); 
    
    return (
     <Card sx={{ maxWidth: 385, mt: "40px", border: 1 }}>
@@ -170,7 +102,14 @@ React.useEffect(() => {
               sx={{ marginLeft: "auto" }}
             >
               Create Admin
-            </Button>
+            </Button>  
+          <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ textAlign: "left" }}
+            >
+              The following people are chapter supervisors of the selected chapter.
+            </Typography>
             <Button
               size="small"
               onClick={() => toggleChapterDialog(true)}
@@ -179,21 +118,14 @@ React.useEffect(() => {
             >
               Add Chapter 
             </Button>
-          </Grid>
-          <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ textAlign: "left" }}
-            >
-              The following people are chapter supervisors of the selected chapter.
-            </Typography>
+            </Grid>
         <Autocomplete
           disablePortal
           autoHighlight
           blurOnSelect
           value={currChapter}
           options={chapters}
-          getOptionLabel={option => option.name}
+          getOptionLabel={option=> option.name}
           sx={{ width: 250, mt: '20px' }}
           renderInput={(params) => <TextField {...params} label="Location" />}
           onChange={(event, value) => {
@@ -206,7 +138,7 @@ React.useEffect(() => {
               <Typography>{currChapter.name} Supervisors</Typography>
               <Button
                 size="small"
-                onClick={handleSvOpen}
+                onClick={() => toggleSvDialog(true)}
                 startIcon={<AddIcon />}
                 sx={{ marginLeft: "auto" }}
               >
@@ -219,14 +151,18 @@ React.useEffect(() => {
            </div>
             : <List>
               {supervisors
-                .filter((el) => el.role_id === 1 && el.chapter_id === currChapter.chapter_id)
+                .filter((el) => el.chapter_id === currChapter.chapter_id)
                 .map((supervisor) => {
                   return (
                     <ListItem
                       secondaryAction={
                         <Button
                           size="small"
-                          onClick={() => handleUnsetSupervisor(supervisor.user_id)}
+                          onClick={() => {
+                            setDeleteId(supervisor.user_id);
+                            toggleDeDialog(true);
+                          }
+                          }
                           startIcon={<DeleteIcon />}
                           sx={{
                             fontWeight: "bold",
@@ -252,8 +188,9 @@ React.useEffect(() => {
             }
           </CardContent>
           <PrivSupervisorModal svDialog={svDialog} toggleSvDialog={toggleSvDialog} currChapter={currChapter} />
-          <PrivCreateAdmin caDialog={caDialog} toggleCaDialog={toggleCaDialog} chapters={chapters} />
+          <PrivCreateAdmin caDialog={caDialog} toggleCaDialog={toggleCaDialog} currChapter={currChapter} />
           <PrivChapterModal chapterDialog={chapterDialog} toggleChapterDialog={toggleChapterDialog} />
+          <PrivDeleteDialog dialog={deDialog} toggleDialog={toggleDeDialog} user_id={deleteId} /> 
         </Card> 
         ) 
 }

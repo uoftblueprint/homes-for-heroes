@@ -20,6 +20,9 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../../redux/userSlice';
+
 import validator from 'validator'
 
 const theme = createTheme({
@@ -46,6 +49,8 @@ function TabPanel(props) {
 export default function ProfilePage({ user_id }) {
   // Tabs
   const [value, setValue] = React.useState(0);
+
+  const [success, setSuccess] = React.useState(false);
 
   const handleTabs = (event, val) => {
     setValue(val);
@@ -75,9 +80,14 @@ export default function ProfilePage({ user_id }) {
     applicant_dob: ''
   });
 
+  const currentUserId = useSelector(selectUser).user_id;
+
   function fetchInfo() {
     return new Promise((resolve) => {
-      fetch(`http://localhost:3000/getCustomerInfo/11`) // TODO: make sure to change to /api and use ${user_id} instead of 11
+      fetch(`/api/getCustomerInfo/${currentUserId}`, {
+        method: 'GET',
+        credentials: 'include'
+      })
           .then(resp => resp.json())
           .then(data => resolve(data))
     })
@@ -150,6 +160,7 @@ export default function ProfilePage({ user_id }) {
   const requestOptions = {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify({
        name: formInfo.name,
        email: formInfo.email,
@@ -163,7 +174,7 @@ export default function ProfilePage({ user_id }) {
 
   const changeInfo = () => {
     console.log(requestOptions)
-    fetch('http://localhost:3000/updateCustomerProfile/11', requestOptions)
+    fetch('/api/userinfo', requestOptions)
       .then(response => response.json());
     setUserInfo({
       ...formInfo
@@ -185,10 +196,7 @@ export default function ProfilePage({ user_id }) {
   const handlePasswordSubmit = (event) => {
     setPwErrorStr('')
     event.preventDefault()
-    if (passwords.old !== 'old-password') {
-       // TODO - implement verifying password
-       setPwErrorStr('Error: current password incorrect')
-    } else if (passwords.new!== passwords.new2) {
+    if (passwords.new !== passwords.new2) {
        setPwErrorStr('Error: passwords do not match')
     } else {
        setPwErrorStr('')
@@ -199,21 +207,24 @@ export default function ProfilePage({ user_id }) {
  
   const passwordRequestOptions = {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json-patch+json' },
-    body: {
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({
       oldPassword: passwords.old,
       newPassword: passwords.new,
-    }
+    })
   };
 
   const changePassword = () => {
     console.log(passwordRequestOptions)
-    fetch('http://localhost:3000/api/changePassword', requestOptions)
-      .then(response => {
-        if (response.status !== 200) {
-          setPwErrorStr(response.error)
-        }
-      })
+    fetch('/api/changePassword', passwordRequestOptions)
+      .then(res => res.json())
+      .then(res => {
+        if(res.errors)
+          setPwErrorStr(res.errors.map(e => `${e.param}: ${e.msg}`).join(', '))
+        else if (res.success)
+          setSuccess(true);
+      });
     // TODO - implement changing password
   }
 
@@ -448,6 +459,11 @@ export default function ProfilePage({ user_id }) {
                     ) : 
                     null 
                   }
+                  {success ? (
+                    <Alert variant="filled" severity="success" sx={{width:'100%'}}>
+                      {'Password has been changed!'}
+                    </Alert>
+                  ) : null}
                 </Box>
               </Box>
             </div>

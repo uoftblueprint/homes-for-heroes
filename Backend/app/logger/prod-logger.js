@@ -7,7 +7,7 @@ const getProdLogger = () =>
     format: combine(
       format.splat(), // String interpolation splat for %d %s-style messages.
       timestamp(),
-      errors({ stack: true }), // Show stacktrace in error msg
+      errors({ stack: false }), // Don't show stacktrace in error msg
       json(),
     ),
     transports: [new transports.Console()],

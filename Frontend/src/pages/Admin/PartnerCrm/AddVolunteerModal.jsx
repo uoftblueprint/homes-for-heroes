@@ -31,13 +31,41 @@ export default function AddVolunteerModal({ dialog, toggleDialog }) {
   const [date_joined, setDate] = React.useState('');
   const [role, setRole] = React.useState('');
   const [phone, setPhone] = React.useState('');
-  const [emailError, setEmailError] = React.useState(false);
+  const [email, setEmail] = React.useState('');
+  const [name_error, setNameError] = React.useState(false); 
+  const [village_error, setVillageError] = React.useState(false);
+  const [date_joined_error, setDateError] = React.useState(false);
+  const [role_error, setRoleError] = React.useState(false);
+  const [phone_error, setPhoneError] = React.useState(false);
+  const [email_error, setEmailError] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
+
+const fieldsValidated = () => {
+  if (
+  !validator.isEmpty(name) && 
+  !validator.isEmpty(village) &&
+  !validator.isEmpty(date_joined) &&
+  !validator.isEmpty(role) &&
+  validator.isMobilePhone(phone),
+  validator.isEmail(email)
+  ){
+    return true;
+  }
+  else{
+  setNameError(validator.isEmpty(name));  
+  setVillageError(validator.isEmpty(village));
+  setDateError(validator.isEmpty(date_joined));
+  setRoleError(validator.isEmpty(role));
+  setPhoneError(!validator.isMobilePhone(phone));
+  setEmailError(!validator.isEmail(email));
+  return false;
+  }
+}
 const handleAdd = () => {
-    let active = true;
+  if (fieldsValidated() === true){ 
     setLoading(true);
-    const url = `http://localhost:3000/api/volunteers/create?`;
+    const url = `/api/volunteers/create?`;
 
     fetch(url,{
       method: 'POST',
@@ -47,14 +75,21 @@ const handleAdd = () => {
       body: JSON.stringify({
         name: name,
         village: village, 
-        date_joined: JSON.stringify(date_joined).slice(1,11),
+        date_joined: date_joined,
         role: role,
-        phone: phone
+        phone: phone,
+        email: email
       })
     })
       .then((resp) => {
+        if (!resp.ok){
+          setLoading(false);
+          throw new Error();
+        }
+        else{ 
         setLoading(false);
         toggleDialog(false);
+        }
       })
       .catch(e => {
         const action = key => (
@@ -79,10 +114,7 @@ const handleAdd = () => {
           action,
         })
       });
-  }
-
-  const handleEmailChange = (e) => {
-    setEmailError(!validator.isEmail(e.target.value));    
+    }
   }
 
   return (
@@ -95,6 +127,8 @@ const handleAdd = () => {
             id="name"
             label="Name"
             value={name}
+            error={name_error}
+            helperText={name_error ? 'Please enter a valid name!' : ''}
             onChange={(e) => setName(e.target.value)}
             fullWidth
             variant="standard" 
@@ -105,6 +139,8 @@ const handleAdd = () => {
             id="village"
             label="Village" 
             value={village}
+            error={village_error}
+            helperText={village_error ? 'Please enter a valid village!': ''}
             onChange={(e) => setVillage(e.target.value)}
             fullWidth
             variant="standard" 
@@ -115,6 +151,8 @@ const handleAdd = () => {
             id="role"
             label="Role" 
             value={role}
+            error={role_error}
+            helperText={role_error ? 'Please enter a valid Role!' : ''}
             onChange={(e) => setRole(e.target.value)}
             fullWidth
             variant="standard" 
@@ -125,7 +163,22 @@ const handleAdd = () => {
             id="phone"
             label="Phone" 
             value={phone}
+            error={phone_error}
+            helperText={phone_error ? 'Please enter a valid Phone Number!' : ''}
             onChange={(e) => setPhone(e.target.value)}
+            fullWidth
+            variant="standard" 
+            sx={{ mb: 3 }} 
+            /> 
+            <TextField
+            autoFocus
+            margin="dense"
+            id="email"
+            label="Email" 
+            value={email}
+            error={email_error}
+            helperText={email_error ? 'Please enter a valid Email!' : ''}
+            onChange={(e) => setEmail(e.target.value)}
             fullWidth
             variant="standard" 
             sx={{ mb: 3 }} 
@@ -135,24 +188,30 @@ const handleAdd = () => {
               <MobileDatePicker 
               label="Date Joined"
               inputFormat="yyyy-MM-dd"
-              value={date_joined}
-              onChange={(v) => setDate(v)}
-              renderInput={(params) => <TextField {...params} />}
+              value={date_joined} 
+              onChange={(v) => setDate(JSON.stringify(v).slice(1,11))}
+              renderInput={(params) => <TextField 
+                error={date_joined_error}
+                helperText={date_joined_error ? 'Date cannot be empty!' : ''}
+                {...params} />}
               />
               :
               <DesktopDatePicker 
               label="Date Joined"
               inputFormat="yyyy-MM-dd"
               mask="____-__-__"
-              value={date_joined}
-              onChange={(v) => setDate(v)}
-              renderInput={(params) => <TextField {...params} />}
+              value={date_joined} 
+              onChange={(v) => setDate(JSON.stringify(v).slice(1,11))}
+              renderInput={(params) => <TextField 
+                error={date_joined_error}
+                helperText={date_joined_error ? 'Date cannot be empty!' : ''}
+                {...params} />}
               />
               }
             </LocalizationProvider>
         </DialogContent>
         <DialogActions>
-          <Button disabled={emailError} onClick={handleAdd}>Add Volunteer</Button>
+          <Button onClick={handleAdd}>Add Volunteer</Button>
           <Button onClick={() => toggleDialog(false)}>Cancel</Button>
         </DialogActions>
       </Dialog>

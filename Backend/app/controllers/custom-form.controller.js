@@ -27,9 +27,11 @@ const customFormController = {
 
   async createCustomForm(req, res, next) {
     try {
+      const details = req.body;
+      details.admin_id = req.user.user_id;
       const form = new CustomForm(req.body);
       const form_id = await form.create();
-      res.json(form_id);
+      res.json({ form_id });
     } catch (err) {
       next(err);
     }

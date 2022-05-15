@@ -80,7 +80,7 @@ export default function SignupForm() {
 
   function fetchPartners() {
     return new Promise((resolve) => {
-      fetch('http://localhost:3000/api/partners')
+      fetch('/api/partners')
         .then((resp) => resp.json())
         .then((data) => resolve(data));
     });
@@ -88,7 +88,7 @@ export default function SignupForm() {
 
   function fetchRoleID() {
     return new Promise((resolve, reject) => {
-      fetch(`http://localhost:3000/api/checkJWT/${jwt}`)
+      fetch(`/api/checkJWT/${jwt}`)
         .then((resp) => resp.json())
         .then((data) => resolve(data))
         .catch(reject);
@@ -200,7 +200,7 @@ export default function SignupForm() {
   };
 
   function pushInfo() {
-    fetch(`http://localhost:3000/api/signup`, requestOptions)
+    fetch(`/api/signup`, requestOptions)
       .then((resp) => resp.json())
       .then((resp) => {
         if (resp.success) {

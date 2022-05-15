@@ -27,11 +27,25 @@ module.exports = (app) => {
   );
 
   app.get(
+    '/getVeteranCSV',
+    isPrivileged,
+    validationSchema.getCSVSchema,
+    validationErrorHandler,
+    customers.getCSV,
+  );
+
+  app.get(
     '/getCustomerInfo/:user_id',
     isPrivileged,
     validationSchema.getCustomerInfoSchema,
     validationErrorHandler,
     customers.getCustomerInfo,
+  );
+
+  app.get(
+    '/getCustomerInfo',
+    isAuthenticated,
+    customers.getSelfCustomerInfo,
   );
 
   app.get(
@@ -42,6 +56,13 @@ module.exports = (app) => {
     customers.getAlertCase,
   );
 
+  app.get(
+    '/customers/:user_id/alertCaseID',
+    validationSchema.getAlertCaseIDSchema,
+    validationErrorHandler,
+    customers.getAlertCaseID,
+  );
+
   app.put(
     '/customers/:user_id/alertCase',
     isPrivileged,
@@ -50,12 +71,12 @@ module.exports = (app) => {
     customers.setAlertCase,
   );
 
-  app.put(
-    '/userinfo',
+  app.post(
+    '/updateUserInfo',
     isAuthenticated,
-    validationSchema.putUserInfoSchema,
+    validationSchema.updateUserInfoSchema,
     validationErrorHandler,
-    customers.putUserInfo,
+    customers.updateUserInfo,
   );
 
   app.patch(
@@ -66,11 +87,30 @@ module.exports = (app) => {
     customers.patchChangePassword,
   );
 
-  app.get(
-    '/getUsersInfoCSV',
-    isPrivileged,
-    validationSchema.getUserInfoCSVSchema,
+  app.patch(
+    '/changePassword',
+    isAuthenticated,
+    validationSchema.patchChangePasswordSchema,
     validationErrorHandler,
-    customers.getUserInfoCSV,
+    customers.patchChangePassword,
   );
+
+  app.post(
+    '/deleteVeteran',
+    isPrivileged,
+    validationSchema.deleteVeteranSchema,
+    validationErrorHandler,
+    customers.deleteVeteran,
+  );
+  app.get(
+    '/getToDo/:user_id', 
+    validationSchema.getToDoSchema,
+    validationErrorHandler,
+    customers.getToDo
+  );
+  app.post(
+    '/updateToDo/:user_id',
+    validationSchema.putToDoSchema,
+    validationErrorHandler,
+    customers.updateToDo);
 };

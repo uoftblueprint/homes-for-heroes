@@ -13,9 +13,12 @@ import CaseCard from './CaseCard';
 export default function CaseList() {
   const [currentCase, setCurrentCase] = useState({});
   const [users, setUsers] = useState([]);
+  const { search } = window.location;
+  const query = new URLSearchParams(search).get('search');
+  const [searchQuery, setSearchQuery] = useState(query || '');
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/customers`)
+    fetch(`/api/customers`)
       .then((response) => response.json())
       .then((res) => {
         setUsers(res.customers);
@@ -23,7 +26,7 @@ export default function CaseList() {
   }, []);
 
   const showCard = (id) => {
-    fetch(`http://localhost:3000/api/customers/${id}/alertCase`)
+    fetch(`/api/customers/${id}/alertCase`)
       .then((response) => response.json())
       .then((caseNote) => setCurrentCase(caseNote))
       .catch((err) => {
@@ -31,14 +34,13 @@ export default function CaseList() {
       });
   };
 
-  const filterPosts = (posts, query) => {
+  const filterUsers = (posts, query) => {
     if (!query) {
       return posts;
     }
 
     return posts.filter((post) => {
-      const postName = post.name.toLowerCase();
-      return postName.includes(query);
+      return post.name.includes(query);
     });
   };
 
@@ -59,7 +61,7 @@ export default function CaseList() {
         InputProps={{
           startAdornment: <SearchIcon fontSize="small" />,
         }}
-        onKeyPress={(e) => {}}
+        onInput={(e) => {setSearchQuery(e.target.value)}}
       />
       <List
         sx={
@@ -69,8 +71,7 @@ export default function CaseList() {
           } /*{ width: '100%', maxWidth: 400, bgcolor: 'gray' }*/
         }
       >
-        {users
-          ? users.map((user) => {
+        {users ? filterUsers(users, searchQuery).map((user) => {
               return (
                 <>
                   <ListItem
