@@ -56,6 +56,13 @@ module.exports = (app) => {
     customers.getAlertCase,
   );
 
+  app.get(
+    '/customers/:user_id/alertCaseID',
+    validationSchema.getAlertCaseIDSchema,
+    validationErrorHandler,
+    customers.getAlertCaseID,
+  );
+
   app.put(
     '/customers/:user_id/alertCase',
     isPrivileged,
@@ -95,5 +102,15 @@ module.exports = (app) => {
     validationErrorHandler,
     customers.deleteVeteran,
   );
-
+  app.get(
+    '/getToDo/:user_id', 
+    validationSchema.getToDoSchema,
+    validationErrorHandler,
+    customers.getToDo
+  );
+  app.post(
+    '/updateToDo/:user_id',
+    validationSchema.putToDoSchema,
+    validationErrorHandler,
+    customers.updateToDo);
 };

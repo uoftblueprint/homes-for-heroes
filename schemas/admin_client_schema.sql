@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS client_users (
     verified BOOLEAN NOT NULL,
     oauth BOOLEAN NOT NULL,
     alert_case_id INT UNIQUE,
+    todo JSON NOT NULL,
     PRIMARY KEY (user_id),
     FOREIGN KEY (alert_case_id)
         REFERENCES cases(case_id)
@@ -51,6 +52,8 @@ DROP TABLE IF EXISTS cases;
 CREATE TABLE IF NOT EXISTS cases (
     user_id INT NOT NULL,
     admin_id INT NOT NULL,
+    title TEXT,
+    category INT NOT NULL,
     notes TEXT,
     last_update DATETIME NOT NULL DEFAULT NOW(),
     case_id INT NOT NULL AUTO_INCREMENT,

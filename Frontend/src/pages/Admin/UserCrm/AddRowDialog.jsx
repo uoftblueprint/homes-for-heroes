@@ -128,7 +128,7 @@ export default function AddRowButton({ dialog, toggleDialog }) {
             label="Email" 
             value={email}
             error={email_error}
-            helperText={email ? 'Please enter a valid Email!' : ''}
+            helperText={email_error ? 'Please enter a valid Email!' : ''}
             onChange={(e) => setEmail(e.target.value)}
             fullWidth
             variant="standard" 
