@@ -1,20 +1,16 @@
 const { getMockReq, getMockRes } = require('@jest-mock/express');
 const supporterController = require('../../../app/controllers/supporter.controller');
 const Supporter = require('../../../app/models/supporter.model');
-jest.mock('../../../app/models/supporter.model');
 
 const mockSupporterInfo = { info_1: 'value_1' };
 const mockPage = { page: 'page_mock' };
-const mockSupporterId = 1;
 const mockError = new Error('mock Error');
 
-Supporter.mockImplementation(() => {
-  return {
-    queryData: jest.fn(),
-    listAll: jest.fn(),
-    updateInfo: jest.fn(),
-  };
-});
+jest.mock('../../../app/models/supporter.model', () => ({
+  queryData: jest.fn(),
+  listAll: jest.fn(),
+  updateInfo: jest.fn(),
+}));
 
 const { res, next, clearMockRes } = getMockRes();
 

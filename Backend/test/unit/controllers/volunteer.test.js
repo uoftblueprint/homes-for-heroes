@@ -1,20 +1,16 @@
 const { getMockReq, getMockRes } = require('@jest-mock/express');
 const volunteerController = require('../../../app/controllers/volunteer.controller');
 const Volunteer = require('../../../app/models/volunteer.model');
-jest.mock('../../../app/models/volunteer.model');
 
 const mockVolunteerInfo = { info_1: 'value_1' };
 const mockPage = { page: 'page_mock' };
-const mockVolunteerId = 1;
 const mockError = new Error('mock Error');
 
-Volunteer.mockImplementation(() => {
-  return {
-    queryData: jest.fn(),
-    listAll: jest.fn(),
-    updateInfo: jest.fn(),
-  };
-});
+jest.mock('../../../app/models/volunteer.model', () => ({
+  queryData: jest.fn(),
+  listAll: jest.fn(),
+  updateInfo: jest.fn(),
+}));
 
 const { res, next, clearMockRes } = getMockRes();
 

@@ -1,20 +1,16 @@
 const { getMockReq, getMockRes } = require('@jest-mock/express');
 const partnerController = require('../../../app/controllers/partner.controller');
 const Partner = require('../../../app/models/partner.model');
-jest.mock('../../../app/models/partner.model');
 
 const mockPartnerInfo = { info_1: 'value_1' };
 const mockPage = { page: 'page_mock' };
-const mockPartnerId = 1;
 const mockError = new Error('mock Error');
 
-Partner.mockImplementation(() => {
-  return {
-    queryData: jest.fn(),
-    listAll: jest.fn(),
-    updateInfo: jest.fn(),
-  };
-});
+jest.mock('../../../app/models/partner.model', () => ({
+  queryData: jest.fn(),
+  listAll: jest.fn(),
+  updateInfo: jest.fn(),
+}));
 
 const { res, next, clearMockRes } = getMockRes();
 
