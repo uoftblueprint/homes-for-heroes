@@ -4,7 +4,7 @@
   "description": "Node.js Restful CRUD API with Node.js, Express and MySQL",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --detectOpenHandles",
     "dev": "NODE_ENV=development nodemon server.js",
     "start": "NODE_ENV=production node server.js"
   },
@@ -43,10 +43,11 @@
     "winston": "^3.5.1"
   },
   "devDependencies": {
+    "@jest-mock/express": "^1.4.5",
     "cross-env": "^7.0.3",
     "jest": "^27.5.1",
     "nodemon": "^2.0.15",
-    "supertest": "^6.2.2"
+    "supertest": "^6.2.3"
   },
   "nodemonConfig": {
     "watch": [
