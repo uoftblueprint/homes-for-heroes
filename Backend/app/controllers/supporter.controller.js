@@ -1,10 +1,9 @@
 const Supporter = require('../models/supporter.model');
-const Json2csvParser = require('json2csv').Parser;``
+const Json2csvParser = require('json2csv').Parser;
 const logger = require('../logger');
 
 const supporterController = {
-
-    async getData(req, res, next) {
+  async getData(req, res, next) {
     try {
       logger.debug(req.query);
       const data = await Supporter.queryData(req.query);
@@ -12,23 +11,21 @@ const supporterController = {
     } catch (err) {
       next(err);
     }
-    },
+  },
 
-    async updateInfo(req, res) {
-      try {
-        logger.debug(req.body);
-        for (var key in req.body) {
-          if (req.body.hasOwnProperty(key)) {
-            await Supporter.updateInfo(key, req.body[key]);
-          }
+  async updateInfo(req, res, next) {
+    try {
+      logger.debug(req.body);
+      for (var key in req.body) {
+        if (req.body.hasOwnProperty(key)) {
+          await Supporter.updateInfo(key, req.body[key]);
         }
-        res.json({ success: true });
-      } catch (err) {
-        console.error(err);
-        res.status(500);
-            res.send({ error: err });
-        }
-    },
+      }
+      res.json({ success: true });
+    } catch (err) {
+      next(err);
+    }
+  },
   async getAllSupporters(req, res, next) {
     try {
       const results = await Supporter.listAll();
@@ -50,21 +47,21 @@ const supporterController = {
     }
   },
 
-  async delete(req, res) {
+  async delete(req, res, next) {
     try {
       logger.debug(req.body);
-      await Promise.all(req.body.rows.map(async (el) => { 
-        Supporter.delete(el)
-      }));
+      await Promise.all(
+        req.body.rows.map(async (el) => {
+          Supporter.delete(el);
+        })
+      );
       res.json({ success: true });
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
-  }, 
+  },
 
-  async getCSV(req, res) {
+  async getCSV(req, res, next) {
     try {
       logger.debug(req.query);
       const info = await Supporter.getCSV(req.query);
@@ -73,16 +70,13 @@ const supporterController = {
       const resultsCSV = jsonParser.parse(infoJson);
       res.setHeader(
         'Content-disposition',
-        'attachment; filename=usersInfo.csv',
+        'attachment; filename=usersInfo.csv'
       );
       res.set('Content-Type', 'text/csv');
       res.send(resultsCSV);
       logger.info('File successfully downloaded.');
-
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err }); 
+      next(err);
     }
   },
 };
