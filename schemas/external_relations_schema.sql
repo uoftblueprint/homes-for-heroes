@@ -2,8 +2,7 @@ CREATE SCHEMA IF NOT EXISTS homes_for_heroes;
 
 USE homes_for_heroes;
 
-DROP TABLE IF EXISTS partners;
-CREATE TABLE partners (
+CREATE TABLE IF NOT EXISTS partners (
     partner_id INT NOT NULL AUTO_INCREMENT,
     org_name CHAR(255) NOT NULL UNIQUE,
     city CHAR(255),
@@ -14,8 +13,7 @@ CREATE TABLE partners (
     PRIMARY KEY (partner_id)
 );
 
-DROP TABLE IF EXISTS volunteers;
-CREATE TABLE volunteers (
+CREATE TABLE IF NOT EXISTS volunteers (
     volunteer_id INT NOT NULL AUTO_INCREMENT,
     name CHAR(255) NOT NULL,
     village CHAR(255),
@@ -26,8 +24,7 @@ CREATE TABLE volunteers (
     PRIMARY KEY (volunteer_id)
 );
 
-DROP TABLE IF EXISTS supporters;
-CREATE TABLE supporters (
+CREATE TABLE IF NOT EXISTS supporters (
     supporter_id INT NOT NULL AUTO_INCREMENT,
     name CHAR(255) NOT NULL,
     date_gifted DATE NOT NULL,

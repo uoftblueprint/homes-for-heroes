@@ -2,8 +2,7 @@ CREATE SCHEMA IF NOT EXISTS homes_for_heroes;
 
 USE homes_for_heroes;
 
-DROP TABLE IF EXISTS CustomForm;
-CREATE TABLE CustomForm (
+CREATE TABLE IF NOT EXISTS CustomForm (
     form_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     admin_id INT NOT NULL,
     created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -14,8 +13,7 @@ CREATE TABLE CustomForm (
     CONSTRAINT FOREIGN KEY (admin_id) REFERENCES admin_users(user_id)
 );
 
-DROP TABLE IF EXISTS Questionnaire;
-CREATE TABLE Questionnaire (
+CREATE TABLE  IF NOT EXISTS  Questionnaire (
     questionnaire_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     form_id INT NOT NULL,

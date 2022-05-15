@@ -4,16 +4,16 @@ services:
         context: ./schemas
         #dockerfile: Database.Dockerfile
     ports:
-      - "${DB_PORT}:${DB_PORT}"
+      - "3007:${DB_PORT}"
+   
     environment:
       MYSQL_USER: 'hfh'
       MYSQL_PASSWORD: '${DB_PASSWORD}'
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
       MYSQL_DATABASE: '${DB_NAME}'
-
-
+      MYSQL_ROOT_HOST: '%'
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data7499:/var/lib/mysql
 
   frontend:
     build:
@@ -42,11 +42,16 @@ services:
     environment:
       REDIS_HOST: redis
       DB_HOST: db
+      DB_USER: 'hfh'
+      DB_PASSWORD: '${DB_PASSWORD}'
+      DB_ROOT_PASSWORD: '${DB_PASSWORD}'
+      DB_NAME: '${DB_NAME}'
+      MYSQL_ROOT_HOST: '%'
     env_file:
       - .env
 
 volumes:
     backend_data:
-    db_data:
+    db_data7499:
 
 version: "3.0"
