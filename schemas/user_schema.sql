@@ -6,17 +6,19 @@ USE homes_for_heroes;
 DROP TABLE IF EXISTS UserInfo;
 CREATE TABLE UserInfo (
     user_id INT PRIMARY KEY,
-    gender CHAR(1) NOT NULL,
-    email CHAR(255) NOT NULL,
-    applicant_phone CHAR(255) NOT NULL,
-    applicant_dob DATE ,
-    street_name CHAR(255),
-    curr_level  CHAR(255),
-    city CHAR(255) NOT NULL,
-    province CHAR(3) NOT NULL,
-    referral CHAR(255),
-    demographic CHAR(255),
-    CONSTRAINT FOREIGN KEY (user_id) REFERENCES client_users(user_id)
+    gender CHAR(1) DEFAULT NULL,
+    email CHAR(255) DEFAULT NULL,
+    applicant_phone CHAR(255) DEFAULT NULL,
+    applicant_dob DATE DEFAULT NULL,
+    street_name CHAR(255) DEFAULT NULL,
+    curr_level  CHAR(255) DEFAULT NULL,
+    city CHAR(255) DEFAULT NULL,
+    province CHAR(3) DEFAULT NULL,
+    referral CHAR(255) DEFAULT NULL,
+    outgoing CHAR(255) DEFAULT NULL,
+    income INT DEFAULT NULL,
+    demographic CHAR(255) DEFAULT NULL,
+    CONSTRAINT FOREIGN KEY (user_id) REFERENCES client_users(user_id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS NextKin;

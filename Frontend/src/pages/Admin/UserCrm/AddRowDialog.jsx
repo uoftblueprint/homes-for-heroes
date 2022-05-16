@@ -18,29 +18,21 @@ export default function AddRowButton({ dialog, toggleDialog }) {
   const [isLoading, setLoading] = React.useState(false); 
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState(''); 
-  const [gender, setGender] = React.useState('M');
-  const [phone, setPhone] = React.useState('');
   const [name_error, setNameError] = React.useState(false);
   const [email_error, setEmailError] = React.useState(false);
-  const [gender_error, setGenderError] = React.useState(false);
-  const [phone_error, setPhoneError] = React.useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
 
   const fieldsValidated = () => {
     if (
     !validator.isEmpty(name) && 
-    validator.isEmail(email) &&
-    validator.isAlpha(gender) &&
-    validator.isMobilePhone(phone)
+    validator.isEmail(email)
     ){
       return true;
     }
     else{
     setNameError(validator.isEmpty(name));  
     setEmailError(!validator.isEmail(email));
-    setGenderError(!validator.isAlpha(gender));
-    setPhoneError(!validator.isMobilePhone(phone));
     return false;
     }
   }
@@ -58,8 +50,6 @@ export default function AddRowButton({ dialog, toggleDialog }) {
         body: JSON.stringify({
           name: name,
           email: email,
-          gender: gender,
-          phone: phone
         })
       })
         .then((resp) => {
@@ -132,31 +122,7 @@ export default function AddRowButton({ dialog, toggleDialog }) {
             onChange={(e) => setEmail(e.target.value)}
             fullWidth
             variant="standard" 
-            /> 
-            <TextField
-            autoFocus
-            margin="dense"
-            id="gender"
-            label="Gender" 
-            value={gender}
-            error={gender_error}
-            helperText={phone_error ? 'Please enter a valid Gender!' : ''}
-            onChange={(e) => setGender(e.target.value)} 
-            fullWidth
-            variant="standard" 
-            /> 
-            <TextField
-            autoFocus
-            margin="dense"
-            id="phone"
-            label="Phone" 
-            value={phone}
-            error={phone_error}
-            helperText={phone_error ? 'Please enter a valid Phone Number!' : ''} 
-            onChange={(e) => setPhone(e.target.value)} 
-            fullWidth
-            variant="standard" 
-            /> 
+            />  
         </DialogContent>
         }
         <DialogActions>

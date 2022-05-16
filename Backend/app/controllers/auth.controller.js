@@ -14,34 +14,14 @@ const authController = {
   async signUp(req, res, next) {
     try {
       const {
-        name,
-        gender,
-        email,
         password,
-        phone,
-        applicant_dob,
-        street_name,
-        curr_level,
-        city,
-        province,
-        referral,
-        income, // TODO: figure out where to use these?
-        demographic, //
         jwt,
       } = req.body;
       const { id } = verifyEmailJWT(jwt);
       const user = await Customer.getById(id);
       if(!user.verified) {
-        await user.update(name, phone, email);
-        await user.updateUserInfo({
-          gender,
-          applicant_dob,
-          street_name,
-          curr_level,
-          city,
-          province,
-          referral,
-        });
+        console.log(req.body); 
+        await Customer.updateUserInfo(id, req.body);
         await user.changePassword(password);
         await Customer.verify(id);
         res.send({ success: true });
@@ -112,8 +92,10 @@ const authController = {
   },
   async createVeteran(req, res, next) {
     const { name, email } = req.body;
+    const chapter_id = req.user.chapter_id;
     try {
-      const tempCustomer = await Customer.createTemp(name, email, 0);
+      const tempCustomer = await Customer.createTemp(name, email, chapter_id, 0);
+      await Customer.createUserInfo(tempCustomer.user_id);
       const authToken = issueEmailJWT(tempCustomer);
       res.json({ success: true });
       await sendInviteLink(email, authToken);
@@ -124,7 +106,7 @@ const authController = {
   async createAdmin(req, res, next) {
     const { name, email, chapter_id } = req.body;
     try {
-      const tempCustomer = await Admin.createTemp(name, email, chapter_id);
+      const tempCustomer = await Admin.createTemp(name, email, chapter_id, 1); 
       const authToken = issueEmailJWT(tempCustomer);
       res.json({ success: true });
       await sendInviteLink(email, authToken);

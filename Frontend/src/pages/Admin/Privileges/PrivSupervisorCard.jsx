@@ -63,7 +63,7 @@ export default function PrivSupervisorCard({ chapters, chapterDialog, toggleChap
   const [deleteId, setDeleteId] = React.useState(null);
   const [supervisors, setSupervisors] = React.useState([]);
   const [currChapter, setChapter] = React.useState(chapters.length === 0 ? {
-    name: '',
+    chapter_name: '',
     chapter_id: null
   } : 
   chapters[0]
@@ -125,7 +125,7 @@ React.useEffect(() => {
           blurOnSelect
           value={currChapter}
           options={chapters}
-          getOptionLabel={option=> option.name}
+          getOptionLabel={option=> option.chapter_name}
           sx={{ width: 250, mt: '20px' }}
           renderInput={(params) => <TextField {...params} label="Location" />}
           onChange={(event, value) => {
@@ -135,7 +135,7 @@ React.useEffect(() => {
           }} 
         />
         <Grid container display="flex" direction="row" justify="space-evenly" sx={{ mt: '15px'}}>
-              <Typography>{currChapter.name} Supervisors</Typography>
+              <Typography>{currChapter.chapter_name} Supervisors</Typography>
               <Button
                 size="small"
                 onClick={() => toggleSvDialog(true)}
@@ -179,7 +179,7 @@ React.useEffect(() => {
                       </ListItemAvatar>
                       <ListItemText
                         primary={supervisor.name}
-                        secondary={`Supervisor of ${chapters.find(obj => obj.chapter_id === supervisor.chapter_id).name}`}
+                        secondary={`Supervisor of ${chapters.find(obj => obj.chapter_id === supervisor.chapter_id).chapter_name}`}
                       />
                     </ListItem>
                   );
@@ -187,7 +187,7 @@ React.useEffect(() => {
             </List>  
             }
           </CardContent>
-          <PrivSupervisorModal svDialog={svDialog} toggleSvDialog={toggleSvDialog} currChapter={currChapter} />
+          <PrivSupervisorModal svDialog={svDialog} toggleSvDialog={toggleSvDialog} chapters={chapters} currChapter={currChapter} />
           <PrivCreateAdmin caDialog={caDialog} toggleCaDialog={toggleCaDialog} currChapter={currChapter} />
           <PrivChapterModal chapterDialog={chapterDialog} toggleChapterDialog={toggleChapterDialog} />
           <PrivDeleteDialog dialog={deDialog} toggleDialog={toggleDeDialog} user_id={deleteId} /> 

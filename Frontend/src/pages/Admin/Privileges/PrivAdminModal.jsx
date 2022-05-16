@@ -158,7 +158,7 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog, state, 
                         startIcon={<CheckIcon />}
                         sx={{ color: "#BDBDBD", marginLeft: "auto" }}
                       >
-                        Already Admin
+                        Already Superadmin
                       </Button>
                     ) : (
                       <Button
@@ -167,7 +167,7 @@ export default function PrivAdminModal({ adminDialog, toggleAdminDialog, state, 
                         startIcon={<AddIcon />}
                         sx={{ color: "#B20009", marginLeft: "auto" }}
                       >
-                        Make Admin
+                        Make Superadmin
                       </Button>
                     )
                   }

@@ -25,20 +25,25 @@ const validationSchema = {
       .withMessage('start_date must be in format YYYY-MM-DD'),
   ],
   getUserDataSchema: [
-    query('name').optional(),
     query('email').optional(),
     query('applicant_phone').optional(),
-    query('street_name').optional(),
-    query('kin_name').optional(),
-    query('page').isInt({ min: 0 }),
-    query('page_size').isInt({ min: 0 }),
+    query('curr_level').optional(),
+    query('income').optional(),
+    query('referral').optional(),
+    query('outgoing').optional(),
+    query('demographic').optional(),
+    query('name').optional(),
+    query('chapter_name').optional()
   ],
   getCSVSchema: [
-    query('name').optional(),
-    query('email').optional(),
-    query('applicant_phone').optional(),
-    query('street_name').optional(),
-    query('kin_name').optional(),
+    query('email').isEmail().optional(),
+    query('applicant_phone').isMobilePhone().optional(),
+    query('curr_level').isString().isLength({ max: 255 }).optional(),
+    query('income').isInt().optional(),
+    query('referral').isString().isLength({ max: 255 }).optional(),
+    query('outgoing').isString().isLength({ max: 255 }).optional(),
+    query('demographic').isString().isLength({max: 255}).optional(),
+    query('name').isString().optional()
   ],
   updateUserInfoSchema: [
     //body('gender').isString().isLength({ min: 1, max: 1 }).optional(),
@@ -49,20 +54,15 @@ const validationSchema = {
     //body('curr_level').isString().isLength({ max: 255 }).optional(), // Do we want to let the user set this??
     // TODO: Maybe force these two to be enums?
     body('*.email').isEmail().optional(),
-    body('*.applicant_phone').optional(),
+    body('*.applicant_phone').isMobilePhone().optional(),
     body('*.curr_level').isString().isLength({ max: 255 }).optional(),
-    body('*.incoming_referral').isString().isLength({ max: 255 }).optional(),
-    body('*.outgoing_referral').isString().isLength({ max: 255 }).optional(),
-    body('*.name')
+    body('*.income').isInt().optional(),
+    body('*.referral').isString().isLength({ max: 255 }).optional(),
+    body('*.outgoing').isString().isLength({ max: 255 }).optional(),
+    body('*.demographic').isString().isLength({max: 255}).optional(),
+    body('*.name').isString().optional()
 
-  ],
-  getUserInfoCSVSchema: [
-    query('name').optional(),
-    query('email').optional(),
-    query('phone').optional(),
-    query('address').optional(),
-    query('kin_name').optional(),
-  ],
+  ], 
   putToDoSchema: [
     param('user_id').isInt({ min: 0 }).withMessage('Invalid user_id'),
     query('todo').isJSON().isLength({ min: 0 }).withMessage('Invalid To Do list passed'),
