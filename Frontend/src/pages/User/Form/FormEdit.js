@@ -12,6 +12,7 @@ function FormEdit() {
     const [title, setTitle] = useState("");
     const [questions, setQuestions] = useState([]);
     const [level, setLevel] = useState({});
+    const [errors, setErrors] = useState([]);
 
     useEffect(() => {
         (async () => {
@@ -36,8 +37,14 @@ function FormEdit() {
         (async () => {
             const res = await updateFormAPI(formId, formBody);
             if (res.status !== 200) {
-                // TODO error handling
-                alert("Error!");
+                if (res.status === 400) {
+                    alert('Input error, please reference the form for incorrect entries')
+                    setErrors((await res.json()).errors);
+                } else {
+                    const er = await res.json();
+                    console.log(er);
+                    alert(er.error);
+                }
             } else {
                 alert("Successfully updated!");
             }
@@ -50,7 +57,7 @@ function FormEdit() {
             level={level}
             questions={questions}
             saveDraft={updateForm}
-            err={false}
+            err={errors}
         />
     )
 }
