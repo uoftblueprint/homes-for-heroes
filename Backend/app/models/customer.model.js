@@ -177,7 +177,6 @@ Customer.getAlertCase = function (user_id) {
       [user_id],
       (err, rows) => {
         if (err) reject(err);
-        // else if (rows[0] === undefined) reject('Alert note does not exist.');
         else resolve(rows[0]);
       },
     );

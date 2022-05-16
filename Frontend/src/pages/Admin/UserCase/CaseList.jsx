@@ -26,14 +26,22 @@ export default function CaseList() {
       });
   }, []);
 
-  const showCard = (id) => {
-    setCurrentOpen(id)
-    fetch(`/api/customers/${id}/alertCase`)
-      .then((response) => response.json())
-      .then((caseNote) => setCurrentCase(caseNote))
-      .catch((err) => {
-        console.error(err);
-      });
+  const showCard = (id) => { 
+      (async () => {
+        setCurrentOpen(id)
+        const resp = await fetch(`/api/customers/${id}/alertCase`)
+        .then((resp) => {
+          return new Promise((resolve) =>{
+            if (resp.ok){
+              resolve(resp.json())
+            }
+            else{
+              resolve(null)
+            }
+          })
+        })
+        .then((resp) => setCurrentCase(resp));
+      })();
   };
 
   const filterUsers = (posts, query) => {

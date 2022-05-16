@@ -38,7 +38,7 @@ const customerController = {
     try {
       const { user_id } = req.params;
       const caseNote = await Customer.getAlertCase(user_id);
-      res.json(caseNote);
+      caseNote ? res.json(caseNote) : next(new Error('No Alerts'));
     } catch (err) {
       next(err);
     }
