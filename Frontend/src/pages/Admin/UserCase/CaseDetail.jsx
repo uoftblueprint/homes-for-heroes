@@ -348,7 +348,7 @@ export default function CaseCard() {
               <Typography variant="h6">{curr.name}'s To-Do list:</Typography>
               <Button onClick={handleOpen} startIcon={<AddIcon />}>Add Item</Button>
               <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                {todo.map(item => {
+                {!todo ? (<></>) : todo.map(item => {
                   const labelId = `checkbox-list-label-${item.value}`;
                   return (
                     <ListItem

@@ -11,7 +11,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import CaseCard from './CaseCard';
 
 export default function CaseList() {
-  const [currentCase, setCurrentCase] = useState({});
+  const [currentCase, setCurrentCase] = useState(null);
+  const [currentOpen, setCurrentOpen] = useState(null);
   const [users, setUsers] = useState([]);
   const { search } = window.location;
   const query = new URLSearchParams(search).get('search');
@@ -26,6 +27,7 @@ export default function CaseList() {
   }, []);
 
   const showCard = (id) => {
+    setCurrentOpen(id)
     fetch(`/api/customers/${id}/alertCase`)
       .then((response) => response.json())
       .then((caseNote) => setCurrentCase(caseNote))
@@ -79,9 +81,13 @@ export default function CaseList() {
                     sx={{ m: 1 }}
                     secondaryAction={
                       <IconButton edge="end" aria-label="show-card">
-                        {currentCase.user_id === user.user_id ? (
+                        {currentOpen === user.user_id ? (
                           <ExpandLessOutlinedIcon
-                            onClick={() => setCurrentCase({})}
+                            onClick={() => {
+                              setCurrentCase(null);
+                              setCurrentOpen(null);
+                            }
+                            }
                           />
                         ) : (
                           <ExpandMoreOutlinedIcon
@@ -93,7 +99,7 @@ export default function CaseList() {
                   >
                     {user.name}
                   </ListItem>
-                  {currentCase.user_id === user.user_id ? (
+                  {currentOpen === user.user_id ? (
                     <CaseCard
                       key={'c' + user.user_id}
                       sx={{ boxShadow: 0 }}

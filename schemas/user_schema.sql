@@ -18,7 +18,7 @@ CREATE TABLE UserInfo (
     outgoing CHAR(255) DEFAULT NULL,
     income INT DEFAULT NULL,
     demographic CHAR(255) DEFAULT NULL,
-    CONSTRAINT FOREIGN KEY (user_id) REFERENCES client_users(user_id)
+    CONSTRAINT FOREIGN KEY (user_id) REFERENCES client_users(user_id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS NextKin;

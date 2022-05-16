@@ -187,7 +187,7 @@ React.useEffect(() => {
             </List>  
             }
           </CardContent>
-          <PrivSupervisorModal svDialog={svDialog} toggleSvDialog={toggleSvDialog} currChapter={currChapter} />
+          <PrivSupervisorModal svDialog={svDialog} toggleSvDialog={toggleSvDialog} chapters={chapters} currChapter={currChapter} />
           <PrivCreateAdmin caDialog={caDialog} toggleCaDialog={toggleCaDialog} currChapter={currChapter} />
           <PrivChapterModal chapterDialog={chapterDialog} toggleChapterDialog={toggleChapterDialog} />
           <PrivDeleteDialog dialog={deDialog} toggleDialog={toggleDeDialog} user_id={deleteId} /> 

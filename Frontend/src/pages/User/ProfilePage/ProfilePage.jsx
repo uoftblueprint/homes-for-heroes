@@ -17,7 +17,13 @@ import { useState } from 'react';
 import InfoIcon from '@mui/icons-material/Info';
 import SettingsIcon from '@mui/icons-material/Settings';
 import EditIcon from '@mui/icons-material/Edit';
-
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+import MobileDatePicker from '@mui/lab/MobileDatePicker';
+import useMediaQuery from "@mui/material/useMediaQuery";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import { useSelector } from 'react-redux';
@@ -48,6 +54,8 @@ function TabPanel(props) {
 
 export default function ProfilePage({ user_id }) {
   // Tabs
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
   const [value, setValue] = React.useState(0);
 
   const [success, setSuccess] = React.useState(false);
@@ -89,7 +97,7 @@ export default function ProfilePage({ user_id }) {
         credentials: 'include'
       })
           .then(resp => resp.json())
-          .then(data => resolve(data))
+          .then(data => resolve(data.customerInfo[0]))
     })
   }
 
@@ -98,22 +106,22 @@ export default function ProfilePage({ user_id }) {
       setLoading(true);
       const data = await fetchInfo();
       setUserInfo({
-            name: data.customerInfo[0].name,
-            email: data.customerInfo[0].email,
-            phone: data.customerInfo[0].phone,
-            street_name: data.customerInfo[0].street_name,
-            city: data.customerInfo[0].city,
-            province: data.customerInfo[0].province,
-            applicant_dob:data.customerInfo[0].applicant_dob.slice(0, 10),
+            name: data.name,
+            email: data.email,
+            phone: data.phone,
+            street_name: data.street_name,
+            city: data.city,
+            province: data.province,
+            applicant_dob:data.applicant_dob.slice(0, 10),
       });
       setFormInfo({
-          name: data.customerInfo[0].name,
-          email: data.customerInfo[0].email,
-          phone: data.customerInfo[0].phone,
-          street_name: data.customerInfo[0].street_name,
-          city: data.customerInfo[0].city,
-          province: data.customerInfo[0].province,
-          applicant_dob:data.customerInfo[0].applicant_dob.slice(0, 10),
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          street_name: data.street_name,
+          city: data.city,
+          province: data.province,
+          applicant_dob:data.applicant_dob.slice(0, 10),
       });
       setLoading(false);
     })();
@@ -125,7 +133,7 @@ export default function ProfilePage({ user_id }) {
     event.preventDefault();
     setErrorStr('')
 
-    if (!validator.isEmail(formInfo.email) | !validator.isMobilePhone(formInfo.phone) | !validator.isDate(formInfo.applicant_dob)) {
+    if (!validator.isEmail(formInfo.email) | !validator.isMobilePhone(formInfo.phone)) {
        let errorLst = []
 
        if (!validator.isEmail(formInfo.email)) {
@@ -149,8 +157,7 @@ export default function ProfilePage({ user_id }) {
     }
   };
 
-  const handleInputChange = (event) => {
-    const { id, value } = event.target;
+  const handleInputChange = (id, value) => {
     setFormInfo({
        ...formInfo,
       [id]: value
@@ -158,23 +165,27 @@ export default function ProfilePage({ user_id }) {
   };
 
   const requestOptions = {
-    method: 'PUT',
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({
-       name: formInfo.name,
-       email: formInfo.email,
-       phone: formInfo.phone,
-       street_name: formInfo.street_name,
-       city: formInfo.city,
-       province: formInfo.province,
-       applicant_dob: formInfo.applicant_dob
-    })
+    body: JSON.stringify(
+      {
+        [currentUserId]:
+        {
+          name: formInfo.name,
+          email: formInfo.email,
+          applicant_phone: formInfo.phone,
+          street_name: formInfo.street_name,
+          city: formInfo.city,
+          province: formInfo.province,
+          applicant_dob: formInfo.applicant_dob
+        }
+      }) 
  };
 
   const changeInfo = () => {
     console.log(requestOptions)
-    fetch('/api/userinfo', requestOptions)
+    fetch('/api/updateUserInfo', requestOptions)
       .then(response => response.json());
     setUserInfo({
       ...formInfo
@@ -240,15 +251,6 @@ export default function ProfilePage({ user_id }) {
     }
   }
 
-  function cleanVal(str) {
-    // formatting/shortening the superlong date-time
-    if (str[4] === '-' && str[7] === '-' && str[10] === 'T' && str[13] === ':' && str[16] === ':' && str.at(-1) === 'Z') {
-        return str.slice(0, 10);
-    }
-    else {
-        return str;
-    }
-  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -287,14 +289,68 @@ export default function ProfilePage({ user_id }) {
                 height: 500,
               }}
             >
-              {Object.entries(userInfo).map((row) => (
+              {Object.entries(userInfo).map((row) => {
+                if (row[0] === 'province') {
+                  return (
+                  <TextField
+                    required
+                    id={row[0]}
+                    sx={{mt: 1, mb: 1.5}}
+                    label="province"
+                    select
+                    name="Province"
+                    value={userInfo[row[0]]}
+                    onChange={e => handleInputChange(row[0], e.target.value)}
+                  >
+                    <MenuItem value={'ON'}>ON</MenuItem>
+                    <MenuItem value={'QC'}>QC</MenuItem>
+                    <MenuItem value={'AB'}>AB</MenuItem>
+                    <MenuItem value={'BC'}>BC</MenuItem>
+                    <MenuItem value={'NB'}>NB</MenuItem>
+                    <MenuItem value={'NL'}>NL</MenuItem>
+                    <MenuItem value={'PE'}>PE</MenuItem>
+                    <MenuItem value={'NS'}>NS</MenuItem>
+                    <MenuItem value={'MB'}>MB</MenuItem>
+                    <MenuItem value={'SK'}>SK</MenuItem>
+                    <MenuItem value={'YT'}>YT</MenuItem>
+                    <MenuItem value={'NT'}>NT</MenuItem>
+                    <MenuItem value={'NU'}>NU</MenuItem>
+                  </TextField>
+                  )
+                }
+                else if (row[0] === 'applicant_dob'){
+                  return (
+                    <LocalizationProvider sx={{mt: 10}} dateAdapter={AdapterDateFns}>
+                      {isMobile ?
+                        <MobileDatePicker
+                          required
+                          value={userInfo[row[0]]} 
+                          onChange={v => handleInputChange(row[0], v.toISOString().slice(0,10))}
+                          renderInput={(params) => <TextField
+                            {...params} />} 
+                        />
+                        :
+                        <DesktopDatePicker
+                          required
+                          label="Date of Birth"
+                          inputFormat='yyyy-MM-dd'
+                          mask='____-__-__'
+                          value={formInfo[row[0]].split('-').join('/')}
+                          onChange={(v) => handleInputChange(row[0], v.toISOString().slice(0,10))}
+                          renderInput={(params) => <TextField {...params} />}
+                        />
+                      }
+                    </LocalizationProvider>
+                  )
+                }
+                else{
+                return (
                 <TextField
                   required
                   id={row[0]}
                   label={cleanKey(row[0])}
-                  defaultValue={cleanVal(row[1])}
-                  value={userInfo[row[1]]}
-                  onChange={handleInputChange}
+                  value={userInfo[row[0]]}
+                  onChange={e => handleInputChange(row[0], e.target.value)}
                   size='standard'
                   variant='standard'
                   sx={{ 
@@ -304,7 +360,9 @@ export default function ProfilePage({ user_id }) {
                     mb: '8px',
                   }} 
                 />
-              ))}
+              )}
+            }
+              )}
               <Box
                 sx={{
                   display: 'inline-flex',
@@ -367,7 +425,7 @@ export default function ProfilePage({ user_id }) {
                           >
                               {<b>{cleanKey(row[0])}:</b>}
                           </TableCell>
-                          <TableCell align="right" style={{ fontSize: '16px'}}>{cleanVal(row[1])}</TableCell>
+                          <TableCell align="right" style={{ fontSize: '16px'}}>{row[1]}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
