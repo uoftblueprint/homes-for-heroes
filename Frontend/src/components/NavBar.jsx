@@ -55,7 +55,7 @@ const Header = (props) => {
   ];
 
   if (authLogin) {
-    if (roleId === ADMIN_ROLE_ID || roleId === SUPER_ADMIN_ROLE_ID) {
+    if (roleId === SUPER_ADMIN_ROLE_ID) {
       menuItems = [
         {
           menuTitle: 'User CRM',
@@ -79,6 +79,30 @@ const Header = (props) => {
         },
       ];
     }
+      else if (roleId === ADMIN_ROLE_ID){
+        menuItems = [
+        {
+          menuTitle: 'User CRM',
+          pageURL: '/usercrm',
+        },
+        {
+          menuTitle: 'User Case',
+          pageURL: '/usercase',
+        },
+        {
+          menuTitle: 'Forms',
+          pageURL: '/forms',
+        },
+      ];
+      }  
+      else{
+        menuItems = [ 
+        {
+          menuTitle: 'Forms',
+          pageURL: '/forms',
+        },
+      ];
+      }
 
     rightMenuItems = [
       {

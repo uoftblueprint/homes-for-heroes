@@ -7,73 +7,36 @@ const Admin = function (admin) {
   this.user_id = admin.user_id;
   this.chapter_id = admin.chapter_id;
   this.role_id = admin.role_id || 1;
-  this.adminCustomer = admin.adminCustomer;
 };
 
-Admin.create = function (name, email, phone, password, chapter_id, role_id = 1) {
+Admin.createTemp = function (name, email, chapter_id, role_id = 1, conn = null) {
   return new Promise((resolve, reject) => {
-    sql.getConnection((err, conn) => {
-      if (err) return reject(err);
-      conn.beginTransaction((err) => {
-        if (err) return reject(err);
-        const adminCustomer = Customer.create(name, phone, email, password, role_id, conn); // role_id of 1 (supervisor) by default
-        conn.query(
-          'INSERT INTO admin_users (user_id, chapter_id) VALUES (?, ?)',
-          [adminCustomer.user_id, chapter_id],
-          (err, result) => {
-            if (err) return conn.rollback(() => reject(err));
-            else if (!result.insertId) return reject(new Error('Could not create admin'));
-
-            conn.commit((err) => {
-              if (err) return conn.rollback(() => reject(err));
-              // Return a new admin
-              resolve(new Admin({
-                user_id: adminCustomer.user_id,
-                chapter_id,
-                role_id,
-                adminCustomer
-              }));
-            });
-          });
+    let txn = true;
+    if (conn === null) {
+      conn = sql;
+      txn = false;
+    }
+    conn.query(
+      'INSERT INTO client_users (name, email, chapter_id, role_id, verified, oauth) VALUES (?, ?, ?, ?, FALSE, FALSE)',
+      [name, email, chapter_id, role_id],
+      (err, result) => {
+        if (err) return txn ? conn.rollback(() => reject(err)) : reject(err);
+        resolve(
+          new Admin({
+            user_id: result.insertId,
+            chapter_id: chapter_id,
+            role_id: role_id,
+            email: email
+          }),
+        );
       });
-    });
   });
 };
 
-Admin.createTemp = function (name, email, chapter_id, role_id = 1) {
-  return new Promise((resolve, reject) => {
-    sql.getConnection((err, conn) => {
-      if (err) return reject(err);
-
-      conn.beginTransaction(async (err) => {
-        if (err) return reject(err);
-        const adminCustomer = await Customer.createTemp(name, email, role_id, conn); // role_id of 1 (supervisor) by default
-        conn.query(
-          'INSERT INTO admin_users (user_id, chapter_id) VALUES (?, ?)',
-          [adminCustomer.user_id, chapter_id],
-          (err, result) => { 
-            if (err) return conn.rollback(() => reject(err));
-            else if (result.insertId) return reject(new Error('Could not create admin'));
-
-            conn.commit((err) => {
-              if (err) return conn.rollback(() => reject(err));
-              // Return a new admin
-              resolve(new Admin({
-                user_id: adminCustomer.user_id,
-                chapter_id,
-                role_id,
-                adminCustomer
-              }));
-            });
-          });
-      });
-    });
-  });
-};
 
 Admin.listAll = function () {
   return new Promise((resolve, reject) => {
-    sql.query('SELECT a.*, c.* FROM admin_users AS a JOIN client_users AS c ON a.user_id = c.user_id', (err, admins) => {
+    sql.query('SELECT * FROM client_users where role_id = 2', (err, admins) => {
       if (err) reject(err);
       else {
         logger.debug('Admin.listAll: %o', admins);
@@ -85,7 +48,7 @@ Admin.listAll = function () {
 
 Admin.listAllRole = function (role_id) {
   return new Promise((resolve, reject) => {
-    sql.query('SELECT a.*, c.* FROM admin_users AS a JOIN client_users AS c ON a.user_id = c.user_id WHERE c.role_id = ?',
+    sql.query('SELECT * FROM client_users WHERE role_id = ?',
       [role_id],
       (err, admins) => {
         if (err) reject(err);
@@ -100,7 +63,7 @@ Admin.listAllRole = function (role_id) {
 Admin.getSearchAdmins = function (name) {
   return new Promise((resolve, reject) => {
     sql.query(
-      'SELECT a.*, c.* FROM admin_users AS a JOIN client_users AS c ON a.user_id = c.user_id WHERE c.name LIKE ? AND c.role_id > 0',
+      'SELECT * FROM client_users WHERE name LIKE ? AND role_id > 0',
       [`%${name}%`],
       (err, admins) => {
         if (err) reject(err);
@@ -119,7 +82,7 @@ Admin.makeSuperadmin = function (admin_id) {
         if (err) reject(err);
         else {
           sql.query(
-            'UPDATE admin_users SET chapter_id = NULL WHERE user_id = ?',
+            'UPDATE client_users SET chapter_id = NULL WHERE user_id = ?',
             [admin_id],
             (err, rows) => {
               if (err) reject(err);
@@ -164,7 +127,7 @@ Admin.assignChapter = function (admin_id, chapter_id) {
   logger.debug(admin_id);
   return new Promise((resolve, reject) => {
     sql.query(
-      'UPDATE admin_users SET chapter_id = ? WHERE user_id = ?',
+      'UPDATE client_users SET chapter_id = ? WHERE user_id = ?',
       [chapter_id, admin_id],
       (err) => {
         if (err) reject(err);
@@ -178,7 +141,7 @@ Admin.assignChapter = function (admin_id, chapter_id) {
 
 Admin.listByChapter = function(chapter_id) {
   return new Promise((resolve, reject) => {
-    sql.query('SELECT a.*, c.* FROM admin_users AS a JOIN client_users AS c ON a.user_id = c.user_id WHERE c.role_id = 1 AND a.chapter_id = ?',
+    sql.query('SELECT * FROM client_users WHERE role_id = 1 AND chapter_id = ?',
       [chapter_id], (err, supervisors) => {
         if (err) reject (err);
         else {
@@ -192,7 +155,7 @@ Admin.listByChapter = function(chapter_id) {
 Admin.getRole = function (admin_id) {
   return new Promise((resolve, reject) => {
     sql.query(
-      'SELECT c.role_id FROM admin_users a INNER JOIN client_users c ON a.user_id = c.user_id WHERE a.user_id = ?',
+      'SELECT * FROM client_users WHERE user_id = ?',
       [admin_id],
       (err, rows) => {
         if (err) reject(err);

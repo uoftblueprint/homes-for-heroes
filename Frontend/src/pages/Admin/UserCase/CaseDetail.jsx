@@ -94,7 +94,7 @@ export default function CaseCard() {
     fetch(`/api/getToDo/${id}`)
       .then((response) => response.json())
       .then((res) => {
-        setTodo(res.payload[0].todo.notes);
+        setTodo(JSON.parse(res.payload[0].todo).notes);
       });
     fetch(
       `/api/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`
@@ -137,7 +137,8 @@ export default function CaseCard() {
   }
 
   const addItem = () => {
-    var nextKey = Object.keys(todo).length;
+    var nextKey = todo ? Object.keys(todo).length : 1;
+    console.log(typeof todo);
     let temp = [...todo, {"id": nextKey, "value": body}];
     let payload = JSON.stringify({notes: temp});
     fetch(`/api/updateToDo/${id}?todo=${payload}`, postOptions)
@@ -348,7 +349,7 @@ export default function CaseCard() {
               <Typography variant="h6">{curr.name}'s To-Do list:</Typography>
               <Button onClick={handleOpen} startIcon={<AddIcon />}>Add Item</Button>
               <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-                {todo.map(item => {
+                {!todo ? (<></>) : todo.map(item => {
                   const labelId = `checkbox-list-label-${item.value}`;
                   return (
                     <ListItem

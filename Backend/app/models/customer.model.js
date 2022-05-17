@@ -1,13 +1,13 @@
 const sql = require('./db.js');
 // const CustomerQueryData = require('./customer-query-data.model.js');
 const CustomerProfile = require('./customer-profile.model');
-const UserInfo = require('./userinfo.model');
 const CustomerQueryData = require('./query-models/customer-query-data.model.js');
 const bcrypt = require('bcrypt');
 
 // constructor
 const Customer = function (customer) {
   this.user_id = customer.user_id;
+  this.chapter_id = customer.chapter_id;
   this.name = customer.name;
   this.email = customer.email;
   this.password = customer.password;
@@ -23,20 +23,10 @@ Customer.prototype.isValidPassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-Customer.prototype.updateUserInfo = function(user_info) {
-  return new Promise((resolve, reject) => {
-    // Don't allow the user to change these params through this API
-    user_info.user_id = this.user_id;
-    user_info.email = this.email;
-    user_info.applicant_phone = this.phone;
-    const userInfo = new UserInfo(user_info);
-    userInfo.update().then(resolve).catch(reject);
-  });
-};
 
 Customer.prototype.changePassword = function(password) {
   return new Promise((resolve, reject) => {
-    const hashedPassword = bcrypt.hashSync(password, 15);
+    const hashedPassword = bcrypt.hashSync(password, 12);
     sql.query('UPDATE client_users SET password = ? WHERE user_id = ?',
       [hashedPassword, this.user_id],
       (err) => {
@@ -46,45 +36,7 @@ Customer.prototype.changePassword = function(password) {
   });
 };
 
-Customer.prototype.update = function(name, phone, email) {
-  return new Promise((resolve, reject) => {
-    sql.query('UPDATE client_users SET name = ?, phone = ?, email = ? WHERE user_id = ?',
-      [name, phone, email, this.user_id],
-      (err) => {
-        if (err) reject(err);
-        else resolve(true);
-      });
-  });
-};
-
-Customer.create = function (name, phone, email, password, role_id = 0, conn = null) {
-  return new Promise((resolve, reject) => {
-    let txn = true;
-    if (conn === null) {
-      conn = sql;
-      txn = false;
-    }
-    const hashedPassword = bcrypt.hashSync(password, 15);
-    conn.query(
-      'INSERT INTO client_users (name, phone, email, password, role_id, verified, oauth) VALUES (?, ?, ?, ?, ?, FALSE, FALSE)',
-      [name, phone, email, hashedPassword, role_id],
-      (err, result) => {
-        if (err) return txn ? conn.rollback(() => reject(err)) : reject(err);
-        resolve(
-          new Customer({
-            user_id: result.insertId,
-            name: name,
-            email: email,
-            phone: phone,
-            verified: true,
-            oauth: false,
-          }),
-        );
-      });
-  });
-};
-
-Customer.createTemp = function (name, email, role_id = 0, conn = null) {
+Customer.createTemp = function (name, email, chapter_id, role_id = 0, conn = null) {
   return new Promise((resolve, reject) => {
     let txn = true;
     if (conn === null) {
@@ -92,13 +44,14 @@ Customer.createTemp = function (name, email, role_id = 0, conn = null) {
       txn = false;
     }
     conn.query(
-      'INSERT INTO client_users (name, email, role_id, verified, oauth) VALUES (?, ?, ?, FALSE, FALSE)',
-      [name, email, role_id],
+      'INSERT INTO client_users (name, email, chapter_id, role_id, verified, oauth) VALUES (?, ?, ?, ?, FALSE, FALSE)',
+      [name, email, chapter_id, role_id],
       (err, result) => {
         if (err) return txn ? conn.rollback(() => reject(err)) : reject(err);
         resolve(
           new Customer({
             user_id: result.insertId,
+            chapter_id: chapter_id,
             name: name,
             email: email,
             verified: false,
@@ -224,7 +177,6 @@ Customer.getAlertCase = function (user_id) {
       [user_id],
       (err, rows) => {
         if (err) reject(err);
-        else if (rows[0] === undefined) reject('Alert note does not exist.');
         else resolve(rows[0]);
       },
     );
@@ -286,22 +238,25 @@ Customer.queryUserData = function (query_params) {
     const page_query =`SELECT COUNT(*) AS count FROM client_users AS client 
      LEFT JOIN UserInfo AS info ON info.user_id = client.user_id
      LEFT JOIN NextKin AS kin ON kin.user_id = client.user_id
+     LEFT JOIN chapters AS chap ON (chap.chapter_id = client.chapter_id OR chap.chapter_id IS NULL)
      ${q.query}`
     const data_query = ` 
     SELECT
       client.user_id, client.name, client.email, client.verified,
-      info.gender, info.applicant_phone, info.applicant_dob, info.curr_level, info.city, info.province,
-      kin.kin_name, kin.relationship, kin.kin_phone, kin.kin_email
+      info.gender, info.applicant_phone, info.curr_level, info.city, info.province, info.income, info.outgoing, info.referral, info.demographic,
+      kin.kin_name, kin.relationship, kin.kin_phone, kin.kin_email,
+      chap.chapter_name
     FROM client_users AS client
       LEFT JOIN UserInfo AS info ON info.user_id = client.user_id
       LEFT JOIN NextKin AS kin ON kin.user_id = client.user_id 
+      LEFT JOIN chapters AS chap ON (chap.chapter_id = client.chapter_id OR chap.chapter_id IS NULL)
       ${q.query}
     ORDER BY client.name
     LIMIT ${q.offset}, ${q.limit}
     `;
-    sql.query(page_query, (error, page) => { 
+    sql.query(page_query, q.queryArray, (error, page) => { 
       if (error) reject(error);
-      sql.query(data_query, (err, row) => {
+      sql.query(data_query, q.queryArray, (err, row) => {
         if (err) reject(err);
         resolve([page[0],row]);
       }); 
@@ -320,26 +275,10 @@ Customer.updateUserInfo = function (user_id, query_params) {
     ${q.query}
     WHERE client.user_id = ${user_id} 
     `;
-    sql.query(data_query, (error, info) => { 
+    sql.query(data_query, q.queryArray, (error, info) => { 
       if (error) reject(error); 
       resolve(info);
     });
-  });
-};
-
-Customer.updateProfile = function(user_id, body) {
-  return new Promise((resolve, reject) => {
-    //console.log(query_params);
-    const cust = new CustomerProfile(user_id, body);
-    const queries = cust.buildQueries();
-    const qry = queries.join(';');
-    // need to update client_users and UserInfo tables separately
-    //sql_qry_c = 'UPDATE client_users SET phone = ? WHERE user_id = ?';
-    sql.query(qry,
-      (err, rows) => {
-        if (err) reject(err);
-        else resolve(rows);
-      });
   });
 };
 
@@ -378,20 +317,30 @@ Customer.getCSV = function (query_params) {
     q.constructQuery();
     const data_query = ` 
     SELECT
-      client.user_id, client.name, client.email, client.verified,
-      info.gender, info.applicant_phone, info.applicant_dob, info.curr_level, info.city, info.province,
-      kin.kin_name, kin.relationship, kin.kin_phone, kin.kin_email
+      client.user_id, client.name, client.email, client.verified, client.chapter_id,
+      info.gender, info.applicant_phone, info.curr_level, info.city, info.province, info.income, info.outgoing, info.referral, info.demographic, 
+      kin.kin_name, kin.relationship, kin.kin_phone, kin.kin_email,
+      chap.chapter_name
     FROM client_users AS client
       LEFT JOIN UserInfo AS info ON info.user_id = client.user_id
       LEFT JOIN NextKin AS kin ON kin.user_id = client.user_id 
+      LEFT JOIN chapters AS chap ON (chap.chapter_id = client.chapter_id OR chap.chapter_id IS NULL)
       ${q.query}
     ORDER BY client.name
     `;
-    sql.query(data_query, (err, row) => {
+    sql.query(data_query, q.queryArray, (err, row) => {
       if (err) reject(err);
       resolve(row);
     }); 
   });
 };
 
+Customer.createUserInfo = function (user_id) {
+  return new Promise((resolve, reject) => {
+    sql.query('INSERT INTO UserInfo (user_id) VALUES (?)', [user_id], (error, info) => { 
+      if (error) reject(error); 
+        resolve(info)
+    });
+  });
+};
 module.exports = Customer;

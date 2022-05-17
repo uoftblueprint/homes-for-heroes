@@ -56,7 +56,7 @@ function stringAvatar(name) {
   };
 }
 
-export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChapter }) {
+export default function PrivSupervisorModal({ svDialog, toggleSvDialog, chapters, currChapter }) {
   
   const theme = useTheme();
   const fullscreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -179,7 +179,7 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
                           startIcon={<CheckIcon />}
                           sx={{ color: "#BDBDBD", marginLeft: "auto" }}
                         >
-                          Already Supervisor
+                          Already in Chapter
                         </Button>
                       ) : (
                       <Button
@@ -188,7 +188,7 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
                         startIcon={<AddIcon />}
                         sx={{ color: "#B20009", marginLeft: "auto" }}
                       >
-                        Make Supervisor
+                        Assign Chapter
                       </Button>
                     )
                   }
@@ -198,6 +198,7 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, currChap
                   </ListItemAvatar>
                   <ListItemText
                     primary={admin.name} 
+                    secondary={`Supervisor of ${chapters.find(obj => obj.chapter_id === admin.chapter_id).chapter_name}`}
                   />
                 </ListItem>
               );

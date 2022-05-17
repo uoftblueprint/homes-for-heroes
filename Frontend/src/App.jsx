@@ -2,14 +2,15 @@ import './App.css';
 
 import AuthProtectedRoute from './components/routes/AuthProtectedRoute';
 import AdminProtectedRoute from './components/routes/AdminProtectedRoute';
+import SuperadminProtectedRoute from './components/routes/SuperadminProtectedRoute';
 import NavBar from './components/NavBar';
 
 import { Route, Switch } from 'react-router-dom';
 
-import FormTop from './pages/User/Form/FormTop.js';
-import FormCreate from './pages/User/Form/FormCreate';
+import FormTop from './pages/form/FormTop.js';
+import FormCreate from './pages/form/FormCreate';
 import FormView from './pages/User/Form/FormView';
-import FormEdit from './pages/User/Form/FormEdit';
+import FormEdit from './pages/form/FormEdit';
 import FormComplete from './pages/User/Form/FormComplete';
 
 import CaseList from './pages/Admin/UserCase/CaseList';
@@ -20,7 +21,7 @@ import VeteranCRM from './pages/Admin/UserCrm/VeteranCRM';
 import Logout from './pages/User/Login/Logout';
 import Privileges from './pages/Admin/Privileges/Privileges';
 import ProfilePage from './pages/User/ProfilePage/ProfilePage';
-import Home from './pages/User/Home/Home.jsx';
+import Home from './pages/Home.jsx';
 
 import ExternalRelations from './pages/Admin/PartnerCrm/ExternalRelations';
 import SignupForm from './components/SignupForm.jsx';
@@ -34,7 +35,7 @@ function App() {
       <header className="App-header">
         <NavBar /> 
         <Switch>
-          <Route
+          <AuthProtectedRoute
             exact
             from="/"
             render={(props) => <Home {...props} />}
@@ -70,7 +71,7 @@ function App() {
             path="/forms/complete/:formId"
             render={(props) => <FormComplete {...props} />}
           />
-          <AdminProtectedRoute
+          <SuperadminProtectedRoute
             exact
             path="/admin"
             render={(props) => <Privileges {...props} />}
@@ -85,7 +86,7 @@ function App() {
             path="/addcase/:id"
             render={(props) => <AddCase {...props} />}
           />
-          <Route
+          <SuperadminProtectedRoute
             exact
             path="/external/"
             render={(props) => <ExternalRelations {...props} />}

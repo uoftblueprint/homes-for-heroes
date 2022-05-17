@@ -36,7 +36,7 @@ module.exports = (app) => {
 
   app.get(
     '/getCustomerInfo/:user_id',
-    isPrivileged,
+    isAuthenticated,
     validationSchema.getCustomerInfoSchema,
     validationErrorHandler,
     customers.getCustomerInfo,

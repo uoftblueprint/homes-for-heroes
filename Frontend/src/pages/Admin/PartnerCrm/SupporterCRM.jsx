@@ -21,6 +21,7 @@ export default function SupporterCRM() {
     nameInRows: 'name',
     columns: [{
             editable: "true",
+            sanitize: (e) => {return e},
             validationMethod: (e) => {return validator.isEmpty(e)},
             field: "name",
             headerName: "NAME",
@@ -28,6 +29,7 @@ export default function SupporterCRM() {
           },
           {
             editable: "true",
+            sanitize: (e) => {return e.toISOString().split('T')[0]},
             validationMethod: (e) => {return !validator.isDate(e)},
             type: 'date',
             valueGetter: ({ value }) => value && new Date(value), 
@@ -37,6 +39,7 @@ export default function SupporterCRM() {
           },
           {
             editable: "true",
+            sanitize: (e) => {return e},
             validationMethod: (e) => {return validator.isEmpty(e)},
             field: "gift_provided",
             headerName: "GIFT PROVIDED",
@@ -44,6 +47,7 @@ export default function SupporterCRM() {
           }, 
           {
             editable: "true",
+            sanitize: (e) => {return e},
             validationMethod: (e) => {return !validator.isMobilePhone(e)},
             field: "phone",
             headerName: "PHONE",
@@ -51,6 +55,7 @@ export default function SupporterCRM() {
           }, 
           {
             editable: "true",
+            sanitize: (e) => {return e},
             validationMethod: (e) => {return !validator.isEmail(e)},
             field: "email",
             headerName: "EMAIL",

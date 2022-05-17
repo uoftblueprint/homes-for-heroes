@@ -22,12 +22,14 @@ export default function PartnerCRM() {
     columns: [{
             editable: "true",
             validationMethod: (e) => {return validator.isEmpty(e)},
+            sanitize: (e) => {return e},
             field: "org_name",
             headerName: "ORGANIZATION NAME",
             flex: 1.5,
           },
           {
             editable: "true",
+            sanitize: (e) => {return e},
             validationMethod: (e) => {return validator.isEmpty(e)},
             field: "city",
             headerName: "CITY",
@@ -35,6 +37,7 @@ export default function PartnerCRM() {
           },
           {
             editable: "true",
+            sanitize: (e) => {return e},
             validationMethod: (e) => {return validator.isEmpty(e)},
             field: "village",
             headerName: "VILLAGE",
@@ -42,6 +45,7 @@ export default function PartnerCRM() {
           }, 
           {
             editable: "true",
+            sanitize: (e) => {return e},
             validationMethod: (e) => {return validator.isEmpty(e)},
             field: "address",
             headerName: "ADDRESS",
@@ -49,6 +53,7 @@ export default function PartnerCRM() {
           },
           {
             editable: "true",
+            sanitize: (e) => {return e},
             validationMethod: (e) => {return  !validator.isMobilePhone(e)},
             field: "phone",
             headerName: "PHONE",
@@ -56,6 +61,7 @@ export default function PartnerCRM() {
           },
           {
             editable: "true",
+            sanitize: (e) => {return e},
             validationMethod: (e) => {return !validator.isEmail(e)},
             field: "email",
             headerName: "EMAIL",

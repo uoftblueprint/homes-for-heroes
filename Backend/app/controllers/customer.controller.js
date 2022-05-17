@@ -9,6 +9,7 @@ const customerController = {
     try {
       const { user_id } = req.params;
       const info = await Customer.getCustomerInfo(user_id);
+      console.log(info)
       res.send({ customerInfo: info });
     } catch (err) {
       next(err);
@@ -38,7 +39,7 @@ const customerController = {
     try {
       const { user_id } = req.params;
       const caseNote = await Customer.getAlertCase(user_id);
-      res.json(caseNote);
+      caseNote ? res.json(caseNote) : next(new Error('No Alerts'));
     } catch (err) {
       next(err);
     }
@@ -72,9 +73,22 @@ const customerController = {
     }
   },
   async getUserData(req, res, next) {
-    try {
-      const user_data = await Customer.queryUserData(req.query);
-      res.send(user_data);
+    try { 
+      if (req.user.role_id === 1){ 
+        const user_data = await Customer.queryUserData(
+          {
+            chapter_id: req.user.chapter_id,
+            ...req.query
+          });
+        res.send(user_data);
+      }
+      else if (req.user.role_id === 2){
+        const user_data = await Customer.queryUserData(req.query);
+        res.send(user_data);
+      }
+      else{
+        next(new Error('Insufficient Permissions'));
+      } 
     } catch (err) {
       next(err);
     }
@@ -168,7 +182,14 @@ const customerController = {
 
   async getCSV(req, res) {
     try {
-      const info = await Customer.getCSV(req.query);
+      let query = req.query;
+      if (req.user.role_id === 1) { 
+          query = {
+            chapter_id: req.user.chapter_id,
+            ...req.query
+          }
+      } 
+      const info = await Customer.getCSV(query);
       const infoJson = JSON.parse(JSON.stringify(info));
       const jsonParser = new Json2csvParser({ header: true });
       const resultsCSV = jsonParser.parse(infoJson);

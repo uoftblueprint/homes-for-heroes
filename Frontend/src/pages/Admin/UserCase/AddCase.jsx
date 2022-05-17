@@ -26,7 +26,7 @@ export default function AddCase () {
   const [body, setBody] = useState("");
   const [time, setTime] = useState(dt);
 
-  const [stat, setStat] = React.useState(4);
+  const [stat, setStat] = React.useState(0);
   const history = useHistory();
 
   const request = {

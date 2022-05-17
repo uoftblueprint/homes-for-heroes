@@ -14,6 +14,7 @@ const PartnerQueryData = function (query_params) {
 
   // final query
   this.query = '';
+  this.queryArray = [];
 
   this.constructQuery = function () {
     this.appendQueryParamKeyword(this.org_name, 'partners.org_name');
