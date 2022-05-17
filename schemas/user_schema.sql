@@ -1,10 +1,8 @@
-CREATE SCHEMA IF NOT EXISTS homes_for_heroes;
 
 USE homes_for_heroes;
 
 
-DROP TABLE IF EXISTS UserInfo;
-CREATE TABLE UserInfo (
+CREATE TABLE  IF NOT EXISTS UserInfo (
     user_id INT PRIMARY KEY,
     gender CHAR(1) DEFAULT NULL,
     email CHAR(255) DEFAULT NULL,
@@ -21,8 +19,7 @@ CREATE TABLE UserInfo (
     CONSTRAINT FOREIGN KEY (user_id) REFERENCES client_users(user_id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS NextKin;
-CREATE TABLE NextKin (
+CREATE TABLE IF NOT EXISTS NextKin (
     kin_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     kin_name CHAR(255) NOT NULL,
@@ -33,8 +30,7 @@ CREATE TABLE NextKin (
 	CONSTRAINT FOREIGN KEY (user_id) REFERENCES client_users(user_id)
 );
 
-DROP TABLE IF EXISTS MedicalHistory;
-CREATE TABLE MedicalHistory (
+CREATE TABLE IF NOT EXISTS MedicalHistory (
     user_id INT PRIMARY KEY, 
     vision_impairment BOOLEAN,
     incontinent BOOLEAN,
