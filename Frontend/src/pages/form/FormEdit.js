@@ -13,14 +13,15 @@ function FormEdit() {
     const [title, setTitle] = useState("");
     const [questions, setQuestions] = useState([]);
     const [level, setLevel] = useState({});
+    const [errors, setErrors] = useState([]);
 
     useEffect(() => {
         (async () => {
             setLoading(true);
             const form = await fetchFormByIdAPI(formId);
             setTitle(form[0].title);
-            setQuestions(form[0].form_body.questions);
-            setLevel(JSON.parse(form[0].curr_level));
+            setQuestions(JSON.parse(form[0].form_body).questions);
+            setLevel(form[0].curr_level);
             setLoading(false);
         })();
     }, [formId, refreshKey])
@@ -33,8 +34,19 @@ function FormEdit() {
 
     const updateForm = (formBody) => {
         (async () => {
-            await updateFormAPI(formId, formBody);
-            setRefreshKey(refreshKey => refreshKey + 1)
+            const res = await updateFormAPI(formId, formBody);
+            if (res.status !== 200) {
+                if (res.status === 400) {
+                    alert('Input error, please reference the form for incorrect entries')
+                    setErrors((await res.json()).errors);
+                } else {
+                    const er = await res.json();
+                    console.log(er);
+                    alert(er.error);
+                }
+            } else {
+                alert("Successfully updated!");
+            }
         })();
         alert("Successfully updated!");
     }
@@ -45,6 +57,7 @@ function FormEdit() {
             level={level}
             questions={questions}
             saveDraft={updateForm}
+            err={errors}
         />
     )
 }

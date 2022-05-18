@@ -69,7 +69,12 @@ function FormTop() {
                 const onClick = (e) => {
                     // e.stopPropagation(); // don't select this row after clicking
                     (async () => {
-                        await publishFormAPI(params.row)
+                        const res = await publishFormAPI(params.row.form_id)
+                        if (res.status !== 200) {
+                            alert("Error publishing!")
+                        } else {
+                            setRefreshKey(refreshKey => refreshKey + 1)
+                        }
                     })();
                     setRefreshKey(refreshKey => refreshKey + 1)
                 };

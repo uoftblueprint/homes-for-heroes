@@ -2,17 +2,18 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Divider from "@mui/material/Divider";
 import {fetchFormByIdAPI} from "../../../api/formAPI";
-import FormControl from "@mui/material/FormControl";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Button from "@mui/material/Button";
 import {useHistory} from "react-router-dom";
-import {FormControlLabel, Typography} from "@mui/material";
-import FormGridOptionView from "../../../components/form/FormGridOptionView";
+import {FormControl, FormGroup, FormControlLabel, MenuItem, Typography} from "@mui/material";
+import FormGridOptionView from "../../../components/form/CustomFormGridOptions";
 import Grid from "@mui/material/Grid";
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import QuestionTypeAnswer from "../../../components/form/QuestionTypeAnswer";
+import QuestionTypeAnswerClient from "../../../components/form/QuestionTypeAnswerClient";
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
 function FormComplete() {
 
@@ -26,7 +27,7 @@ function FormComplete() {
 
     const handleBack = () => {
         history.push("/")
-    }
+    } 
 
     const handleSubmit = () => {
         console.log(questions)
@@ -38,7 +39,7 @@ function FormComplete() {
             setLoading(true);
             const form = await fetchFormByIdAPI(formId);
             setTitle(form[0].title);
-            setQuestions(JSON.parse(form[0].form_body).questions);
+            setQuestions(JSON.parse(form[0].form_body).questions.map((item) => {return {...item, value: null}}));
             setLevel(form[0].curr_level.split(' '));
             setLoading(false);
         })();
@@ -57,41 +58,77 @@ function FormComplete() {
         )
     }
 
-    const renderOptionViewer = (choice, control, i) => {
+    const renderOptionViewer = (options, property) => {
+        Object.keys(options).map((choice, i) =>{ 
         return (
-            <Grid container key={`grid-${i}`} direction="row" alignItems="left">
-                <Grid item key={`grid-choice-${i}`}>
-                    <FormControlLabel
-                        key={`choice-${i}`}
-                        disabled
-                        control={control}
-                        label={<Typography>{choice}</Typography>}
-                    />
-                </Grid>
-            </Grid>
+                <FormControlLabel
+                    control={<property.view name={choice} checked={options[choice]} onChange={(e) => options[choice] = e.target.checked} />}
+                    label={choice}
+                />
+        )
+        }
         )
     }
 
     const renderView = (question) => {
-        const qTypeProperty = QuestionTypeAnswer(question.type);
-        if ([3, 4, 5].includes(qTypeProperty.qType)) {
+        if ([3, 4].includes(question.type)) {
+            const qTypeProperty = QuestionTypeAnswerClient(question);
+            let newOptions = {}
+            question.options.forEach((item) => { newOptions[item] = false });
+            question.value = newOptions;
             return (
-                <Grid container direction="column">
-                    {question.options.map((choice, i) => (
-                        renderOptionViewer(choice, qTypeProperty.options, i)
-                        )
-                    )}
-                </Grid>
+                <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
+                    <FormGroup>
+                        {Object.keys(question.value).map((choice, i) => {
+                            let checkValue;
+                            return (
+                                <FormControlLabel
+                                    control={<qTypeProperty.view name={choice} checked={checkValue} onChange={(e) => {checkValue = e.target.checked; question.value[choice] = checkValue}} />}
+                                    label={choice}
+                                />
+                            )
+                        }
+                        )}
+                    </FormGroup>
+                </FormControl>
             )
-        }  else if ([7, 8].includes(qTypeProperty.qType)) {
+        } else if ([5].includes(question.type)) {
+            const qTypeProperty = QuestionTypeAnswerClient(question);
             return (
+                <qTypeProperty.view {...qTypeProperty.viewProps}>
+                    {question.options.map((item) => (
+                        <MenuItem value={item}>{item}</MenuItem>
+                    ))}
+                </qTypeProperty.view>
+            )
+        }
+         else if ([7, 8].includes(question.type)) {
+            const qTypeProperty = QuestionTypeAnswerClient(question);
+            let newRows = [];
+            question.rows.forEach((row, i) => {
+                let newRow = {
+                    id: i,
+                    name: row
+                }
+                question.options.forEach((column) => newRow[column] = false);
+                newRows.push(newRow);
+            })
+            question.value = newRows; 
+            return ( 
                 <FormGridOptionView
                     qTypeProperty={qTypeProperty}
                     choices={question.options}
-                    rows={question.rows}
+                    rows={question.value}
                 />
             )
-        } else {
+        } else if ([9, 10].includes(question.type)) {
+            const qTypeProperty = QuestionTypeAnswerClient(question);
+            return <LocalizationProvider dateAdapter={AdapterDateFns}>
+             <qTypeProperty.view {...qTypeProperty.viewProps} /> 
+            </LocalizationProvider>
+        }  
+        else {
+            const qTypeProperty = QuestionTypeAnswerClient(question);
             if (!qTypeProperty.view) return '';
             return <qTypeProperty.view {...qTypeProperty.viewProps} /> || '';
         }
@@ -159,7 +196,9 @@ function FormComplete() {
 
             {renderLevelViewer()}
 
-            {questions.map((question, i) => (createQuestionUI(question, i)))}
+            {questions.map((question, i) => {
+                return createQuestionUI(question, i)
+                })}
 
             {/*Temporary footer space*/}
             <Grid container direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{mb: 12}} />
