@@ -6,7 +6,7 @@ const Chapter = function (body) {
 
 Chapter.prototype.create = function() {
   return new Promise((resolve, reject) => {
-    sql.query('INSERT INTO chapters (name) VALUES (?)', [this.name],
+    sql.query('INSERT INTO chapters (chapter_name) VALUES (?)', [this.name],
       (err, results) => {
         if (err) reject (err);
         else resolve(results.insertId);
@@ -27,7 +27,7 @@ Chapter.listAll = function() {
 
 Chapter.getId = function(chapter_name) {
   return new Promise((resolve, reject) => {
-    sql.query('SELECT chapter_id from chapters where name = ?', [chapter_name], (err, results) => {
+    sql.query('SELECT chapter_id from chapters where chapter_name = ?', [chapter_name], (err, results) => {
       if (err) reject (err);
       else {
         resolve(results[0].chapter_id);

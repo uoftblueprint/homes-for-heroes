@@ -146,10 +146,8 @@ export default function BaseCRM({
     } else {
       if (params.field === 'date_gifted' || params.field === 'date_joined'){
         updateCellChanges(params.id, params.field, params.value.toISOString().split('T')[0]);
-      }
-      else{
-        updateCellChanges(params.id, params.field, params.value);
-      }
+      } 
+      updateCellChanges(params.id, params.field, column.sanitize(params.value));
       updateHighlightCells((prevArray) => [
         ...prevArray,
         { id: params.id, field: params.field },

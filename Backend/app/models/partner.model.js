@@ -48,14 +48,10 @@ Partner.queryData = function (query_params) {
     FROM partners 
       ${q.query}
     LIMIT ${q.offset}, ${q.limit}
-    `;
-    sql.query(data_query, (err, row) => {
-      if (err) reject(err);
-      page_count = row
-    }); 
-    sql.query(page_query, (error, page) => { 
+    `; 
+    sql.query(page_query, q.queryArray, (error, page) => { 
       if (error) reject(error);
-      sql.query(data_query, (err, row) => {
+      sql.query(data_query, q.queryArray, (err, row) => {
         if (err) reject(err);
           resolve([page[0],row])
       }); 
@@ -102,7 +98,7 @@ Partner.getCSV = function (query_params) {
     FROM partners 
       ${q.query}
     `;
-    sql.query(data_query, (err, row) => {
+    sql.query(data_query, q.queryArray, (err, row) => {
       if (err) reject(err);
         resolve(row)
     }); 

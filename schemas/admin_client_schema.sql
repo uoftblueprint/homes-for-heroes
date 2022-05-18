@@ -4,19 +4,6 @@ USE homes_for_heroes;
 
 SET FOREIGN_KEY_CHECKS=0;
 
-DROP TABLE IF EXISTS admin_users;
-CREATE TABLE IF NOT EXISTS admin_users (
-    user_id INT NOT NULL,
-    chapter_id INT DEFAULT NULL,
-    PRIMARY KEY (user_id),
-    FOREIGN KEY (user_id)
-        REFERENCES client_users(user_id)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    FOREIGN KEY (chapter_id)
-        REFERENCES chapters(chapter_id)
-);
-
 DROP TABLE IF EXISTS client_users;
 CREATE TABLE IF NOT EXISTS client_users (
     user_id INT NOT NULL AUTO_INCREMENT,
@@ -25,15 +12,18 @@ CREATE TABLE IF NOT EXISTS client_users (
     phone VARCHAR(255),
     password VARCHAR(255),
     role_id INT NOT NULL DEFAULT 0,
+    chapter_id INT DEFAULT NULL,
     verified BOOLEAN NOT NULL,
     oauth BOOLEAN NOT NULL,
     alert_case_id INT UNIQUE,
-    todo JSON NOT NULL,
+    todo JSON NOT NULL DEFAULT (JSON_OBJECT('notes', JSON_ARRAY())),
     PRIMARY KEY (user_id),
     FOREIGN KEY (alert_case_id)
         REFERENCES cases(case_id)
         ON UPDATE CASCADE
-        ON DELETE SET NULL
+        ON DELETE SET NULL,
+    FOREIGN KEY (chapter_id)
+        REFERENCES chapters(chapter_id)
 );
 
 DROP TABLE IF EXISTS federated_credentials;
@@ -63,7 +53,7 @@ CREATE TABLE IF NOT EXISTS cases (
         ON UPDATE CASCADE
         ON DELETE CASCADE,
     FOREIGN KEY (admin_id)
-        REFERENCES admin_users (user_id)
+        REFERENCES client_users (user_id)
         ON UPDATE CASCADE
 );
 

@@ -11,5 +11,5 @@ CREATE TABLE CustomForm (
     form_body JSON NOT NULL,
     curr_level CHAR(255) NOT NULL,
     is_final BOOLEAN NOT NULL DEFAULT FALSE,
-    CONSTRAINT FOREIGN KEY (admin_id) REFERENCES admin_users(user_id)
+    CONSTRAINT FOREIGN KEY (admin_id) REFERENCES client_users(user_id)
 );

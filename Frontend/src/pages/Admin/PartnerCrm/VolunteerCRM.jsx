@@ -21,6 +21,7 @@ export default function VolunteerCRM() {
     nameInRows: 'name',
     columns: [{
             editable: "true",
+            sanitize: (e) => {return e},
             validationMethod: (e) => {return validator.isEmpty(e)},
             field: "name",
             headerName: "NAME",
@@ -28,6 +29,7 @@ export default function VolunteerCRM() {
           },
           {
             editable: "true",
+            sanitize: (e) => {return e},
             validationMethod: (e) => {return validator.isEmpty(e)},
             field: "village",
             headerName: "VILLAGE",
@@ -35,6 +37,7 @@ export default function VolunteerCRM() {
           },
           {
             editable: "true",
+            sanitize: (e) => {return e.toISOString().split('T')[0]},
             validationMethod: (e) => {return !validator.isDate(e)},
             field: "date_joined",
             type: 'date',
@@ -44,6 +47,7 @@ export default function VolunteerCRM() {
           },
           {
             editable: "true",
+            sanitize: (e) => {return e},
             validationMethod: (e) => {return validator.isAlpha(e)},
             field: "role",
             headerName: "ROLE",
@@ -51,6 +55,7 @@ export default function VolunteerCRM() {
           },
           {
             editable: "true",
+            sanitize: (e) => {return e},
             validationMethod: (e) => {return !validator.isMobilePhone(e)},
             field: "phone",
             headerName: "PHONE",
@@ -58,6 +63,7 @@ export default function VolunteerCRM() {
           }, 
           {
             editable: "true",
+            sanitize: (e) => {return e},
             validationMethod: (e) => {return !validator.isEmail(e)},
             field: "email",
             headerName: "EMAIL",

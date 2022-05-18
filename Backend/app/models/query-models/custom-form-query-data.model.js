@@ -7,6 +7,7 @@ const CustomFormQueryData = function(query_params) {
 
   // final query
   this.query = '';
+  this.queryArray = [];
 
   this.constructQuery = function() {
     this.appendQueryParam(this.admin_id, 'form.admin_id');

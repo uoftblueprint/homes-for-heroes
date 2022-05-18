@@ -5,14 +5,71 @@ import AddRowDialog from "./AddRowDialog.jsx";
 
 import validator from "validator";
 
+import useFetch from "../../../api/useFetch";
+
 import Link from "@mui/material/Link";
+
 import LaunchIcon from "@mui/icons-material/Launch";
 
 import { useHistory } from "react-router-dom";
+import { el } from "date-fns/locale";
+
+const normalizeInput = (value, previousValue) => {
+  // return nothing if no value
+  if (!value) return value; 
+
+  // only allows 0-9 inputs
+  const currentValue = value.replace(/[^\d]/g, '');
+  const cvLength = currentValue.length; 
+
+  if (!previousValue || value.length > previousValue.length) {
+
+    // returns: "x", "xx", "xxx"
+    if (cvLength < 4) return currentValue; 
+
+    // returns: "(xxx)", "(xxx) x", "(xxx) xx", "(xxx) xxx",
+    if (cvLength < 7) return `(${currentValue.slice(0, 3)}) ${currentValue.slice(3)}`; 
+
+    // returns: "(xxx) xxx-", (xxx) xxx-x", "(xxx) xxx-xx", "(xxx) xxx-xxx", "(xxx) xxx-xxxx"
+    return `(${currentValue.slice(0, 3)}) ${currentValue.slice(3, 6)}-${currentValue.slice(6, 10)}`; 
+  }
+};
 
 export default function VeteranCRM() {
   const [dialog, setDialog] = React.useState(false);
+  const [chapters, addChapters] = React.useState([]); 
+  const [partners, addPartners] = React.useState([]);
+  const { fetchWithError } = useFetch();
 
+  React.useEffect(() => {
+    (async() => {
+      const endpoint = `chapters/getAll`;
+      const options = {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        }
+      }
+      const response = await fetchWithError(endpoint, options);
+      if (response.chapters.constructor === Array){ 
+        addChapters(response.chapters);
+      }
+      })();
+      (async() => {
+      const endpoint = `partners`;
+      const options = {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        }
+      }
+      const response = await fetchWithError(endpoint, options);
+      if (response.partners.constructor === Array){ 
+        addPartners(response.partners);
+      }
+      })();  
+  }, []);
+  
   const props = {
     dialog: dialog,
     setDialog: setDialog,
@@ -27,6 +84,7 @@ export default function VeteranCRM() {
     columns: [
         {
           editable: "true",
+          sanitize: (e) => {return e},
           validationMethod: (e) => {return validator.isEmpty(e)},
           field: "name",
           headerName: "NAME",
@@ -50,6 +108,7 @@ export default function VeteranCRM() {
         },
         {
           editable: "true",
+          sanitize: (e) => {return e},
           validationMethod: (e) => {return !validator.isEmail(e)},
           field: "email",
           headerName: "EMAIL",
@@ -57,29 +116,34 @@ export default function VeteranCRM() {
         },
         {
           editable: "true",
+          sanitize: (e) => {return e},
           validationMethod: (e) => {return !validator.isMobilePhone(e)},
           field: "applicant_phone",
           headerName: "PHONE",
           flex: 1,
+          renderCell: (params) => normalizeInput(params.formattedValue)
         },
         {
           editable: "true",
-          validationMethod: (e) => {return !validator.isAlphanumeric(e)},
-          status: "true",
-          type: 'singleSelect',
+          sanitize: (e) => {return e.toString()},
+          validationMethod: (e) => {return !(e > 0) || !(e < 5)},
+          status: "true", 
+          type: 'number',
           field: "curr_level",
           headerName: "STATUS",
           flex: 1,
         },
         {
           editable: "true",
+          sanitize: (e) => {return e},
           validationMethod: (e) => {return !validator.isAlphanumeric(e)},
-          field: "demographics",
+          field: "demographic",
           headerName: "DEMOGRAPHICS",
           flex: 2,
         },
         {
           editable: "true",
+          sanitize: (e) => {return e},
           validationMethod: (e) => {return !validator.isNumeric(e)},
           field: "income",
           headerName: "INCOME",
@@ -87,18 +151,37 @@ export default function VeteranCRM() {
         },
         {
           editable: "true",
-          validationMethod: (e) => {return !validator.isAlphanumeric(e)},
-          field: "incoming_referrals",
+          sanitize: (e) => {
+            return partners.find((partners) => partners.org_name === e).org_name},
+          validationMethod: (e) => {return false},
+          field: "referral",
           headerName: "INC. REFERRALS",
           flex: 1.5,
+          type: 'singleSelect',
+          valueOptions: partners.map(e => e.org_name),
         },
         {
           editable: "true",
-          validationMethod: (e) => {return !validator.isAlphanumeric(e)},
-          field: "outgoing_referrals",
+          sanitize: (e) => {
+            return partners.find((partners) => partners.org_name === e).org_name},
+          validationMethod: (e) => {return false},
+          field: "outgoing",
           headerName: "OUT. REFERRALS",
           flex: 1.5,
+          type: 'singleSelect',
+          valueOptions: partners.map(e => e.org_name),
         },
+        {
+          editable: "true",
+          sanitize: (e) => {
+            return chapters.find((chapter) => chapter.chapter_name === e).chapter_id},
+          validationMethod: (e) => {return false},
+          field: "chapter_name",
+          headerName: "CHAPTER",
+          flex: 1.5,
+          type: 'singleSelect',
+          valueOptions: chapters.map(e => e.chapter_name), 
+        }
       ]
 }
     const history = useHistory();

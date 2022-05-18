@@ -13,7 +13,8 @@ const SupporterQueryData = function (query_params) {
   
     // final query
     this.query = '';
-  
+    this.queryArray = [];
+
     this.constructQuery = function () {
       this.appendQueryParamKeyword(this.name, 'supporters.name');
       this.appendQueryParamKeyword(this.date_gifted, 'supporters.date_gifted');
