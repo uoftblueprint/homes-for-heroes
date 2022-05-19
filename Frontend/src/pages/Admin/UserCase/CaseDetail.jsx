@@ -276,8 +276,7 @@ export default function CaseCard() {
                 </Typography>
               </Grid>
               <Button
-                component="a"
-                href="intake-form"
+                onClick={(e) => {history.push(`/viewForms/${id}`)}}
                 variant="outlined"
                 startIcon={<VisibilityIcon />}
               >

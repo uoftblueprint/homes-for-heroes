@@ -6,23 +6,21 @@ import Grid from "@mui/material/Grid";
 import EditIcon from '@mui/icons-material/Edit';
 import { DataGrid } from "@mui/x-data-grid";
 import { Link, useRouteMatch } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { selectUserId } from "../../../redux/userSlice";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import useFetch from '../../../api/useFetch';
+import { useParams } from 'react-router-dom';
 
-export default function UserHome() {
+export default function CaseForms() {
 
     const [unfinished, setUnfinished] = useState([]);
     const [submitted, setSubmitted] = useState([]);
     const [isLoading, setLoading] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const { fetchWithError } = useFetch();
+    const { id }  = useParams();
 
-    const currentUserId = useSelector(selectUserId);
-    // const currentUserId = 1;
 
     let url = '/forms' ;
 
@@ -40,12 +38,12 @@ export default function UserHome() {
         {
             field: 'view',
             type: 'actions',
-            width: 150,
+            width: 250,
             renderCell: (params) => {
                 return (
                     <Button component={Link} to={`${qUrl}/view/${params.row.questionnaire_id}`}
                             variant="outlined" size="small" startIcon={<VisibilityIcon />}>
-                            VIEW FORM
+                            VIEW COMPLETED FORM
                     </Button>
                 );
             }
@@ -57,12 +55,11 @@ export default function UserHome() {
             field: 'edit',
             type: 'actions',
             width: 150,
-            flex: 0.4,
             renderCell: (params) => {
                 return (
-                    <Button sx={{ minWidth:0 }} component={Link} to={`${url}/complete/${params.row.form_id}`}
+                    <Button sx={{ minWidth:0 }} component={Link} to={`${url}/view/${params.row.form_id}`}
                             variant="outlined" size="small" startIcon={<EditIcon />}>
-                            COMPLETE FORM
+                            VIEW FORM
                     </Button>
                 );
             }
@@ -72,7 +69,7 @@ export default function UserHome() {
     useEffect(() => {
         (async () => {
             setLoading(true);
-            const endpoint = `questionnaire/queryCompletedQuestionnaires/${currentUserId}`
+            const endpoint = `questionnaire/queryCompletedQuestionnaires/${id}`
             const options = {
                 headers: {
                     "Content-Type": "application/json",
@@ -96,16 +93,16 @@ export default function UserHome() {
                 {isLoading ? <></> :
                     <Grid item sx={{ mb: 3 }}>
                         <Typography sx={{ fontSize: 40, mb: 1 }} align="left">
-                            Available Forms
+                            Submitted Forms
                         </Typography>
                         {
-                            unfinished.length === 0 ?
+                            submitted.length === 0 ?
                                 <Grid alignItem='center' justifyContent='center'>
                                     <Typography> No Items... </Typography>
                                 </Grid>
                                 :
                                 <DataGrid container autoHeight hideFooter={true} headerHeight={0}
-                                    rows={unfinished} columns={[...displayDataColumns, ...draftOptions]} loading={isLoading}
+                                    rows={submitted} columns={[...displayDataColumns, ...completedOptions]} loading={isLoading}
                                     components={{
                                         NoRowsOverlay: () => (
                                             <Grid alignItem='center' justifyContent='center'>
@@ -125,16 +122,16 @@ export default function UserHome() {
                 {isLoading ? <></> :
                     <Grid item>
                         <Typography sx={{ fontSize: 40, mb: 1 }} align="left">
-                            Submitted
+                            Unsubmitted Forms 
                         </Typography>
                         {
-                            submitted.length === 0 ?
+                            unfinished.length === 0 ?
                                 <Grid alignItem='center' justifyContent='center'>
                                     <Typography> No Items... </Typography>
                                 </Grid>
                             :
                             <DataGrid container autoHeight hideFooter={true} headerHeight={0}
-                                rows={submitted} columns={[...displayDataColumns, ...completedOptions]} loading={isLoading}
+                                rows={unfinished} columns={[...displayDataColumns, ...draftOptions]} loading={isLoading}
                                 components={{
                                     NoRowsOverlay: () => (
                                         <Grid alignItem='center' justifyContent='center'>
@@ -156,3 +153,4 @@ export default function UserHome() {
         </Card>
     )
 }
+

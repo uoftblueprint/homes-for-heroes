@@ -32,13 +32,13 @@ export default function FormCompletedView() {
     const history = useHistory()
 
     const handleBack = () => {
-        history.push("/")
+        history.goBack();
     }
 
     const handleFinished = () => {
         (async () => {
             setLoading(true);
-            history.push('/'); 
+            history.goBack(); 
             setLoading(false);
         })();
     }

@@ -15,6 +15,7 @@ import FormComplete from './pages/User/Form/FormComplete';
 import FormCompletedView from './pages/User/Form/FormCompletedView';
 
 import CaseList from './pages/Admin/UserCase/CaseList';
+import CaseForms from './pages/Admin/UserCase/CaseForms';
 import Login from './pages/User/Login/Login';
 import ForgotPassword from './pages/User/PasswordReset/ForgotPassword';
 import ResetPassword from './pages/User/PasswordReset/ResetPassword';
@@ -91,6 +92,11 @@ function App() {
             exact
             path="/addcase/:id"
             render={(props) => <AddCase {...props} />}
+          />
+          <AdminProtectedRoute
+            exact
+            path="/viewForms/:id"
+            render={(props) => <CaseForms {...props} />}
           />
           <SuperadminProtectedRoute
             exact
