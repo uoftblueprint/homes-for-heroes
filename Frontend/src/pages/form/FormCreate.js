@@ -1,9 +1,11 @@
 import { useHistory } from "react-router-dom";
 import { createFormAPI } from "../../api/formAPI";
+import useFetch from "../../api/useFetch";
 import FormBuilder from "../../components/form/FormBuilder";
 
 function FormCreate() {
     const history = useHistory();
+    const { makeFormWithError } = useFetch();
 
     const level = {
         l1: false,
@@ -14,7 +16,12 @@ function FormCreate() {
 
     const createDraft = (formBody) => {
         (async () => {
-            await createFormAPI(formBody)
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formBody)
+            }
+            let resp = await makeFormWithError('custom-form/createCustomForm', requestOptions)
             history.push("/forms")
         })();
     }

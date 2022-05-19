@@ -23,5 +23,6 @@ require('./partner.routes')(apiRouter);
 require('./volunteer.routes')(apiRouter);
 require('./admin.routes')(apiRouter);
 require('./chapter.routes')(apiRouter);
+require('./questionnaire.routes')(apiRouter);
 
 module.exports = apiRouter;

@@ -1,100 +1,116 @@
-import { Typography } from "@mui/material";
-import { useState, useEffect } from "react";
+import AddIcon from '@mui/icons-material/Add';
+import Alert from '@mui/material/Alert';
 import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Grid";
-import CardContent from "@mui/material/CardContent";
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
-import { fetchCustomFormsAPI } from "../../../api/formAPI";
+import { DataGrid } from "@mui/x-data-grid";
 import { Link, useRouteMatch } from "react-router-dom";
-import { useSelector } from 'react-redux';
-import { Redirect, useLocation } from 'react-router-dom';
-import { selectRoleId } from '../../../redux/userSlice';
-import { ADMIN_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '../../../components/constants';
+import { useSelector } from "react-redux";
+import { selectUserId } from "../../../redux/userSlice";
+import Typography from "@mui/material/Typography";
+import { useEffect, useState } from "react";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import useFetch from '../../../api/useFetch';
 
-export default function UserHome() {
+export default function UserHome({ currLevel }) {
 
-  const [completed, setCompleted] = useState([]);
-  const [pending, setPending] = useState([]);
+    const [completed, setCompleted] = useState([]);
+    const [drafts, setDrafts] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
+    const { fetchWithError } = useFetch();
 
-  const admin_id = 2;
+    const currentUserId = useSelector(selectUserId);
+    console.log(currentUserId);
+    // const currentUserId = 1;
 
-  useEffect(() => {
-    (async () => {
-      const forms = await fetchCustomFormsAPI(admin_id);
-      setPending(forms.completed.map((element, index) => ({ ...element, "id": index })));
-    })();
-  }, [0])
+    let url = '/forms' ;
 
-  return (
-    <Grid
-      container
-      spacing={2}
-      sx={{ marginTop: "10px", paddingLeft: "100px", paddingRight: "100px"}}
-    >
-        <Typography sx={{fontSize: 48, ml: '10px'}} gutterBottom component="div">
-            Forms
-        </Typography>
-      <Grid item xs={12}>
-        <Card sx={{ maxWidth: 1500, border: 1 }}>
-          <CardContent>
-            <Grid
-              container
-              display="flex"
-              direction="column"
-              justifyContent="flex-start"
-              alignItems="flex-start"
-            >
-              <Typography sx={{ fontSize: 24, mb: '1px'}} gutterBottom component="div">
-                Items To Complete:
-              </Typography>
-              {pending.map((item, index) => (
-                <Grid container xs={12}>
-                  <Grid item xs={8}>
-                    <Typography sx={{ float:"left",fontSize: 18, mb: '1px' }} component="div">
-                      {item.title}
+    let qUrl = '/questionnaire'
+
+    const displayDataColumns = [
+        {
+            field: "title",
+            headerName: "Title",
+            flex: 2,
+        }
+    ];
+
+    const completedOptions = [
+        {
+            field: 'view',
+            type: 'actions',
+            width: 150,
+            renderCell: (params) => {
+                return (
+                    <Button component={Link} to={`${qUrl}/view/${params.row.form_id}`}
+                            variant="outlined" size="small" startIcon={<VisibilityIcon />}>
+                            VIEW FORM
+                    </Button>
+                );
+            }
+        }
+    ];
+
+    const draftOptions = [
+        {
+            field: 'edit',
+            type: 'actions',
+            width: 150,
+            renderCell: (params) => {
+                return (
+                    <Button component={Link} to={`${url}/complete/${params.row.form_id}`}
+                            variant="outlined" size="small" startIcon={<EditIcon />}>
+                            COMPLETE FORM
+                    </Button>
+                );
+            }
+        }, 
+    ];
+
+    useEffect(() => {
+        (async () => {
+            setLoading(true);
+            const endpoint = `questionnaire/queryCompletedQuestionnaires/${currentUserId}`
+            const options = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                }
+            }
+            const forms = await fetchWithError(endpoint, options);
+            setCompleted(forms.completed.map((element, index) => ({ ...element, "id": index })));
+            setDrafts(forms.drafts.map((element, index) => ({ ...element, "id": index })));
+            setLoading(false);
+        })();
+    }, [])
+
+    return (
+        <Card
+            display="flex"
+            direction="column"
+            sx={{ mt: '15px', boxShadow: 'None', minHeight: 1000, minWidth: 375, width: "100%", maxWidth: 1200 }}
+        >
+            <Grid container direction="column">
+                <Grid item sx={{mb: 3}}>
+                    <Typography sx={{ fontSize: 40, mb: 1}} align="left">
+                        Completed Forms
                     </Typography>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Button component={Link} to={`forms/complete/${item.form_id}`} variant="outlined" size="small" startIcon={<EditIcon />}>Complete Form</Button>
-                  </Grid>
-                </ Grid>
-              ))}
-            </Grid>
-          </CardContent>
-        </Card>
-        <Card sx={{ maxWidth: 1500, mt: "40px", border: 1 }}>
-          <CardContent>
-            <Grid
-              container
-              display="flex"
-              direction="column"
-              justifyContent="flex-start"
-              alignItems="flex-start"
-            >
-              <Typography sx={{ fontSize: 24, mb: '1px'}} gutterBottom component="div">
-                Completed:
-              </Typography>
-              {completed.map((item, index) => (
-                <Grid container xs={12}>
-                  <Grid item xs={8}>
-                    <Typography sx={{ float: "left", fontSize: 18, mb: '1px' }} component="div">
-                      {item.title}
+                    <DataGrid container autoHeight hideFooter={true} headerHeight={0}
+                              rows={completed} columns={[...displayDataColumns, ...completedOptions]} loading={loading}
+                    />
+                </Grid>
+                <Grid item>
+                    <Typography sx={{ fontSize: 40, mb: 1}} align="left">
+                        Drafts
                     </Typography>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Button component={Link} to={`forms/view/${item.form_id}`} variant="outlined" size="small" startIcon={<VisibilityIcon />}>View Form</Button>
-                  </Grid>
-                  <Grid item xs={4}>
-                    <Button variant="outlined" size="small" startIcon={<EditIcon />}>Edit Response</Button>
-                  </Grid>
-                </ Grid>
-              ))}
+                    <DataGrid container autoHeight hideFooter={true} headerHeight={0}
+                              rows={drafts} columns={[...displayDataColumns, ...draftOptions]} loading={loading}
+                    />
+                </Grid>
             </Grid>
-          </CardContent>
+
         </Card>
-      </Grid>
-    </Grid>
-    );
+    )
 }

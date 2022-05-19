@@ -3,6 +3,7 @@ import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import {Checkbox, InputAdornment, Radio, TextField, Typography} from "@mui/material";
+import Slider from "@mui/material/Slider";
 import EventIcon from "@mui/icons-material/Event";
 import LinearScaleIcon from "@mui/icons-material/LinearScale";
 import NotesIcon from "@mui/icons-material/Notes";
@@ -67,6 +68,11 @@ const QuestionTypeAnswer = function (qType) {
             icon: LinearScaleIcon,
             divider: false,
             options: null,
+            view: Slider,
+            viewProps:{
+                value:null,
+                disabled
+            } 
         },
         {
             qType: 7,

@@ -130,7 +130,7 @@ Customer.getById = function (user_id) {
 Customer.getCustomerInfo = function (user_id) {
   return new Promise((resolve, reject) => {
     const query = `SELECT c.name, c.email, c.phone, u.street_name, 
-    u.city, u.province, u.applicant_dob 
+    u.city, u.province, u.applicant_dob, u.curr_level 
     FROM client_users AS c INNER JOIN UserInfo AS u 
     ON c.user_id = u.user_id WHERE c.user_id = ?`;
     sql.query(query, [user_id], (err, userInfo) => {

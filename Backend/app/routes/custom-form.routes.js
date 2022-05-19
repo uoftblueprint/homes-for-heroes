@@ -22,7 +22,7 @@ module.exports = (app) => {
 
   app.get(
     '/custom-Form/queryAllAdminForms',
-    isPrivileged,
+    // isPrivileged,
     validationErrorHandler,
     formController.queryAllAdminForms
   );

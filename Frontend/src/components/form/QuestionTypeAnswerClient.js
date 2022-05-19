@@ -3,8 +3,7 @@ import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import {Checkbox, InputAdornment, Radio, TextField, Typography, Select} from "@mui/material";
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import Slider from '@mui/material/Slider';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import EventIcon from "@mui/icons-material/Event";
@@ -86,6 +85,12 @@ const QuestionTypeAnswerClient = function (question) {
             icon: LinearScaleIcon,
             divider: false,
             options: null,
+            view: Slider,
+            viewProps: {
+                value: inputValue,
+                onChange: (e) => inputValue = e.target.value,
+                onBlur: (e) => question.value = inputValue
+            }
         },
         {
             qType: 7,
@@ -119,10 +124,12 @@ const QuestionTypeAnswerClient = function (question) {
             options: null,  
             view: DesktopDatePicker,
             viewProps: {
-                value: inputValue,
-                onChange: (v) => {inputValue = v.toISOString(); console.log(inputValue)},
+                inputFormat:'yyyy-MM-dd',
+                mask:"____-__-__",
+                value: question.value ? question.value : null,
+                onChange: (v) => {question.value=v.toISOString().slice(0,10);},
                 onBlur: () => {question.value = inputValue},
-                renderInput: (params) => <TextField {...params} />
+                renderInput: (params) => {params.inputProps.value = question.value ? question.value : 'yyyy-mm-dd'; return <TextField {...params} />}
             }
         },
         {
@@ -130,18 +137,13 @@ const QuestionTypeAnswerClient = function (question) {
             name: "Time",
             icon: AccessTimeIcon,
             divider: false,
-            options: <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DateTimePicker 
-              label="Dated"
-              value={inputValue}
-              onChange={(v) => {inputValue = v}}
-              onBlur={question.value = inputValue}
-              renderInput={(params) => <TextField 
-                {...params} />}
-              />
-            </LocalizationProvider>,
-            view: null,
+            options: null,
+            view: DateTimePicker,
             viewProps: { 
+                value: question.value ? question.value : null,
+                onChange: (v) => {question.value=v.toISOString().split('T')[0] + ' ' + v.toISOString().split('T')[1].slice(0, 5)},
+                onBlur: () => {question.value = inputValue},
+                renderInput: (params) => {params.inputProps.value = question.value ? question.value : 'yyyy-mm-dd hh:mm'; return <TextField {...params} />}
             },
         },
     ]

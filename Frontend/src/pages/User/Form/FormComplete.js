@@ -15,29 +15,56 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 
+import useFetch from "../../../api/useFetch";
+import { useSelector } from "react-redux";
+import { selectUserId } from "../../../redux/userSlice";
+
 function FormComplete() {
 
     const { formId } = useParams();
+    const [baseForm, setForm] = useState({});
     const [loading, setLoading] = useState(false);
     const [title, setTitle] = useState("");
     const [questions, setQuestions] = useState([]);
     const [level, setLevel] = useState([]);
+    const { makeFormWithError } = useFetch()
+    const currUserId = useSelector(selectUserId);
 
     const history = useHistory()
 
     const handleBack = () => {
         history.push("/")
-    } 
+    }
 
     const handleSubmit = () => {
-        console.log(questions)
-        // history.push("/")
+        (async () => {
+            setLoading(true);
+            const endpoint = 'questionnaire/create';
+            const options = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    ...baseForm,
+                    created_date: baseForm.created_date.slice(0,10),
+                    user_id: currUserId,
+                    form_body: {
+                        questions: questions
+                    }
+                }),
+            }
+            let resp = await makeFormWithError(endpoint, options);
+            console.log(resp)
+            setLoading(false);
+        })();
     }
 
     useEffect(() => {
         (async () => {
             setLoading(true);
             const form = await fetchFormByIdAPI(formId);
+            setForm(form[0]);
             setTitle(form[0].title);
             setQuestions(JSON.parse(form[0].form_body).questions.map((item) => {return {...item, value: null}}));
             setLevel(form[0].curr_level.split(' '));

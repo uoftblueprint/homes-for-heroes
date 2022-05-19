@@ -9,7 +9,7 @@ CREATE TABLE CustomForm (
     created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     title VARChAR(256) NOT NULL,
     form_body JSON NOT NULL,
-    curr_level JSON NOT NULL,
+    curr_level CHAR(255) NOT NULL,
     is_final BOOLEAN NOT NULL DEFAULT FALSE,
     CONSTRAINT FOREIGN KEY (admin_id) REFERENCES client_users(user_id)
 );
@@ -20,8 +20,7 @@ CREATE TABLE Questionnaire (
     user_id INT NOT NULL,
     form_id INT NOT NULL,
     created_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    response_body JSON NOT NULL,
-    is_submitted BOOLEAN NOT NULL DEFAULT FALSE,
+    form_body JSON NOT NULL,
     CONSTRAINT FOREIGN KEY (user_id) REFERENCES client_users(user_id),
     CONSTRAINT FOREIGN KEY (form_id) REFERENCES CustomForm(form_id)
 );
