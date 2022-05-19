@@ -1,7 +1,6 @@
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Divider from "@mui/material/Divider";
-import {fetchFormByIdAPI} from "../../../api/formAPI";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Button from "@mui/material/Button";
 import {useHistory} from "react-router-dom";
@@ -10,7 +9,7 @@ import FormGridOptionView from "../../../components/form/CustomFormGridOptions";
 import Grid from "@mui/material/Grid";
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import QuestionTypeAnswerClient from "../../../components/form/QuestionTypeAnswerClient";
+import QuestionTypeAnswerCompleted from "../../../components/form/QuestionTypeAnswerCompleted";
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -19,15 +18,15 @@ import useFetch from "../../../api/useFetch";
 import { useSelector } from "react-redux";
 import { selectUserId } from "../../../redux/userSlice";
 
-function FormComplete() {
+export default function FormCompletedView() {
 
-    const { formId } = useParams();
+    const { questionnaireId } = useParams();
     const [baseForm, setForm] = useState({});
     const [loading, setLoading] = useState(false);
     const [title, setTitle] = useState("");
     const [questions, setQuestions] = useState([]);
     const [level, setLevel] = useState([]);
-    const { makeFormWithError } = useFetch()
+    const { fetchWithError } = useFetch()
     const currUserId = useSelector(selectUserId);
 
     const history = useHistory()
@@ -36,31 +35,10 @@ function FormComplete() {
         history.push("/")
     }
 
-    const handleSubmit = () => {
+    const handleFinished = () => {
         (async () => {
             setLoading(true);
-            const endpoint = 'questionnaire/create';
-            const options = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    ...baseForm,
-                    created_date: baseForm.created_date.slice(0,10),
-                    user_id: currUserId,
-                    form_body: {
-                        questions: questions
-                    }
-                }),
-            }
-            try{
-               await makeFormWithError(endpoint, options);
-               history.push('/'); 
-            }
-            catch(e){
-                console.log(e);
-            };
+            history.push('/'); 
             setLoading(false);
         })();
     }
@@ -68,17 +46,28 @@ function FormComplete() {
     useEffect(() => {
         (async () => {
             setLoading(true);
-            const form = await fetchFormByIdAPI(formId);
+            const endpoint = `questionnaire/get/${questionnaireId}`;
+            const options = {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            }
+            const form = await fetchWithError(endpoint, options);
             setForm(form[0]);
             setTitle(form[0].title);
-            setQuestions(JSON.parse(form[0].form_body).questions.map((item) => {return {...item, value: null}}));
+            setQuestions(JSON.parse(form[0].form_body).questions);
             setLevel(form[0].curr_level.split(' '));
             setLoading(false);
         })();
-    }, [formId])
+    }, [questionnaireId])
 
     const renderLevelViewer = () => {
         return (
+            <>
+            <Box sx={{ display: 'flex', p:2 }} justifyContent="center">
+                <Typography sx={{mr: 1}}>Created by {baseForm.name} on {baseForm.created_date ? baseForm.created_date.slice(0, 10) : ''} </Typography>
+            </Box>
             <Box sx={{ display: 'flex', mb:5, p:2 }} justifyContent="center">
                 <Typography sx={{mr: 1}}>Visible to: </Typography>
                 {
@@ -87,24 +76,14 @@ function FormComplete() {
                     ))
                 }
             </Box>
-        )
-    }
-
-    const renderOptionViewer = (options, property) => {
-        Object.keys(options).map((choice, i) =>{ 
-        return (
-                <FormControlLabel
-                    control={<property.view name={choice} checked={options[choice]} onChange={(e) => options[choice] = e.target.checked} />}
-                    label={choice}
-                />
-        )
-        }
+            </>
         )
     }
 
     const renderView = (question) => {
+        console.log(question)
         if ([3, 4].includes(question.type)) {
-            const qTypeProperty = QuestionTypeAnswerClient(question);
+            const qTypeProperty = QuestionTypeAnswerCompleted(question);
             let newOptions = {}
             question.options.forEach((item) => { newOptions[item] = false });
             question.value = newOptions;
@@ -125,7 +104,7 @@ function FormComplete() {
                 </FormControl>
             )
         } else if ([5].includes(question.type)) {
-            const qTypeProperty = QuestionTypeAnswerClient(question);
+            const qTypeProperty = QuestionTypeAnswerCompleted(question);
             return (
                 <qTypeProperty.view {...qTypeProperty.viewProps}>
                     {question.options.map((item) => (
@@ -135,7 +114,7 @@ function FormComplete() {
             )
         }
          else if ([7, 8].includes(question.type)) {
-            const qTypeProperty = QuestionTypeAnswerClient(question);
+            const qTypeProperty = QuestionTypeAnswerCompleted(question);
             let newRows = [];
             question.rows.forEach((row, i) => {
                 let newRow = {
@@ -154,13 +133,13 @@ function FormComplete() {
                 />
             )
         } else if ([9, 10].includes(question.type)) {
-            const qTypeProperty = QuestionTypeAnswerClient(question);
+            const qTypeProperty = QuestionTypeAnswerCompleted(question);
             return <LocalizationProvider dateAdapter={AdapterDateFns}>
              <qTypeProperty.view {...qTypeProperty.viewProps} /> 
             </LocalizationProvider>
         }  
         else {
-            const qTypeProperty = QuestionTypeAnswerClient(question);
+            const qTypeProperty = QuestionTypeAnswerCompleted(question);
             if (!qTypeProperty.view) return '';
             return <qTypeProperty.view {...qTypeProperty.viewProps} /> || '';
         }
@@ -237,7 +216,7 @@ function FormComplete() {
             <Button
             variant="outlined"
             startIcon={<ArrowUpwardIcon/>}
-            onClick={handleSubmit}
+            onClick={handleFinished}
             >
                 Submit
             </Button>
@@ -245,5 +224,3 @@ function FormComplete() {
         </Card>
     )
 }
-
-export default FormComplete; 

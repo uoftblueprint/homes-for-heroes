@@ -99,7 +99,7 @@ export default function useFetch() {
     }
 
   const makeFormWithError = (endpoint, options) => {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
       const url = `${host}${endpoint}`;
       fetch(url, options)
         .then((resp) => {
@@ -123,6 +123,7 @@ export default function useFetch() {
             autoHideDuration: 15000,
             action,
           });
+          return reject(e.toString());
         }); 
       });
     }

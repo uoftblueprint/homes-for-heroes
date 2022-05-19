@@ -98,9 +98,8 @@ const Header = (props) => {
       else{
         menuItems = [ 
         {
-          menuTitle: 'Forms',
-          pageURL: '/forms',
-        },
+        }
+        ,
       ];
       }
 
@@ -111,7 +110,7 @@ const Header = (props) => {
       },
       {
         menuTitle: 'Logout',
-        pageUrl: 'logout',
+        pageUrl: '/logout',
       },
     ];
   }

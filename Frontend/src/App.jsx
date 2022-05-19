@@ -12,6 +12,7 @@ import FormCreate from './pages/form/FormCreate';
 import FormView from './pages/User/Form/FormView';
 import FormEdit from './pages/form/FormEdit';
 import FormComplete from './pages/User/Form/FormComplete';
+import FormCompletedView from './pages/User/Form/FormCompletedView';
 
 import CaseList from './pages/Admin/UserCase/CaseList';
 import Login from './pages/User/Login/Login';
@@ -70,6 +71,11 @@ function App() {
             exact
             path="/forms/complete/:formId"
             render={(props) => <FormComplete {...props} />}
+          />
+          <AuthProtectedRoute
+            exact
+            path="/questionnaire/view/:questionnaireId"
+            render={(props) => <FormCompletedView {...props} />}
           />
           <SuperadminProtectedRoute
             exact

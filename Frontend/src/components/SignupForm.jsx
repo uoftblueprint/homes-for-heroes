@@ -466,7 +466,7 @@ export default function SignupForm() {
             value={formInfo.referral}
             onChange={handleFormChange}
           >
-            {partners.map(({ org_name }) => (
+            {!partners ? null :partners.map(({ org_name }) => (
               <MenuItem value={org_name}>{org_name}</MenuItem>
             ))}
           </Select>

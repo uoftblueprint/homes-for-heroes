@@ -8,7 +8,12 @@ const questionnaireController = {
     try {
       const { questionnaire_id } = req.params;
       const resForm = await Questionnaire.getQuestionnaire(questionnaire_id);
-      res.send(resForm);
+      if (req.user.role_id > 0 || resForm[0].user_id === req.user.user_id) { 
+        res.send(resForm);
+      }
+      else{
+        next(new Error('Insufficient Permissions'));
+      }
     } catch (err) {
       next(err);
     }
@@ -18,9 +23,16 @@ const questionnaireController = {
     try {
       const details = req.body;
       details.user_id = req.user.user_id;
-      const questionnaire = new Questionnaire(req.body);
-      const questionnaire_id = await questionnaire.create();
-      res.json({ questionnaire_id });
+      const info = await Customer.getCustomerInfo(req.user.user_id);
+      const curr_level = info[0].curr_level;  
+      if (req.user.role_id === 0 && details.curr_level.includes(curr_level)) { 
+        const questionnaire = new Questionnaire(req.body);
+        const questionnaire_id = await questionnaire.create();
+        res.json({ questionnaire_id });
+      }
+      else{
+        next(new Error('Insufficient Permissions'));
+      }
     } catch (err) {
       next(err);
     }
@@ -31,13 +43,13 @@ const questionnaireController = {
       const { user_id } = req.params;
       const info = await Customer.getCustomerInfo(user_id);
       const curr_level = info[0].curr_level;
-      const [forms, questionnaires] = await Promise.all([
-        await CustomForm.queryForm({ is_final: true, curr_level: curr_level }),
+      const [unsubmitted, submitted] = await Promise.all([
+        await CustomForm.queryFormNotSubmittedBy(curr_level, user_id),
         await Questionnaire.queryUserQuestionnaires({ user_id })
       ]);
       res.send({
-        'completed': questionnaires,
-        'drafts': forms
+        'submitted': submitted,
+        'unfinished': unsubmitted
       });
     } catch (err) {
       next(err);

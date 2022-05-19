@@ -20,7 +20,6 @@ const authController = {
       const { id } = verifyEmailJWT(jwt);
       const user = await Customer.getById(id);
       if(!user.verified) {
-        console.log(req.body); 
         await Customer.updateUserInfo(id, req.body);
         await user.changePassword(password);
         await Customer.verify(id);

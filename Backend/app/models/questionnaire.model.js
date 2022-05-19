@@ -28,7 +28,11 @@ Questionnaire.prototype.create = function() {
 Questionnaire.getQuestionnaire = function(questionnaire_id) {
   return new Promise((resolve, reject) => {
     sql.query(
-      'SELECT * FROM Questionnaire WHERE questionnaire_id = ?',
+      `SELECT questionnaire.*, f.title, f.curr_level, u.name 
+      FROM Questionnaire AS questionnaire
+      LEFT JOIN CustomForm AS f ON questionnaire.form_id = f.form_id
+      LEFT JOIN client_users AS u ON questionnaire.user_id = u.user_id
+      WHERE questionnaire_id = ?`,
       [questionnaire_id],
       (err, rows) => {
         if (err) reject(err);
@@ -46,8 +50,9 @@ Questionnaire.queryUserQuestionnaires = function(query_params) {
     q.constructQuery();
 
     const data_query = `
-            SELECT *
+            SELECT questionnaire.*, f.title
             FROM Questionnaire AS questionnaire
+            LEFT JOIN CustomForm AS f ON questionnaire.form_id = f.form_id
                 ${q.query}
         `;
 

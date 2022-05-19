@@ -13,11 +13,11 @@ import { useEffect, useState } from "react";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import useFetch from '../../../api/useFetch';
 
-export default function UserHome({ currLevel }) {
+export default function UserHome() {
 
-    const [completed, setCompleted] = useState([]);
-    const [drafts, setDrafts] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [unfinished, setUnfinished] = useState([]);
+    const [submitted, setSubmitted] = useState([]);
+    const [isLoading, setLoading] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const { fetchWithError } = useFetch();
 
@@ -44,7 +44,7 @@ export default function UserHome({ currLevel }) {
             width: 150,
             renderCell: (params) => {
                 return (
-                    <Button component={Link} to={`${qUrl}/view/${params.row.form_id}`}
+                    <Button component={Link} to={`${qUrl}/view/${params.row.questionnaire_id}`}
                             variant="outlined" size="small" startIcon={<VisibilityIcon />}>
                             VIEW FORM
                     </Button>
@@ -58,9 +58,10 @@ export default function UserHome({ currLevel }) {
             field: 'edit',
             type: 'actions',
             width: 150,
+            flex: 0.4,
             renderCell: (params) => {
                 return (
-                    <Button component={Link} to={`${url}/complete/${params.row.form_id}`}
+                    <Button sx={{ minWidth:0 }} component={Link} to={`${url}/complete/${params.row.form_id}`}
                             variant="outlined" size="small" startIcon={<EditIcon />}>
                             COMPLETE FORM
                     </Button>
@@ -80,8 +81,8 @@ export default function UserHome({ currLevel }) {
                 }
             }
             const forms = await fetchWithError(endpoint, options);
-            setCompleted(forms.completed.map((element, index) => ({ ...element, "id": index })));
-            setDrafts(forms.drafts.map((element, index) => ({ ...element, "id": index })));
+            setUnfinished(forms.unfinished.map((element, index) => ({ ...element, "id": index })));
+            setSubmitted(forms.submitted.map((element, index) => ({ ...element, "id": index })));
             setLoading(false);
         })();
     }, [])
@@ -93,22 +94,64 @@ export default function UserHome({ currLevel }) {
             sx={{ mt: '15px', boxShadow: 'None', minHeight: 1000, minWidth: 375, width: "100%", maxWidth: 1200 }}
         >
             <Grid container direction="column">
-                <Grid item sx={{mb: 3}}>
-                    <Typography sx={{ fontSize: 40, mb: 1}} align="left">
-                        Completed Forms
-                    </Typography>
-                    <DataGrid container autoHeight hideFooter={true} headerHeight={0}
-                              rows={completed} columns={[...displayDataColumns, ...completedOptions]} loading={loading}
-                    />
+                {isLoading ? <></> :
+                    <Grid item sx={{ mb: 3 }}>
+                        <Typography sx={{ fontSize: 40, mb: 1 }} align="left">
+                            Available Forms
+                        </Typography>
+                        {
+                            unfinished.length === 0 ?
+                                <Grid alignItem='center' justifyContent='center'>
+                                    <Typography> No Items... </Typography>
+                                </Grid>
+                                :
+                                <DataGrid container autoHeight hideFooter={true} headerHeight={0}
+                                    rows={unfinished} columns={[...displayDataColumns, ...draftOptions]} loading={isLoading}
+                                    components={{
+                                        NoRowsOverlay: () => (
+                                            <Grid alignItem='center' justifyContent='center'>
+                                                No Items
+                                            </Grid>
+                                        ),
+                                        NoResultsOverlay: () => (
+                                            <Grid alignItem='center' justifyContent='center'>
+                                                No Items
+                                            </Grid>
+                                        )
+                                    }}
+                                />
+                        }
+                    </Grid>
+                }
+                {isLoading ? <></> :
+                    <Grid item>
+                        <Typography sx={{ fontSize: 40, mb: 1 }} align="left">
+                            Submitted
+                        </Typography>
+                        {
+                            submitted.length === 0 ?
+                                <Grid alignItem='center' justifyContent='center'>
+                                    <Typography> No Items... </Typography>
+                                </Grid>
+                            :
+                            <DataGrid container autoHeight hideFooter={true} headerHeight={0}
+                                rows={submitted} columns={[...displayDataColumns, ...completedOptions]} loading={isLoading}
+                                components={{
+                                    NoRowsOverlay: () => (
+                                        <Grid alignItem='center' justifyContent='center'>
+                                            No Items
+                                        </Grid>
+                                    ),
+                                    NoResultsOverlay: () => (
+                                        <Grid alignItem='center' justifyContent='center'>
+                                            No Items
+                                        </Grid>
+                                    )
+                                }}
+                            />
+                    }
                 </Grid>
-                <Grid item>
-                    <Typography sx={{ fontSize: 40, mb: 1}} align="left">
-                        Drafts
-                    </Typography>
-                    <DataGrid container autoHeight hideFooter={true} headerHeight={0}
-                              rows={drafts} columns={[...displayDataColumns, ...draftOptions]} loading={loading}
-                    />
-                </Grid>
+            }
             </Grid>
 
         </Card>
