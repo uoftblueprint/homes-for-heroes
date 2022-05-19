@@ -81,20 +81,15 @@ export default function FormCompletedView() {
     }
 
     const renderView = (question) => {
-        console.log(question)
         if ([3, 4].includes(question.type)) {
             const qTypeProperty = QuestionTypeAnswerCompleted(question);
-            let newOptions = {}
-            question.options.forEach((item) => { newOptions[item] = false });
-            question.value = newOptions;
             return (
                 <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
                     <FormGroup>
                         {Object.keys(question.value).map((choice, i) => {
-                            let checkValue;
                             return (
                                 <FormControlLabel
-                                    control={<qTypeProperty.view name={choice} checked={checkValue} onChange={(e) => {checkValue = e.target.checked; question.value[choice] = checkValue}} />}
+                                    control={<qTypeProperty.view name={choice} checked={question.value[choice]} />}
                                     label={choice}
                                 />
                             )
@@ -116,12 +111,12 @@ export default function FormCompletedView() {
          else if ([7, 8].includes(question.type)) {
             const qTypeProperty = QuestionTypeAnswerCompleted(question);
             let newRows = [];
-            question.rows.forEach((row, i) => {
+            question.value.forEach((row, i) => {
                 let newRow = {
                     id: i,
-                    name: row
+                    name: question.rows[i]
                 }
-                question.options.forEach((column) => newRow[column] = false);
+                question.options.forEach((column) => newRow[column] = row[column]);
                 newRows.push(newRow);
             })
             question.value = newRows; 
@@ -147,7 +142,7 @@ export default function FormCompletedView() {
 
     const createQuestionUI = (question, i) => {
         return (
-            <Grid sx={{mb: 8}} key={`grid-q-${i}`}>
+            <Grid sx={{mb: 8, pointerEvents: 'none'}} key={`grid-q-${i}`}>
                 <Box sx={{ display: 'flex', border: '1px solid black', p:5 }}>
                     <Grid container direction="column">
                         {question.required &&
@@ -212,13 +207,13 @@ export default function FormCompletedView() {
                 })}
 
             {/*Temporary footer space*/}
-            <Grid container direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{mb: 12}} />
+            <Grid container direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{mb: 5}} />
             <Button
+            sx={{mb: 5}}
             variant="outlined"
-            startIcon={<ArrowUpwardIcon/>}
             onClick={handleFinished}
             >
-                Submit
+                Finish
             </Button>
 
         </Card>

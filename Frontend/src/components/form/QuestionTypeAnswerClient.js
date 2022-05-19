@@ -4,6 +4,7 @@ import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import {Checkbox, InputAdornment, Radio, TextField, Typography, Select} from "@mui/material";
 import Slider from '@mui/material/Slider';
+import TextareaAutosize from "@mui/material/TextareaAutosize";
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import EventIcon from "@mui/icons-material/Event";
@@ -37,11 +38,13 @@ const QuestionTypeAnswerClient = function (question) {
             icon: NotesIcon,
             divider: true,
             options: null,
-            view: TextField,
+            view: TextareaAutosize,
             viewProps: {
                 disabled: false,
                 label: "Long-answer text",
                 variant: "standard",
+                minRows: 3,
+                placeholder: 'Long answer...',
                 value: inputValue,
                 onChange: (e) => {inputValue = e.target.value},
                 onBlur: (e) => {question.value = inputValue}

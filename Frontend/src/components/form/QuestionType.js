@@ -3,6 +3,7 @@ import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import {Slider, Checkbox, InputAdornment, Radio, TextField, Typography} from "@mui/material";
+import TextareaAutosize from "@mui/material/TextareaAutosize";
 import EventIcon from "@mui/icons-material/Event";
 import LinearScaleIcon from "@mui/icons-material/LinearScale";
 import NotesIcon from "@mui/icons-material/Notes";
@@ -30,9 +31,11 @@ const QuestionType = function (qType) {
             icon: NotesIcon,
             divider: true,
             options: null,
-            view: TextField,
+            view: TextareaAutosize,
             viewProps: {
                 disabled: true,
+                minRows: 3,
+                placeholder: 'Long Answer...',
                 label: "Long-answer text",
                 variant: "standard",
             }
