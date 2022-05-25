@@ -91,7 +91,7 @@ const authController = {
   },
   async createVeteran(req, res, next) {
     const { name, email } = req.body;
-    const chapter_id = req.user.chapter_id;
+    const { chapter_id } = req.user;
     try {
       const tempCustomer = await Customer.createTemp(name, email, chapter_id, 0);
       await Customer.createUserInfo(tempCustomer.user_id);
