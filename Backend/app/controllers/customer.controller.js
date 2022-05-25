@@ -9,7 +9,6 @@ const customerController = {
     try {
       const { user_id } = req.params;
       const info = await Customer.getCustomerInfo(user_id);
-      console.log(info)
       res.send({ customerInfo: info });
     } catch (err) {
       next(err);

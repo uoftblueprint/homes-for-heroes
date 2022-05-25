@@ -324,7 +324,7 @@ export default function ProfilePage({ user_id }) {
                       {isMobile ?
                         <MobileDatePicker
                           required
-                          value={userInfo[row[0]]} 
+                          value={formInfo[row[0]].split('-').join('/')}
                           onChange={v => handleInputChange(row[0], v.toISOString().slice(0,10))}
                           renderInput={(params) => <TextField
                             {...params} />} 
@@ -349,7 +349,7 @@ export default function ProfilePage({ user_id }) {
                   required
                   id={row[0]}
                   label={cleanKey(row[0])}
-                  value={userInfo[row[0]]}
+                  value={formInfo[row[0]]}
                   onChange={e => handleInputChange(row[0], e.target.value)}
                   size='standard'
                   variant='standard'

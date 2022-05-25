@@ -2,7 +2,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import {Checkbox, InputAdornment, Radio, TextField, Typography, Select} from "@mui/material";
+import {Checkbox, Radio, TextField, Typography, Select} from "@mui/material";
 import Slider from '@mui/material/Slider';
 import TextareaAutosize from "@mui/material/TextareaAutosize";
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
@@ -132,8 +132,6 @@ const QuestionTypeAnswerCompleted = function (question) {
                 inputFormat:'yyyy-MM-dd',
                 mask:"____-__-__",
                 value: question.value ? question.value : null,
-                onChange: (v) => {question.value=v.toISOString().slice(0,10);},
-                onBlur: () => {question.value = inputValue},
                 renderInput: (params) => {params.inputProps.value = question.value ? question.value : 'yyyy-mm-dd'; return <TextField disabled {...params} />}
             }
         },

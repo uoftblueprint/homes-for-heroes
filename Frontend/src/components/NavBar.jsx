@@ -98,6 +98,8 @@ const Header = (props) => {
       else{
         menuItems = [ 
         {
+          menuTitle: 'Home',
+          pageURL: '/'
         }
         ,
       ];
@@ -106,11 +108,11 @@ const Header = (props) => {
     rightMenuItems = [
       {
         menuTitle: 'Profile',
-        pageUrl: 'profile',
+        pageURL: '/profile',
       },
       {
         menuTitle: 'Logout',
-        pageUrl: '/logout',
+        pageURL: '/logout',
       },
     ];
   }

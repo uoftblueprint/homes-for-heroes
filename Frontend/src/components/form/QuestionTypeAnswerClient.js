@@ -127,11 +127,8 @@ const QuestionTypeAnswerClient = function (question) {
             options: null,  
             view: DesktopDatePicker,
             viewProps: {
-                inputFormat:'yyyy-MM-dd',
-                mask:"____-__-__",
                 value: question.value ? question.value : null,
-                onChange: (v) => {question.value=v.toISOString().slice(0,10);},
-                onBlur: () => {question.value = inputValue},
+                onChange: (v) => {question.value=v.toISOString().slice(0, 10)},
                 renderInput: (params) => {params.inputProps.value = question.value ? question.value : 'yyyy-mm-dd'; return <TextField {...params} />}
             }
         },
@@ -144,7 +141,7 @@ const QuestionTypeAnswerClient = function (question) {
             view: DateTimePicker,
             viewProps: { 
                 value: question.value ? question.value : null,
-                onChange: (v) => {question.value=v.toISOString().split('T')[0] + ' ' + v.toISOString().split('T')[1].slice(0, 5)},
+                onChange: (v) => {v ? question.value=v.toISOString().split('T')[0] + ' ' + v.toISOString().split('T')[1].slice(0, 5) : console.log('No Date')},
                 onBlur: () => {question.value = inputValue},
                 renderInput: (params) => {params.inputProps.value = question.value ? question.value : 'yyyy-mm-dd hh:mm'; return <TextField {...params} />}
             },

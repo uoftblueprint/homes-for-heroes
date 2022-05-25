@@ -25,6 +25,7 @@ function FormComplete() {
     const [baseForm, setForm] = useState({});
     const [loading, setLoading] = useState(false);
     const [title, setTitle] = useState("");
+    const [requiredError, setRequiredError] = useState(false);
     const [questions, setQuestions] = useState([]);
     const [level, setLevel] = useState([]);
     const { makeFormWithError } = useFetch()
@@ -38,30 +39,61 @@ function FormComplete() {
 
     const handleSubmit = () => {
         (async () => {
-            setLoading(true);
-            const endpoint = 'questionnaire/create';
-            const options = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    ...baseForm,
-                    created_date: baseForm.created_date.slice(0,10),
-                    user_id: currUserId,
-                    form_body: {
-                        questions: questions
+            const isClear = Object.keys(questions).every((key) => {
+                const question = questions[key]
+                if (!question.required){
+                    return true
+                }
+                {
+                    if ([3, 4].includes(question.type)) {
+                        return (Object.keys(question.value).some((key) => (
+                            question.value[key]
+                        ))) 
+                    } else if ([5].includes(question.type)) {
+                        return (question.value !== null)
                     }
-                }),
+                    else if ([7, 8].includes(question.type)) {
+                        return (question.value.some((row) => {
+                            return (Object.keys(row).some((cell) => (
+                                cell !== 'id' && cell !== 'name' && row[cell] 
+                            )))
+                        }))
+                    } else if ([9, 10].includes(question.type)) {
+                        return (question.value !== null)
+                    }  
+                    else {
+                        return (question.value !== null && question.value !== '')
+                    }
+            }});
+            if (isClear){
+                setLoading(true);
+                const endpoint = 'questionnaire/create';
+                const options = {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        ...baseForm,
+                        created_date: baseForm.created_date.slice(0,10),
+                        user_id: currUserId,
+                        form_body: {
+                            questions: questions
+                        }
+                    }),
+                }
+                try{
+                await makeFormWithError(endpoint, options);
+                history.push('/'); 
+                }
+                catch(e){
+                    console.log(e);
+                };
+                setLoading(false);
             }
-            try{
-               await makeFormWithError(endpoint, options);
-               history.push('/'); 
+            {
+                setRequiredError(true);
             }
-            catch(e){
-                console.log(e);
-            };
-            setLoading(false);
         })();
     }
 
@@ -233,14 +265,16 @@ function FormComplete() {
                 })}
 
             {/*Temporary footer space*/}
-            <Grid container direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{mb: 12}} />
+            <Grid container direction="column" justifyContent="center" alignItems="center" spacing={2} sx={{mb: 12}} >
+            <Typography sx={{ color: 'red', mb: 2 }}>{requiredError ? 'Please fill all required questions!' : ''}</Typography>
             <Button
             variant="outlined"
             startIcon={<ArrowUpwardIcon/>}
             onClick={handleSubmit}
             >
                 Submit
-            </Button>
+            </Button> 
+            </Grid>
 
         </Card>
     )
