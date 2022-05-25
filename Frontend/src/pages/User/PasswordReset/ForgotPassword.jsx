@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useState } from 'react';
 import {
   Button,
   Container,
@@ -44,8 +43,7 @@ export default function ForgotPassword() {
         },
         body: JSON.stringify({ email }),
       });
-      const { token } = await res.json();
-      console.log(token);
+      await res.json();
       setEmailSent(true);
     } catch (err) {
       console.error(err);
