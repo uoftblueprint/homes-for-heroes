@@ -1,6 +1,7 @@
 import { Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import Grid from "@mui/material/Grid";
+import { Redirect, useLocation } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import UserHome from './User/Home/UserHome';
 import { useSelector } from 'react-redux';
@@ -12,6 +13,7 @@ export default function Home() {
     const currentRoleId = useSelector(selectRoleId); 
     const [currName, setCurrName] = useState('');
     const [isLoading, setLoading] = useState(false);
+    const location = useLocation();
 
     useEffect(() => {
         setLoading(true);
@@ -31,13 +33,19 @@ export default function Home() {
   (<UserHome/>)
   :
   (
-    <Grid
-      container
-      sx={{ marginTop: "10px", justifyContent: 'center'}}
-    >
-        <Typography sx={{fontSize: 48 }} component="div">
-            Welcome, {currName}  
-        </Typography>
-    </Grid>
+    // <Grid
+    //   container
+    //   sx={{ marginTop: "10px", justifyContent: 'center'}}
+    // >
+    //     <Typography sx={{fontSize: 48 }} component="div">
+    //         Welcome, {currName}  
+    //     </Typography>
+    // </Grid>
+    <Redirect
+        to={{
+          pathname: '/usercrm',
+          state: { from: location },
+        }}
+      />
     );
 }

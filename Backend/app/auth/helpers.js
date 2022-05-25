@@ -9,7 +9,6 @@ const helpers = {
     const payload = {
       id: user.user_id,
     };
-
     return jwt.sign(payload, process.env.JWT_VERIFY_EMAIL_SECRET, { expiresIn: '1d' }); // Expires in 1 day
   },
   verifyEmailJWT(token) {
@@ -27,7 +26,8 @@ const helpers = {
   },
   async sendInviteLink(email, token) {
     const mailTransporter = await mailer();
-    const url = `http://${process.env.HOST}/signup/${token}`;
+    const url = `http://localhost:3006/signup/${token}`;
+    console.log(url);
     const info = await mailTransporter.sendMail({
       from: '"Homes for Heroes" <foo@example.com>', // sender address
       to: email, // list of receivers

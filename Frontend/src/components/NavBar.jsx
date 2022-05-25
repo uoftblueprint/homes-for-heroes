@@ -58,11 +58,11 @@ const Header = (props) => {
     if (roleId === SUPER_ADMIN_ROLE_ID) {
       menuItems = [
         {
-          menuTitle: 'User CRM',
+          menuTitle: 'Veteran CRM',
           pageURL: '/usercrm',
         },
         {
-          menuTitle: 'User Case',
+          menuTitle: 'Case Notes',
           pageURL: '/usercase',
         },
         {
@@ -82,11 +82,11 @@ const Header = (props) => {
       else if (roleId === ADMIN_ROLE_ID){
         menuItems = [
         {
-          menuTitle: 'User CRM',
+          menuTitle: 'Veteran CRM',
           pageURL: '/usercrm',
         },
         {
-          menuTitle: 'User Case',
+          menuTitle: 'Case Notes',
           pageURL: '/usercase',
         },
         {

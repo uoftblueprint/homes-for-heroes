@@ -198,6 +198,7 @@ export default function CaseCard() {
   }
 
   const updateCaseNote = () => {
+    console.log(newNote);
     fetch(`/api/casenote/${currCaseId}/update?new_note=${newNote}&new_title=${title}`, updateOptions)
       .then((response) => response.json())
       .then((res) => console.log(res))
@@ -292,7 +293,9 @@ export default function CaseCard() {
           display="flex"
           direction="column"
         >
-          <Grid item xs={12}>
+          <Grid item xs={12}> 
+             {alert.error === 'No Alerts' ? <></>
+              :
             <Alert
               variant="outlined"
               severity="info"
@@ -318,6 +321,7 @@ export default function CaseCard() {
               Alert created at {alert.last_update} by this admin.<br/>
               {alert.notes}
             </Alert>
+            }
           </Grid>
           <Grid item xs={12}>
             <Dialog

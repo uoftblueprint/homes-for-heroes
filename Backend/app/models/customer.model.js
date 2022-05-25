@@ -142,7 +142,7 @@ Customer.getCustomerInfo = function (user_id) {
 
 Customer.retrieveAll = function () {
   return new Promise((resolve, reject) => {
-    sql.query('SELECT * FROM client_users', (err, rows) => {
+    sql.query('SELECT * FROM client_users WHERE role_id = 0', (err, rows) => {
       if (err) reject(err);
       else {
         const customers = [];
