@@ -15,4 +15,4 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-CMD sleep 9s; npm run pm2:start
+CMD sleep 9s; npm run dev
