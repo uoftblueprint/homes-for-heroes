@@ -10,6 +10,7 @@ services:
       MYSQL_PASSWORD: '${DB_PASSWORD}'
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
       MYSQL_DATABASE: '${DB_NAME}'
+      MYSQL_ROOT_HOST: '%'
 
 
     volumes:
@@ -43,7 +44,12 @@ services:
       - /usr/src/app/node_modules
     environment:
       REDIS_HOST: redis
-      DB_HOST: db
+      DB_HOST: db 
+      DB_USER: 'hfh'
+      DB_PASSWORD: '${DB_PASSWORD}'
+      DB_ROOT_PASSWORD: '${DB_PASSWORD}'
+      DB_NAME: '${DB_NAME}'
+      MYSQL_ROOT_HOST: '%'
     env_file:
       - .env
 
