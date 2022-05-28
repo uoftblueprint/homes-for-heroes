@@ -16,7 +16,17 @@ services:
     volumes:
       - db_data:/var/lib/mysql
 
- 
+  frontend:
+    build:
+        context: ./Frontend 
+        #dockerfile: Frontend.Dockerfile
+    ports:
+      - "3006:3006"
+    environment:
+      BACKEND_HOST: backend
+    env_file:
+      - .env
+  
   redis:
     image: redis:6-alpine
     ports:

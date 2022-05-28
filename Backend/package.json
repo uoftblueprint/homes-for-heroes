@@ -8,9 +8,7 @@
     "test": "jest --detectOpenHandles",
 
     "dev": "NODE_ENV=development nodemon server.js",
-    "start": "NODE_ENV=production node server.js",
-    "pm2:delete": "pm2 delete ecosystem.config.js",
-    "pm2:start": "pm2-runtime process.yml"
+    "start": "NODE_ENV=production node server.js"
   },
   "keywords": [
     "nodejs",
