@@ -4,7 +4,7 @@ module.exports = {
   apps: [
     {
       name: 'homes-for-heroes-app',
-      script: 'Backend/server.js',
+      script: 'server.js',
       instances: -1, // Spread app across all cpus except one
       exec_mode: 'cluster', // The app will be clustered
       env: {
