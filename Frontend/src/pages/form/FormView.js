@@ -1,15 +1,16 @@
-import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
-import Divider from "@mui/material/Divider";
-import {fetchFormByIdAPI} from "../../../api/formAPI";
-import FormControl from "@mui/material/FormControl";
-import FormBackButton from "../../../components/form/FormBackButton";
-import {FormControlLabel, Typography} from "@mui/material";
-import FormGridOptionView from "../../../components/form/FormGridOptionView";
-import Grid from "@mui/material/Grid";
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import QuestionType from "../../../components/form/QuestionType";
+import {fetchFormByIdAPI} from "../../api/formAPI";
+import * as React from "react";
+import Box from "@mui/material/Box";
+import {FormControlLabel, Typography} from "@mui/material";
+import Grid from "@mui/material/Grid";
+import QuestionType from "../../components/form/QuestionType";
+import Divider from "@mui/material/Divider";
+import Button from "@mui/material/Button";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import FormControl from "@mui/material/FormControl";
 
 function FormView() {
 
@@ -19,15 +20,15 @@ function FormView() {
 
     const [title, setTitle] = useState("");
     const [questions, setQuestions] = useState([]);
-    const [level, setLevel] = useState([]);
+    const [level, setLevel] = useState({});
 
     useEffect(() => {
         (async () => {
             setLoading(true);
             const form = await fetchFormByIdAPI(formId);
             setTitle(form[0].title);
-            setQuestions(JSON.parse(form[0].form_body).questions);
-            setLevel(form[0].curr_level.split(' '));
+            setQuestions(form[0].form_body.questions);
+            setLevel(JSON.parse(form[0].curr_level));
             setLoading(false);
         })();
     }, [formId])
@@ -37,9 +38,11 @@ function FormView() {
             <Box sx={{ display: 'flex', mb:5, p:2 }} justifyContent="center">
                 <Typography sx={{mr: 1}}>Visible to: </Typography>
                 {
-                    level.map((l, i) => (
-                        <Typography key={`level-text-${i}`} sx={{mr: 1}}>{l}</Typography>
-                    ))
+                    Object.keys(level)
+                        .filter(l => level[l] === true)
+                        .map((l, i) => (
+                            <Typography key={`level-text-${i}`} sx={{mr: 1}}>{l}</Typography>
+                        ))
                 }
             </Box>
         )
@@ -60,9 +63,9 @@ function FormView() {
         )
     }
 
-    const renderView = (question) => {
+    const renderQuestionOption = (question) => {
         const qTypeProperty = QuestionType(question.type);
-        if ([3, 4, 5].includes(qTypeProperty.qType)) {
+        if (qTypeProperty !== undefined && qTypeProperty.options !== null) {
             return (
                 <Grid container direction="column">
                     {question.options.map((choice, i) => (
@@ -71,17 +74,8 @@ function FormView() {
                     )}
                 </Grid>
             )
-        }  else if ([7, 8].includes(qTypeProperty.qType)) {
-            return (
-                <FormGridOptionView
-                    qTypeProperty={qTypeProperty}
-                    choices={question.options}
-                    rows={question.rows}
-                />
-            )
         } else {
-            if (!qTypeProperty.view) return '';
-            return <qTypeProperty.view {...qTypeProperty.viewProps} /> || '';
+            return qTypeProperty.view || '';
         }
     }
 
@@ -101,7 +95,7 @@ function FormView() {
                         <Divider sx={{my: 1.5}}/>
                         <Grid item>
                             <Box display="flex" justifyContent="flex-start">
-                                {renderView(question)}
+                                {renderQuestionOption(question)}
                             </Box>
                         </Grid>
                     </Grid>
@@ -111,6 +105,7 @@ function FormView() {
     }
 
     if (loading) {
+
         return (
             <div>Loading!</div>
         )
@@ -124,7 +119,7 @@ function FormView() {
         >
             <Grid container justifyContent="flex-start">
                 <Grid item>
-                    <FormBackButton/>
+                    <Button variant="outlined" startIcon={<ArrowBackIcon/>}>BACK</Button>
                 </Grid>
             </Grid>
             <Grid container direction="column" justifyContent="center" alignItems="center">
@@ -138,6 +133,7 @@ function FormView() {
                 <Grid item>
                 </Grid>
             </Grid>
+
 
             {renderLevelViewer()}
 

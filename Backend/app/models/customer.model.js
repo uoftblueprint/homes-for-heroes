@@ -130,7 +130,7 @@ Customer.getById = function (user_id) {
 Customer.getCustomerInfo = function (user_id) {
   return new Promise((resolve, reject) => {
     const query = `SELECT c.name, c.email, c.phone, u.street_name, 
-    u.city, u.province, u.applicant_dob 
+    u.city, u.province, u.applicant_dob, u.curr_level 
     FROM client_users AS c INNER JOIN UserInfo AS u 
     ON c.user_id = u.user_id WHERE c.user_id = ?`;
     sql.query(query, [user_id], (err, userInfo) => {
@@ -142,7 +142,7 @@ Customer.getCustomerInfo = function (user_id) {
 
 Customer.retrieveAll = function () {
   return new Promise((resolve, reject) => {
-    sql.query('SELECT * FROM client_users', (err, rows) => {
+    sql.query('SELECT * FROM client_users WHERE role_id = 0', (err, rows) => {
       if (err) reject(err);
       else {
         const customers = [];
@@ -258,7 +258,7 @@ Customer.queryUserData = function (query_params) {
       if (error) reject(error);
       sql.query(data_query, q.queryArray, (err, row) => {
         if (err) reject(err);
-          resolve([page[0],row])
+        resolve([page[0],row]);
       }); 
     });
   });
@@ -277,7 +277,7 @@ Customer.updateUserInfo = function (user_id, query_params) {
     `;
     sql.query(data_query, q.queryArray, (error, info) => { 
       if (error) reject(error); 
-        resolve(info)
+      resolve(info);
     });
   });
 };
@@ -330,7 +330,7 @@ Customer.getCSV = function (query_params) {
     `;
     sql.query(data_query, q.queryArray, (err, row) => {
       if (err) reject(err);
-        resolve(row)
+      resolve(row);
     }); 
   });
 };

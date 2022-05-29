@@ -49,6 +49,10 @@ if (process.env.NODE_ENV === 'production') app.use(express.static('public'));
 
 // Catch any errors that haven't been caught by the appropriate handler
 app.use(catchAllErrorHandler);
+require('./app/routes/customer.routes')(app);
+require('./app/routes/casenote.routes')(app);
+require('./app/routes/custom-form.routes')(app);
+require('./app/routes/questionnaire.routes')(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3000;

@@ -2,15 +2,15 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import {Slider, Checkbox, InputAdornment, Radio, TextField, Typography} from "@mui/material";
-import TextareaAutosize from "@mui/material/TextareaAutosize";
+import {Checkbox, InputAdornment, Radio, TextField, Typography} from "@mui/material";
+import Slider from "@mui/material/Slider";
 import EventIcon from "@mui/icons-material/Event";
 import LinearScaleIcon from "@mui/icons-material/LinearScale";
 import NotesIcon from "@mui/icons-material/Notes";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import ShortTextIcon from "@mui/icons-material/ShortText";
 
-const QuestionType = function (qType) {
+const QuestionTypeAnswer = function (qType) {
     const types = [
         {
             qType: 1,
@@ -20,7 +20,7 @@ const QuestionType = function (qType) {
             options: null,
             view: TextField,
             viewProps: {
-                disabled: true,
+                disabled: false,
                 label: "Short-answer text",
                 variant: "standard",
             }
@@ -31,11 +31,9 @@ const QuestionType = function (qType) {
             icon: NotesIcon,
             divider: true,
             options: null,
-            view: TextareaAutosize,
+            view: TextField,
             viewProps: {
-                disabled: true,
-                minRows: 3,
-                placeholder: 'Long Answer...',
+                disabled: false,
                 label: "Long-answer text",
                 variant: "standard",
             }
@@ -72,8 +70,9 @@ const QuestionType = function (qType) {
             options: null,
             view: Slider,
             viewProps:{
-                disabled: true
-            }
+                value:null,
+                disabled
+            } 
         },
         {
             qType: 7,
@@ -84,7 +83,7 @@ const QuestionType = function (qType) {
             options: <Radio/>,
             view: Radio,
             viewProps: {
-                disabled: true
+                disabled: false
             }
         },
         {
@@ -96,7 +95,7 @@ const QuestionType = function (qType) {
             options: <Checkbox/>,
             view: Checkbox,
             viewProps: {
-                disabled: true
+                disabled: false
             }
         },
         {
@@ -108,7 +107,7 @@ const QuestionType = function (qType) {
             view: TextField,
             viewProps: {
                 variant: "standard",
-                label: "YYYY-MM-DD",
+                label: "Day, Month, Year",
                 InputProps: {
                     endAdornment: <InputAdornment position="end">
                         <EventIcon/>
@@ -125,7 +124,7 @@ const QuestionType = function (qType) {
             view: TextField,
             viewProps: {
                 variant: "standard",
-                label: "YYYY-MM-DD HH:mm",
+                label: "Time",
                 InputProps: {
                     endAdornment: <InputAdornment position="end">
                         <AccessTimeIcon/>
@@ -144,4 +143,4 @@ const QuestionType = function (qType) {
             }).indexOf(qType)];
 }
 
-export default QuestionType;
+export default QuestionTypeAnswer;

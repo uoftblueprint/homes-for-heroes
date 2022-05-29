@@ -1,14 +1,22 @@
 import {DataGrid} from "@mui/x-data-grid";
+import Button from "@mui/material/Button";
 
 export default function FormGridOptionView({qTypeProperty, choices, rows}) {
-
-    const rowOptions = rows.map((element, index) => ({ "id": element }))
-
+ 
+    const toggleCell = (params) => {
+        rows[params.id][params.field] = !rows[params.id][params.field]
+    }
     const constructColOptions = () => {
         let options = [{
             field: 'id',
-            headerName: '',
-        }];
+            headerName: '', 
+            hide: true
+        }, 
+        {
+            field: 'name',
+            headerName: ''
+        }
+    ];
         for (const choice of choices){
             options.push(
                 {
@@ -17,8 +25,8 @@ export default function FormGridOptionView({qTypeProperty, choices, rows}) {
                     type: 'actions',
                     width: 150,
                     renderCell: (params) => {
-                        return <qTypeProperty.view {...qTypeProperty.viewProps} />
-                    }
+                        return <qTypeProperty.view checked={rows[params.id][choice]} />
+                }
                 }
             )
         }
@@ -34,10 +42,9 @@ export default function FormGridOptionView({qTypeProperty, choices, rows}) {
             disableSelectionOnClick={true}
             disableExtendRowFullWidth={true}
             hideFooter={true}
-            rows={rowOptions}
+            rows={rows}
             columns={colOptions}
-            loading={rowOptions.length !== rows.length || colOptions.length !== choices.length + 1}
+            onCellClick={toggleCell}
         />
     )
 }
-

@@ -11,7 +11,6 @@ import { store, persistor } from './redux/store';
 import { PersistGate } from 'redux-persist/integration/react';
 
 ReactDOM.render(
-  <React.StrictMode>
     <BrowserRouter>
       <SnackbarProvider maxSnack={3}>
         <Provider store={store}>
@@ -21,7 +20,7 @@ ReactDOM.render(
         </Provider>
       </SnackbarProvider>
     </BrowserRouter>
-  </React.StrictMode>,
+    ,
   document.getElementById('root'),
 );
 

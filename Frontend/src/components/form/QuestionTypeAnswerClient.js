@@ -2,15 +2,19 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import {Slider, Checkbox, InputAdornment, Radio, TextField, Typography} from "@mui/material";
+import {Checkbox, InputAdornment, Radio, TextField, Typography, Select} from "@mui/material";
+import Slider from '@mui/material/Slider';
 import TextareaAutosize from "@mui/material/TextareaAutosize";
+import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+import DateTimePicker from '@mui/lab/DateTimePicker';
 import EventIcon from "@mui/icons-material/Event";
 import LinearScaleIcon from "@mui/icons-material/LinearScale";
 import NotesIcon from "@mui/icons-material/Notes";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import ShortTextIcon from "@mui/icons-material/ShortText";
 
-const QuestionType = function (qType) {
+const QuestionTypeAnswerClient = function (question) {
+    let inputValue;
     const types = [
         {
             qType: 1,
@@ -20,9 +24,12 @@ const QuestionType = function (qType) {
             options: null,
             view: TextField,
             viewProps: {
-                disabled: true,
+                disabled: false,
                 label: "Short-answer text",
                 variant: "standard",
+                value: inputValue,
+                onChange: (e) => {inputValue = e.target.value},
+                onBlur: (e) => {question.value = inputValue}
             }
         },
         {
@@ -33,11 +40,14 @@ const QuestionType = function (qType) {
             options: null,
             view: TextareaAutosize,
             viewProps: {
-                disabled: true,
-                minRows: 3,
-                placeholder: 'Long Answer...',
+                disabled: false,
                 label: "Long-answer text",
                 variant: "standard",
+                minRows: 3,
+                placeholder: 'Long answer...',
+                value: inputValue,
+                onChange: (e) => {inputValue = e.target.value},
+                onBlur: (e) => {question.value = inputValue}
             }
         },
         {
@@ -46,7 +56,10 @@ const QuestionType = function (qType) {
             icon: RadioButtonCheckedIcon,
             divider: false,
             options: <Radio/>,
-            view: Radio
+            view: Radio,
+            viewProps: {
+
+            }
         },
         {
             qType: 4,
@@ -54,15 +67,20 @@ const QuestionType = function (qType) {
             icon: CheckBoxIcon,
             divider: false,
             options: <Checkbox/>,
-            view: Checkbox
+            view: Checkbox,
         },
         {
             qType: 5,
             name: "Dropdown",
             icon: ArrowDropDownCircleIcon,
             divider: true,
-            options: <Typography sx={{mr: 1}}>#</Typography>,
-            view: Typography
+            options: null, 
+            view: Select,
+            viewProps: {
+                value: inputValue,
+                onChange: (e) => { inputValue = e.target.value },
+                onBlur: (e) => { question.value = inputValue }
+            }
         },
         {
             qType: 6,
@@ -71,8 +89,10 @@ const QuestionType = function (qType) {
             divider: false,
             options: null,
             view: Slider,
-            viewProps:{
-                disabled: true
+            viewProps: {
+                value: inputValue,
+                onChange: (e) => inputValue = e.target.value,
+                onBlur: (e) => question.value = inputValue
             }
         },
         {
@@ -84,7 +104,7 @@ const QuestionType = function (qType) {
             options: <Radio/>,
             view: Radio,
             viewProps: {
-                disabled: true
+                disabled: false
             }
         },
         {
@@ -96,7 +116,7 @@ const QuestionType = function (qType) {
             options: <Checkbox/>,
             view: Checkbox,
             viewProps: {
-                disabled: true
+                disabled: false
             }
         },
         {
@@ -104,16 +124,12 @@ const QuestionType = function (qType) {
             name: "Date",
             icon: EventIcon,
             divider: false,
-            options: null,
-            view: TextField,
+            options: null,  
+            view: DesktopDatePicker,
             viewProps: {
-                variant: "standard",
-                label: "YYYY-MM-DD",
-                InputProps: {
-                    endAdornment: <InputAdornment position="end">
-                        <EventIcon/>
-                    </InputAdornment>
-                }
+                value: question.value ? question.value : null,
+                onChange: (v) => {question.value=v.toISOString().slice(0, 10)},
+                renderInput: (params) => {params.inputProps.value = question.value ? question.value : 'yyyy-mm-dd'; return <TextField {...params} />}
             }
         },
         {
@@ -122,26 +138,23 @@ const QuestionType = function (qType) {
             icon: AccessTimeIcon,
             divider: false,
             options: null,
-            view: TextField,
-            viewProps: {
-                variant: "standard",
-                label: "YYYY-MM-DD HH:mm",
-                InputProps: {
-                    endAdornment: <InputAdornment position="end">
-                        <AccessTimeIcon/>
-                    </InputAdornment>
-                }
+            view: DateTimePicker,
+            viewProps: { 
+                value: question.value ? question.value : null,
+                onChange: (v) => {v ? question.value=v.toISOString().split('T')[0] + ' ' + v.toISOString().split('T')[1].slice(0, 5) : console.log('No Date')},
+                onBlur: () => {question.value = inputValue},
+                renderInput: (params) => {params.inputProps.value = question.value ? question.value : 'yyyy-mm-dd hh:mm'; return <TextField {...params} />}
             },
         },
     ]
 
-    if (qType === 0) {
+    if (question.type === 0) {
         return types;
     }
 
     return types[types.map(function (item) {
                 return item.qType;
-            }).indexOf(qType)];
+            }).indexOf(question.type)];
 }
 
-export default QuestionType;
+export default QuestionTypeAnswerClient;

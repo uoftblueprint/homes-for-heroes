@@ -38,6 +38,7 @@ import CreateIcon from '@mui/icons-material/Create';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SearchIcon from '@mui/icons-material/Search';
+import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 
 export default function CaseCard() {
   let { id } = useParams();
@@ -173,20 +174,36 @@ export default function CaseCard() {
   };
 
   const filterNotes = (posts, query) => {
-    if (!query) {
+    if (view === 4) {
+      if (!query) {
+        return posts.filter((post) => {
+          return post.case_id !== alertCaseId;
+        });
+      }
+      {
       return posts.filter((post) => {
-        return post.case_id !== alertCaseId;
+        return post.title.includes(query) && post.case_id !== alertCaseId;
       });
+      }
     }
-
-    return posts.filter((post) => {
-      return post.title.includes(query) && post.case_id !== alertCaseId;
-    });
+    else{
+      if (!query) {
+        return posts.filter((post) => {
+          return post.case_id !== alertCaseId && post.category == view;
+        });
+      }
+      {
+      return posts.filter((post) => {
+        return post.title.includes(query) && post.case_id !== alertCaseId && post.category == view;
+      });
+      }
+    }
   };
 
   const captureNote = (e) => {
     e.preventDefault();
     setNewNote(e.target.value);
+    setCurrBody(e.target.value);
   };
 
   const editCaseNote = (case_id, title, notes) => {
@@ -276,8 +293,7 @@ export default function CaseCard() {
                 </Typography>
               </Grid>
               <Button
-                component="a"
-                href="intake-form"
+                onClick={(e) => {history.push(`/viewForms/${id}`)}}
                 variant="outlined"
                 startIcon={<VisibilityIcon />}
               >
@@ -293,7 +309,9 @@ export default function CaseCard() {
           display="flex"
           direction="column"
         >
-          <Grid item xs={12}>
+          <Grid item xs={12}> 
+             {alert.error === 'No Alerts' ? <></>
+              :
             <Alert
               variant="outlined"
               severity="info"
@@ -319,6 +337,7 @@ export default function CaseCard() {
               Alert created at {alert.last_update} by this admin.<br/>
               {alert.notes}
             </Alert>
+            }
           </Grid>
           <Grid item xs={12}>
             <Dialog
@@ -446,7 +465,7 @@ export default function CaseCard() {
               fullWidth
               variant="standard"
               onChange={captureNote}
-              defaultValue={currBody}
+              value={currBody}
             />
           </DialogContent>
           <DialogActions>

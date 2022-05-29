@@ -2,13 +2,13 @@ import { useSelector } from 'react-redux';
 import { Redirect, useLocation } from 'react-router-dom';
 import { selectRoleId } from '../../redux/userSlice';
 import AuthProtectedRoute from './AuthProtectedRoute';
-import { ADMIN_ROLE_ID, SUPER_ADMIN_ROLE_ID } from '../constants';
+import { SUPER_ADMIN_ROLE_ID } from '../constants';
 
-const AdminProtectedRoute = (props) => {
+const SuperadminProtectedRoute = (props) => {
   const roleId = useSelector(selectRoleId);
   const location = useLocation();
 
-  if (roleId !== ADMIN_ROLE_ID && roleId !== SUPER_ADMIN_ROLE_ID) {
+  if (roleId !== SUPER_ADMIN_ROLE_ID) {
     alert('You are not authorized to access this page');
     return <Redirect
         to={{
@@ -22,4 +22,4 @@ const AdminProtectedRoute = (props) => {
   }
 };
 
-export default AdminProtectedRoute;
+export default SuperadminProtectedRoute;
