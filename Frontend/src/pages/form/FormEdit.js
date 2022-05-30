@@ -1,13 +1,14 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {fetchFormByIdAPI, updateFormAPI} from "../../../api/formAPI";
-import FormBuilder from "../../../components/form/FormBuilder";
+import {fetchFormByIdAPI, updateFormAPI} from "../../api/formAPI";
+import FormBuilder from "../../components/form/FormBuilder";
 
 function FormEdit() {
 
     let { formId } = useParams();
 
     const [loading, setLoading] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const [title, setTitle] = useState("");
     const [questions, setQuestions] = useState([]);
@@ -19,13 +20,11 @@ function FormEdit() {
             setLoading(true);
             const form = await fetchFormByIdAPI(formId);
             setTitle(form[0].title);
-            setQuestions(form[0].form_body.questions);
-            let l = {l1: false, l2: false, l3: false, l4: false};
-            form[0].curr_level.split(' ').forEach((lv) => l[lv] = true);
-            setLevel(l)
+            setQuestions(JSON.parse(form[0].form_body).questions);
+            setLevel(form[0].curr_level);
             setLoading(false);
         })();
-    }, [formId])
+    }, [formId, refreshKey])
 
     if (loading) {
         return (
@@ -49,6 +48,7 @@ function FormEdit() {
                 alert("Successfully updated!");
             }
         })();
+        alert("Successfully updated!");
     }
 
     return (

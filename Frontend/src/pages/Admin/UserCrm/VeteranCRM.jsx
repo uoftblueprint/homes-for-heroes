@@ -136,7 +136,7 @@ export default function VeteranCRM() {
         {
           editable: "true",
           sanitize: (e) => {return e},
-          validationMethod: (e) => {return !validator.isAlphanumeric(e)},
+          validationMethod: (e) => {return validator.isEmpty(e)},
           field: "demographic",
           headerName: "DEMOGRAPHICS",
           flex: 2,

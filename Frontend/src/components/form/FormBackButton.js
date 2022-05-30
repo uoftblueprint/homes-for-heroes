@@ -7,7 +7,7 @@ export default function FormBackButton() {
     const history = useHistory()
 
     const handleClick = () => {
-        history.push("/forms")
+        history.goBack()
     }
 
     return (

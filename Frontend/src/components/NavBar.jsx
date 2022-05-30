@@ -55,14 +55,14 @@ const Header = (props) => {
   ];
 
   if (authLogin) {
-    if (roleId === ADMIN_ROLE_ID || roleId === SUPER_ADMIN_ROLE_ID) {
+    if (roleId === SUPER_ADMIN_ROLE_ID) {
       menuItems = [
         {
-          menuTitle: 'User CRM',
+          menuTitle: 'Veteran CRM',
           pageURL: '/usercrm',
         },
         {
-          menuTitle: 'User Case',
+          menuTitle: 'Case Notes',
           pageURL: '/usercase',
         },
         {
@@ -79,15 +79,40 @@ const Header = (props) => {
         },
       ];
     }
+      else if (roleId === ADMIN_ROLE_ID){
+        menuItems = [
+        {
+          menuTitle: 'Veteran CRM',
+          pageURL: '/usercrm',
+        },
+        {
+          menuTitle: 'Case Notes',
+          pageURL: '/usercase',
+        },
+        {
+          menuTitle: 'Forms',
+          pageURL: '/forms',
+        },
+      ];
+      }  
+      else{
+        menuItems = [ 
+        {
+          menuTitle: 'Home',
+          pageURL: '/'
+        }
+        ,
+      ];
+      }
 
     rightMenuItems = [
       {
         menuTitle: 'Profile',
-        pageUrl: 'profile',
+        pageURL: '/profile',
       },
       {
         menuTitle: 'Logout',
-        pageUrl: 'logout',
+        pageURL: '/logout',
       },
     ];
   }

@@ -1,6 +1,4 @@
 const Admin = require('../models/admin.model');
-const Chapter = require('../models/chapter.model');
-const logger = require('../logger');
 
 const adminController = {
   async createAdmin(req, res, next) {
@@ -83,7 +81,7 @@ const adminController = {
 
   async assignChapter(req, res, next) {
     try {
-      const chapter_id = req.body.chapter_id;
+      const { chapter_id } = req.body;
       const { admin_id } = req.params;
       await Admin.assignChapter(admin_id, chapter_id);
       res.send({ success: true });

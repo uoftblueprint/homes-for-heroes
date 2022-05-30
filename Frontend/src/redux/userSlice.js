@@ -37,5 +37,6 @@ export const selectUser = (state) => state.user;
 export const selectTimeout = (state) => state.user.timeout;
 export const selectLoggedIn = (state) => state.user.loggedIn;
 export const selectRoleId = (state) => state.user.role_id;
+export const selectUserId = (state) => state.user.user_id;
 
 export default userSlice.reducer;

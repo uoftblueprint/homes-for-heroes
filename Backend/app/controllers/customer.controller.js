@@ -137,56 +137,36 @@ const customerController = {
     }
   },
 
-  async patchChangePassword(req, res, next) {
+  async updateUserInfo(req, res, next) {
     try {
-      const { oldPassword, newPassword } = req.body;
-      if(await req.user.isValidPassword(oldPassword)) {
-        await req.user.changePassword(newPassword);
-        res.send({ success: true });
-      } else {
-        next(new Error('Old password incorrect'));
+      for (const key in req.body) {
+        await Customer.updateUserInfo(key, req.body[key]);
       }
+      res.json({ success: true });
     } catch (err) {
       next(err);
     }
-  },
-
-  async updateUserInfo(req, res) {
-    try {
-      for (var key in req.body) {
-        if (req.body.hasOwnProperty(key)) {
-          await Customer.updateUserInfo(key, req.body[key]);
-        }
-      }
-      res.json({ success: true });
-    } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
-    }
   },  
 
-  async deleteVeteran(req, res) {
+  async deleteVeteran(req, res, next) {
     try {
       await Promise.all(req.body.rows.map(async (el) => { 
-        Customer.deleteVeteran(el)
+        Customer.deleteVeteran(el);
       }));
       res.json({ success: true });
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err });
+      next(err);
     }
   },  
 
-  async getCSV(req, res) {
+  async getCSV(req, res, next) {
     try {
-      let query = req.query;
+      let { query } = req;
       if (req.user.role_id === 1) { 
-          query = {
-            chapter_id: req.user.chapter_id,
-            ...req.query
-          }
+        query = {
+          chapter_id: req.user.chapter_id,
+          ...req.query
+        };
       } 
       const info = await Customer.getCSV(query);
       const infoJson = JSON.parse(JSON.stringify(info));
@@ -201,9 +181,7 @@ const customerController = {
       logger.info('File successfully downloaded.');
 
     } catch (err) {
-      console.error(err);
-      res.status(500);
-      res.send({ error: err }); 
+      next(err);
     }
   },
 };

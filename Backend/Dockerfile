@@ -16,4 +16,5 @@ RUN npm install pm2 -g
 # Bundle app source
 COPY . .
 
-CMD sleep 9s; pm2-runtime ecosystem.config.js
+CMD  pm2-runtime ecosystem.config.js
+

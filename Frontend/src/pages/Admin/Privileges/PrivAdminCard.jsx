@@ -134,7 +134,7 @@ export default function PrivAdminCard({ state, update }) {
           </div>
         ) : (
           <List>
-            {superadmins 
+            {superadmins.length === 0 ? <>No Results Found</> : superadmins 
               .map((superadmin) => {
                 return (
                   superadmin.user_id === currentUserId ? 
