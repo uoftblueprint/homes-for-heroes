@@ -16,14 +16,3 @@ cat user_schema.sql >> /mainschema.sql
 cat chapters_schema.sql >> /mainschema.sql
 cat custom_form_schemas.sql >> /mainschema.sql
 cat external_relations_schema.sql >> /mainschema.sql
-#cat sample_schema.sql >> /mainschema.sql
-
-
-if  [ -d  "/var/lib/mysql"  ]; then 
-    mysqld --initialize
-    mysqld --user=root  --init-file="/mainschema.sql"
-
-else 
-    mysqld  --user=root --init-file="/mainschema.sql"
-
-fi
