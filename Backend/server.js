@@ -48,6 +48,11 @@ app.use('/api', apiRouter);
 // Serve the React files if in prod mode
 if (process.env.NODE_ENV === 'production') app.use(express.static(path.join(__dirname, 'public')));
 
+// Handle extra react router requests
+app.get('*', (req,res) =>{
+  res.sendFile(path.join(__dirname, 'public/index.html'));
+});
+
 // Catch any errors that haven't been caught by the appropriate handler
 app.use(catchAllErrorHandler);
 require('./app/routes/customer.routes')(app);
