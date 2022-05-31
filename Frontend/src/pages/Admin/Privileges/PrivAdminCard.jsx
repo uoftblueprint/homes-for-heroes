@@ -3,7 +3,7 @@ import * as React from "react";
 import PrivAdminModal from "./PrivAdminModal";
 import useFetch from "../../../api/useFetch";
 import { useSelector } from 'react-redux';
-import { selectUser } from '../../../redux/userSlice';
+import { selectUserId } from '../../../redux/userSlice';
 
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
@@ -56,7 +56,7 @@ export default function PrivAdminCard({ state, update }) {
   const [superadmins, setSuperadmins] = React.useState([]);
   const [isLoading, setLoading] = React.useState(false);
   const { fetchWithError } = useFetch();
-  const currentUserId = useSelector(selectUser).user_id;
+  const currentUserId = useSelector(selectUserId);
 
   React.useEffect(() => {
     (async () => {

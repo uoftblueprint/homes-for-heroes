@@ -27,7 +27,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import { useSelector } from 'react-redux';
-import { selectUser } from '../../../redux/userSlice';
+import { selectUserId } from '../../../redux/userSlice';
 
 import validator from 'validator'
 
@@ -88,7 +88,7 @@ export default function ProfilePage({ user_id }) {
     applicant_dob: ''
   });
 
-  const currentUserId = useSelector(selectUser).user_id;
+  const currentUserId = useSelector(selectUserId);
 
   function fetchInfo() {
     return new Promise((resolve) => {

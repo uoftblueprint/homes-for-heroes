@@ -17,7 +17,6 @@ export default function VerifyEmail() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('hello');
     // upon successful email sending, show success alert
 
     if (!validator.isEmail(email)) {
