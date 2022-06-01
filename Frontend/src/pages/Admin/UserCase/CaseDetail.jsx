@@ -38,7 +38,6 @@ import CreateIcon from '@mui/icons-material/Create';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SearchIcon from '@mui/icons-material/Search';
-import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 
 export default function CaseCard() {
   let { id } = useParams();
@@ -95,7 +94,7 @@ export default function CaseCard() {
     fetch(`/api/getToDo/${id}`)
       .then((response) => response.json())
       .then((res) => {
-        setTodo(JSON.parse(res.payload[0].todo).notes);
+        setTodo(res.payload[0].todo.notes);
       });
     fetch(
       `/api/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`
@@ -139,7 +138,6 @@ export default function CaseCard() {
 
   const addItem = () => {
     var nextKey = todo ? Object.keys(todo).length : 1;
-    console.log(typeof todo);
     let temp = [...todo, {"id": nextKey, "value": body}];
     let payload = JSON.stringify({notes: temp});
     fetch(`/api/updateToDo/${id}?todo=${payload}`, postOptions)
@@ -423,7 +421,7 @@ export default function CaseCard() {
           }}
           fullWidth
           variant="outlined"
-          placeholder="Search Users"
+          placeholder="Search Cases"
           name="search"
           type="text"
           InputProps={{
@@ -509,7 +507,7 @@ export default function CaseCard() {
                 </Grid>
                 <Grid item xs={1} container display='flex' direction="row" >
                   <PersonIcon sx={{}}/>
-                  <Typography variant="subtitle2" sx={{ WebkitLineClamp: 1}}>ADMIN</Typography>
+                  <Typography variant="subtitle2" sx={{ WebkitLineClamp: 1}}>{item.admin_id}</Typography>
                 </Grid>
                 <Grid item xs={2} container display='flex' direction="row">
                   <DateRangeIcon sx={{  }}/>

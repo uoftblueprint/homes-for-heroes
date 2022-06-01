@@ -20,7 +20,7 @@ function FormEdit() {
             setLoading(true);
             const form = await fetchFormByIdAPI(formId);
             setTitle(form[0].title);
-            setQuestions(JSON.parse(form[0].form_body).questions);
+            setQuestions(form[0].form_body.questions);
             setLevel(form[0].curr_level);
             setLoading(false);
         })();

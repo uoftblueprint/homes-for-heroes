@@ -1,10 +1,10 @@
 FROM mysql:8
 COPY . .
-#ADD . ./docker-entrypoint-initdb.d/
-ADD . ./bin/docker-entrypoint.sh 
-RUN chmod 0644  ./mysql.sh
 
-ADD . .
-RUN chmod +x  ./mysql.sh
+RUN chmod -R +x ./mysql.sh ./docker-entrypoint-initdb.d/ ./init.sh
 
-CMD ./mysql.sh 
+RUN ./mysql.sh
+
+ADD ./mainschema.sql ./docker-entrypoint-initdb.d
+
+ENTRYPOINT ./init.sh

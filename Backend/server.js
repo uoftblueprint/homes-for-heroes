@@ -8,13 +8,14 @@ const apiRouter = require('./app/routes');
 const db = require('./app/models/db');
 const redisClient = require('./app/redis');
 const session = require('express-session');
+const path = require('path');
 const redisStore = require('connect-redis')(session);
 const app = express();
 
 // Decodes cookies for other middleware
 app.use(cookieParser(process.env.SESSION_SECRET));
 
-// // Use Redis for session storage
+// Use Redis for session storage
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -45,7 +46,12 @@ app.use(requestLoggingHandler);
 app.use('/api', apiRouter);
 
 // Serve the React files if in prod mode
-if (process.env.NODE_ENV === 'production') app.use(express.static('public'));
+if (process.env.NODE_ENV === 'production') app.use(express.static(path.join(__dirname, 'public')));
+
+// Handle extra react router requests
+app.get('*', (req,res) =>{
+  res.sendFile(path.join(__dirname, 'public/index.html'));
+});
 
 // Catch any errors that haven't been caught by the appropriate handler
 app.use(catchAllErrorHandler);

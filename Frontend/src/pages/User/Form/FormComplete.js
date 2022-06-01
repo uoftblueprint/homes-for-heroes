@@ -103,7 +103,7 @@ function FormComplete() {
             const form = await fetchFormByIdAPI(formId);
             setForm(form[0]);
             setTitle(form[0].title);
-            setQuestions(JSON.parse(form[0].form_body).questions.map((item) => {return {...item, value: null}}));
+            setQuestions(form[0].form_body.questions.map((item) => {return {...item, value: null}}));
             setLevel(form[0].curr_level.split(' '));
             setLoading(false);
         })();

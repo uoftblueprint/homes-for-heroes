@@ -50,7 +50,7 @@ const Header = (props) => {
   let rightMenuItems = [
     {
       menuTitle: 'Login',
-      pageUrl: '/login',
+      pageURL: '/login',
     },
   ];
 
@@ -186,10 +186,10 @@ const Header = (props) => {
 
               <div style={{ marginLeft: 'auto' }}>
                 {rightMenuItems.map((menuItem) => {
-                  const { menuTitle, pageUrl } = menuItem;
+                  const { menuTitle, pageURL } = menuItem;
                   return (
                     <Button
-                      onClick={() => handleButtonClick(pageUrl)}
+                      onClick={() => handleButtonClick(pageURL)}
                       sx={{
                         marginLeft: 'auto',
                         color: 'white',

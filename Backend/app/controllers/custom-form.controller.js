@@ -7,15 +7,21 @@ const customFormController = {
     try {
       const { form_id } = req.params;
       const resForm = await CustomForm.queryForm({ form_id: form_id });
-      const info = await Customer.getCustomerInfo(req.user.user_id);
-      const curr_level = info[0].curr_level;  
-      if (req.user.role_id > 0 || resForm[0].curr_level.includes(curr_level)) { 
+      if (req.user.role_id > 0) { 
         res.send(resForm);
       }
-      else{
-        next(new Error('Insufficient Permissions'));
+      else {
+        const info = await Customer.getCustomerInfo(req.user.user_id);
+        const curr_level = info[0].curr_level; 
+        if (resForm[0].curr_level.includes(curr_level)) {
+          res.send(resForm)
+        }
+        else{
+          next(new Error('Insufficient Permissions'));
+        }
       }
-    } catch (err) {
+      }
+      catch (err) {
       next(err);
     }
   },
@@ -49,7 +55,7 @@ const customFormController = {
     try {
       const [completedForms, drafts] = await Promise.all([
         await CustomForm.queryForm({ is_final: true }),
-        await CustomForm.queryForm({ is_final: false })
+        await CustomForm.queryForm({ is_final: 'false' })
       ]);
       res.send({
         'completed': completedForms,

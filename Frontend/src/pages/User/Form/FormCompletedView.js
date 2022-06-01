@@ -56,7 +56,7 @@ export default function FormCompletedView() {
             const form = await fetchWithError(endpoint, options);
             setForm(form[0]);
             setTitle(form[0].title);
-            setQuestions(JSON.parse(form[0].form_body).questions);
+            setQuestions(form[0].form_body.questions);
             setLevel(form[0].curr_level.split(' '));
             setLoading(false);
         })();

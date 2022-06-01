@@ -74,7 +74,6 @@ CustomForm.queryForm = function(query_params) {
                 ${q.query}
             ORDER BY form.created_date DESC
         `;
-
     sql.query(data_query, q.queryArray, (err, row) => {
       if (err) reject(err);
       resolve(row);
