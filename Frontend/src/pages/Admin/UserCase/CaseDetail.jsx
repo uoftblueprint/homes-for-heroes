@@ -421,7 +421,7 @@ export default function CaseCard() {
           }}
           fullWidth
           variant="outlined"
-          placeholder="Search Users"
+          placeholder="Search Cases"
           name="search"
           type="text"
           InputProps={{
