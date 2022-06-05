@@ -198,7 +198,7 @@ export default function PrivSupervisorModal({ svDialog, toggleSvDialog, chapters
                   </ListItemAvatar>
                   <ListItemText
                     primary={admin.name} 
-                    secondary={`Supervisor of ${chapters.find(obj => obj.chapter_id === admin.chapter_id).chapter_name}`}
+                    secondary={`Supervisor of ${admin.chapter_id ? chapters.find(obj => obj.chapter_id === admin.chapter_id).chapter_name : 'unassigned'}`}
                   />
                 </ListItem>
               );
