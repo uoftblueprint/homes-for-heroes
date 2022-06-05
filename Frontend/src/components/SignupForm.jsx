@@ -192,8 +192,8 @@ export default function SignupForm() {
       ...(roleID === 0 && {
         income: veteranInfo.income,
         demographic: veteranInfo.demographic,
+        referral: formInfo.referral,
       }),
-      referral: formInfo.referral,
       curr_level: formInfo.curr,
       jwt,
     }),
@@ -420,55 +420,58 @@ export default function SignupForm() {
       </Box>
 
       {roleID === 0 ? (
-        <Box
-          sx={{
-            width: '100%',
-            mt: '25px',
-          }}
-        >
-          <TextField
-            required
-            label="Income"
-            name="income"
-            value={veteranInfo.income}
-            onChange={handleVeteranFormChange}
+        <Box>
+          <Box
             sx={{
-              width: '50%',
+              width: '100%',
+              mt: '25px',
             }}
-          />
-          <TextField
-            required
-            label="Demographic"
-            name="demographic"
-            value={veteranInfo.demographic}
-            onChange={handleVeteranFormChange}
+          >
+            <TextField
+              required
+              label="Income"
+              name="income"
+              value={veteranInfo.income}
+              onChange={handleVeteranFormChange}
+              sx={{
+                width: '50%',
+              }}
+            />
+            <TextField
+              required
+              label="Demographic"
+              name="demographic"
+              value={veteranInfo.demographic}
+              onChange={handleVeteranFormChange}
+              sx={{
+                width: '50%',
+              }}
+            />
+          </Box>
+          <FormControl
             sx={{
-              width: '50%',
+              mt: '25px',
             }}
-          />
+          >
+            <>
+              <InputLabel>Incoming Referral *</InputLabel>
+              <Select
+                required
+                label="Incoming Referral"
+                name="referral"
+                value={formInfo.referral}
+                onChange={handleFormChange}
+              >
+                {!partners
+                  ? null
+                  : partners.map(({ org_name }) => (
+                      <MenuItem value={org_name}>{org_name}</MenuItem>
+                    ))}
+              </Select>
+            </>
+          </FormControl>
         </Box>
       ) : null}
-
-      <FormControl
-        sx={{
-          mt: '25px',
-        }}
-      >
-        <>
-          <InputLabel>Incoming Referral *</InputLabel>
-          <Select
-            required
-            label="Incoming Referral"
-            name="referral"
-            value={formInfo.referral}
-            onChange={handleFormChange}
-          >
-            {!partners ? null :partners.map(({ org_name }) => (
-              <MenuItem value={org_name}>{org_name}</MenuItem>
-            ))}
-          </Select>
-        </>
-      </FormControl>
 
       <Button
         variant="outlined"
