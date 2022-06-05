@@ -119,7 +119,7 @@ const handleAdd = () => {
 
   return (
       <Dialog open={dialog} onClose={() => toggleDialog(false)} PaperProps={{ sx: { width: "50%", height: "100%" } }}>
-        <DialogTitle>Add Veteran</DialogTitle>
+        <DialogTitle>Add Volunteer</DialogTitle>
         <DialogContent> 
           <TextField
             autoFocus

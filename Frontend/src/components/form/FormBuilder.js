@@ -11,7 +11,7 @@ import VisibilityCheckBox from './VisibilityCheckBox';
 import { Prompt } from 'react-router-dom';
 import FormBackButton from './FormBackButton';
 import { errorToObj, isEmpty } from '../../utils';
-import { selectUser } from '../../redux/userSlice';
+import { selectUserId } from '../../redux/userSlice';
 import { useSelector } from 'react-redux';
 
 export default function FormBuilder(props) {
@@ -29,7 +29,7 @@ export default function FormBuilder(props) {
   const [blockNav, setBlockNav] = useState(false);
 
   const formErrors = errorToObj(props.err);
-  const adminId = useSelector(selectUser).user_id;
+  const adminId = useSelector(selectUserId);
 
   const updateLevel = (name, checked) => {
     let l = { ...level };

@@ -94,7 +94,7 @@ export default function CaseCard() {
     fetch(`/api/getToDo/${id}`)
       .then((response) => response.json())
       .then((res) => {
-        setTodo(JSON.parse(res.payload[0].todo).notes);
+        setTodo(res.payload[0].todo.notes);
       });
     fetch(
       `/api/getCases?user_id=${id}&start_date=1000-01-01&end_date=9999-12-31`
@@ -138,7 +138,6 @@ export default function CaseCard() {
 
   const addItem = () => {
     var nextKey = todo ? Object.keys(todo).length : 1;
-    console.log(typeof todo);
     let temp = [...todo, {"id": nextKey, "value": body}];
     let payload = JSON.stringify({notes: temp});
     fetch(`/api/updateToDo/${id}?todo=${payload}`, postOptions)
@@ -173,20 +172,36 @@ export default function CaseCard() {
   };
 
   const filterNotes = (posts, query) => {
-    if (!query) {
+    if (view === 4) {
+      if (!query) {
+        return posts.filter((post) => {
+          return post.case_id !== alertCaseId;
+        });
+      }
+      {
       return posts.filter((post) => {
-        return post.case_id !== alertCaseId;
+        return post.title.includes(query) && post.case_id !== alertCaseId;
       });
+      }
     }
-
-    return posts.filter((post) => {
-      return post.title.includes(query) && post.case_id !== alertCaseId;
-    });
+    else{
+      if (!query) {
+        return posts.filter((post) => {
+          return post.case_id !== alertCaseId && post.category == view;
+        });
+      }
+      {
+      return posts.filter((post) => {
+        return post.title.includes(query) && post.case_id !== alertCaseId && post.category == view;
+      });
+      }
+    }
   };
 
   const captureNote = (e) => {
     e.preventDefault();
     setNewNote(e.target.value);
+    setCurrBody(e.target.value);
   };
 
   const editCaseNote = (case_id, title, notes) => {
@@ -276,8 +291,7 @@ export default function CaseCard() {
                 </Typography>
               </Grid>
               <Button
-                component="a"
-                href="intake-form"
+                onClick={(e) => {history.push(`/viewForms/${id}`)}}
                 variant="outlined"
                 startIcon={<VisibilityIcon />}
               >
@@ -293,7 +307,9 @@ export default function CaseCard() {
           display="flex"
           direction="column"
         >
-          <Grid item xs={12}>
+          <Grid item xs={12}> 
+             {alert.error === 'No Alerts' ? <></>
+              :
             <Alert
               variant="outlined"
               severity="info"
@@ -319,6 +335,7 @@ export default function CaseCard() {
               Alert created at {alert.last_update} by this admin.<br/>
               {alert.notes}
             </Alert>
+            }
           </Grid>
           <Grid item xs={12}>
             <Dialog
@@ -404,7 +421,7 @@ export default function CaseCard() {
           }}
           fullWidth
           variant="outlined"
-          placeholder="Search Users"
+          placeholder="Search Cases"
           name="search"
           type="text"
           InputProps={{
@@ -446,7 +463,7 @@ export default function CaseCard() {
               fullWidth
               variant="standard"
               onChange={captureNote}
-              defaultValue={currBody}
+              value={currBody}
             />
           </DialogContent>
           <DialogActions>
@@ -490,7 +507,7 @@ export default function CaseCard() {
                 </Grid>
                 <Grid item xs={1} container display='flex' direction="row" >
                   <PersonIcon sx={{}}/>
-                  <Typography variant="subtitle2" sx={{ WebkitLineClamp: 1}}>ADMIN</Typography>
+                  <Typography variant="subtitle2" sx={{ WebkitLineClamp: 1}}>{item.admin_id}</Typography>
                 </Grid>
                 <Grid item xs={2} container display='flex' direction="row">
                   <DateRangeIcon sx={{  }}/>

@@ -74,8 +74,24 @@ CustomForm.queryForm = function(query_params) {
                 ${q.query}
             ORDER BY form.created_date DESC
         `;
-
     sql.query(data_query, q.queryArray, (err, row) => {
+      if (err) reject(err);
+      resolve(row);
+    });
+  });
+};
+
+CustomForm.queryFormNotSubmittedBy = function(curr_level, user_id) {
+  return new Promise((resolve, reject) => {
+    // construct query
+    const data_query = `
+            SELECT *
+            FROM CustomForm AS form 
+            WHERE form.is_final = 1 AND form.curr_level LIKE ? AND form.form_id NOT IN (SELECT form_id FROM Questionnaire WHERE user_id = ?)
+            ORDER BY form.created_date DESC
+        `;
+
+    sql.query(data_query, [`%${curr_level}%`, user_id], (err, row) => {
       if (err) reject(err);
       resolve(row);
     });

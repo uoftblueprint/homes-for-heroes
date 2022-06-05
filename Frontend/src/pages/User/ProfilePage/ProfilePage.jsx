@@ -27,7 +27,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 import { useSelector } from 'react-redux';
-import { selectUser } from '../../../redux/userSlice';
+import { selectUserId } from '../../../redux/userSlice';
 
 import validator from 'validator'
 
@@ -88,7 +88,7 @@ export default function ProfilePage({ user_id }) {
     applicant_dob: ''
   });
 
-  const currentUserId = useSelector(selectUser).user_id;
+  const currentUserId = useSelector(selectUserId);
 
   function fetchInfo() {
     return new Promise((resolve) => {
@@ -112,7 +112,7 @@ export default function ProfilePage({ user_id }) {
             street_name: data.street_name,
             city: data.city,
             province: data.province,
-            applicant_dob:data.applicant_dob.slice(0, 10),
+            applicant_dob: data.applicant_dob ? data.applicant_dob.slice(0, 10) : null,
       });
       setFormInfo({
           name: data.name,
@@ -121,7 +121,7 @@ export default function ProfilePage({ user_id }) {
           street_name: data.street_name,
           city: data.city,
           province: data.province,
-          applicant_dob:data.applicant_dob.slice(0, 10),
+          applicant_dob: data.applicant_dob ? data.applicant_dob.slice(0, 10) : null,
       });
       setLoading(false);
     })();
@@ -184,7 +184,6 @@ export default function ProfilePage({ user_id }) {
  };
 
   const changeInfo = () => {
-    console.log(requestOptions)
     fetch('/api/updateUserInfo', requestOptions)
       .then(response => response.json());
     setUserInfo({
@@ -227,7 +226,6 @@ export default function ProfilePage({ user_id }) {
   };
 
   const changePassword = () => {
-    console.log(passwordRequestOptions)
     fetch('/api/changePassword', passwordRequestOptions)
       .then(res => res.json())
       .then(res => {
@@ -299,7 +297,7 @@ export default function ProfilePage({ user_id }) {
                     label="province"
                     select
                     name="Province"
-                    value={userInfo[row[0]]}
+                    value={formInfo[row[0]]}
                     onChange={e => handleInputChange(row[0], e.target.value)}
                   >
                     <MenuItem value={'ON'}>ON</MenuItem>
@@ -324,7 +322,7 @@ export default function ProfilePage({ user_id }) {
                       {isMobile ?
                         <MobileDatePicker
                           required
-                          value={userInfo[row[0]]} 
+                          value={formInfo[row[0]] ? formInfo[row[0]].split('-').join('/') : null}
                           onChange={v => handleInputChange(row[0], v.toISOString().slice(0,10))}
                           renderInput={(params) => <TextField
                             {...params} />} 
@@ -335,7 +333,7 @@ export default function ProfilePage({ user_id }) {
                           label="Date of Birth"
                           inputFormat='yyyy-MM-dd'
                           mask='____-__-__'
-                          value={formInfo[row[0]].split('-').join('/')}
+                          value={formInfo[row[0]] ? formInfo[row[0]].split('-').join('/') : null}
                           onChange={(v) => handleInputChange(row[0], v.toISOString().slice(0,10))}
                           renderInput={(params) => <TextField {...params} />}
                         />
@@ -349,7 +347,7 @@ export default function ProfilePage({ user_id }) {
                   required
                   id={row[0]}
                   label={cleanKey(row[0])}
-                  value={userInfo[row[0]]}
+                  value={formInfo[row[0]]}
                   onChange={e => handleInputChange(row[0], e.target.value)}
                   size='standard'
                   variant='standard'

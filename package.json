@@ -19,6 +19,8 @@
     "prod": "cd Backend && npm start",
     "build": "cd Frontend && npm run build",
     "install:all": "npm i && cd Frontend && npm i && cd ../Backend && npm i",
+    "install:frontend": "cd Frontend && npm i",
+    "install:backend": "cd Backend && npm i",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc.json",

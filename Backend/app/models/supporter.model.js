@@ -67,7 +67,7 @@ Supporter.updateInfo = function (user_id, query_params) {
     ${q.query}
     WHERE supporter_id = ${user_id} 
     `;
-    sql.query(data_query, (error, info) => {
+    sql.query(data_query, q.queryArray, (error, info) => {
       if (error) reject(error);
       resolve(info)
     });

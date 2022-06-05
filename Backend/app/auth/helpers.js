@@ -9,7 +9,6 @@ const helpers = {
     const payload = {
       id: user.user_id,
     };
-
     return jwt.sign(payload, process.env.JWT_VERIFY_EMAIL_SECRET, { expiresIn: '1d' }); // Expires in 1 day
   },
   verifyEmailJWT(token) {
@@ -27,29 +26,27 @@ const helpers = {
   },
   async sendInviteLink(email, token) {
     const mailTransporter = await mailer();
-    const url = `http://${process.env.HOST}/signup/${token}`;
+    const url = `http${process.env.SSL ? 's' : ''}://${process.env.HOST}/signup/${token}`;
     const info = await mailTransporter.sendMail({
-      from: '"Homes for Heroes" <foo@example.com>', // sender address
+      from: `"Homes for Heroes" <${process.env.SMPT_SENDER}>`, // sender address
       to: email, // list of receivers
       subject: 'Your invite link for Homes for Heroes', // Subject line
       html: `Here is your invite link: <a href="${url}">${url}</a>`, // html body
     });
     logger.info('Email sent to %s with id: %s', email, info.messageId);
-    // TODO: Remove in production
-    logger.info('Email preview URL: %s', nodemailer.getTestMessageUrl(info));
+    if (process.env.NODE_ENV !== 'production') logger.info('Email preview URL: %s', nodemailer.getTestMessageUrl(info));
   },
   async sendResetLink(email, token) {
     const mailTransporter = await mailer();
-    const url = `http://${process.env.HOST}/reset/${token}`;
+    const url = `http${process.env.SSL ? 's' : ''}://${process.env.HOST}/reset/${token}`;
     const info = await mailTransporter.sendMail({
-      from: '"Homes for Heroes" <foo@example.com>', // sender address
+      from: `"Homes for Heroes" <${process.env.SMPT_SENDER}>`, // sender address
       to: email, // list of receivers
       subject: 'Your password reset link for Homes for Heroes', // Subject line
       html: `Here is your password reset link: <a href="${url}">${url}</a><br>If you did not request a reset, please ignore this email.`, // html body
     });
     logger.info('Email sent to %s with id: %s', email, info.messageId);
-    // TODO: Remove in production
-    logger.info('Email preview URL: %s', nodemailer.getTestMessageUrl(info));
+    if (process.env.NODE_ENV !== 'production') logger.info('Email preview URL: %s', nodemailer.getTestMessageUrl(info));
   },
   async isAuthenticated(req, res, next) {
     if(req.user)

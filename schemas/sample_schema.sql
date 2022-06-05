@@ -56,7 +56,8 @@ VALUES
 
 INSERT INTO `client_users` (`name`,`email`,`role_id`, `chapter_id`, `verified`,`oauth`, `phone`, `password`)
 VALUES
-  ("Mesbah Rafin","mesbah@gmail.com",2,1,1,0, "5062329415", "$2b$15$P6WyshJ2ys3xvDL9HqpGduD0w.woRawkNAIIBCNHvdVCF5kLUtk8u");
+  ("Mesbah Rafin","mesbah@gmail.com",1,1,1,0, "5062329415", "$2b$15$P6WyshJ2ys3xvDL9HqpGduD0w.woRawkNAIIBCNHvdVCF5kLUtk8u"),
+  ("Raymond Chen","raymond@gmail.com",2,1,1,0, "5062322232", "$2b$15$P6WyshJ2ys3xvDL9HqpGduD0w.woRawkNAIIBCNHvdVCF5kLUtk8u");
 
 INSERT INTO `UserInfo` (`user_id`,`gender`,`email`,`applicant_phone`,`applicant_dob`,`street_name`,`curr_level`,`city`,`province`,`referral`,`outgoing`,`income`,`demographic`)
 VALUES

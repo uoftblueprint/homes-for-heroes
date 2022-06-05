@@ -1,6 +1,7 @@
 const BaseQueryData = require('./base-query-data.model');
 
-const CustomerQueryData = function (query_params) {
+
+const CustomerQueryData = function(query_params) {
   BaseQueryData.call(this);
 
   // chapter
@@ -34,7 +35,7 @@ const CustomerQueryData = function (query_params) {
   this.page = parseInt(query_params.page);
   this.limit = parseInt(query_params.page_size);
   this.offset = (this.page - 1) * this.limit;
-
+  
   // final query
   this.query = '';
   this.queryArray = [];

@@ -16,7 +16,7 @@ export default function Logout() {
       alert('User is not logged in.');
       return;
     }
-
+    // TODO MAKE THIS RELATIVE TO ROOT
     fetch('/logout').then((response) => {
       if (response.status !== 200) {
         console.warn('Logout error occurred');

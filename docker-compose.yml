@@ -2,48 +2,38 @@ services:
   db:
     build:
         context: ./schemas
-        #dockerfile: Database.Dockerfile
-    ports:
-      - "${DB_PORT}:${DB_PORT}"
+    expose:
+      - "${DB_PORT}"
     environment:
       MYSQL_USER: 'hfh'
       MYSQL_PASSWORD: '${DB_PASSWORD}'
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
       MYSQL_DATABASE: '${DB_NAME}'
-
+      MYSQL_ROOT_HOST: '%'
 
     volumes:
       - db_data:/var/lib/mysql
 
-  frontend:
-    build:
-        context: ./Frontend 
-        #dockerfile: Frontend.Dockerfile
-    ports:
-      - "3006:3006"
-    environment:
-      BACKEND_HOST: backend
-    env_file:
-      - .env
-  
   redis:
     image: redis:6-alpine
-    ports:
-      - "${REDIS_PORT}:${REDIS_PORT}"
+    expose:
+      - "${REDIS_PORT}"
     env_file:
       - .env
+
   backend:
     build:
-        context: ./Backend 
-        #dockerfile: Backend.Dockerfile
+        context: .
     ports:
       - "3000:3000"
-    volumes:
-      - ./Backend:/usr/src/app
-      - /usr/src/app/node_modules
     environment:
       REDIS_HOST: redis
-      DB_HOST: db
+      DB_HOST: db 
+      DB_USER: 'hfh'
+      DB_PASSWORD: '${DB_PASSWORD}'
+      DB_ROOT_PASSWORD: '${DB_PASSWORD}'
+      DB_NAME: '${DB_NAME}'
+      MYSQL_ROOT_HOST: '%'
     env_file:
       - .env
 
