@@ -106,6 +106,7 @@ const authController = {
     const { name, email, chapter_id } = req.body;
     try {
       const tempCustomer = await Admin.createTemp(name, email, chapter_id, 1); 
+      await Customer.createUserInfo(tempCustomer.user_id);
       const authToken = issueEmailJWT(tempCustomer);
       res.json({ success: true });
       await sendInviteLink(email, authToken);

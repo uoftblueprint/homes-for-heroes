@@ -15,7 +15,7 @@ const validationSchema = {
     // TODO: Maybe force these two to be enums?
     body('city').isString().isLength({ max: 255 }),
     body('province').isString().isLength({ min: 2, max: 3 }),
-    body('referral').isString().isLength({ max: 255 }),
+    body('referral').optional(),
     body('income').isString().isLength({ max: 255 }).optional(),
     body('demographic').isString().isLength({ max: 255 }).optional(),
     body('jwt').isJWT(),
