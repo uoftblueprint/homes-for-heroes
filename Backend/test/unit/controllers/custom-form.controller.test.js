@@ -4,7 +4,7 @@ const CustomForm = require('../../../app/models/custom-form.model');
 
 const { res, next, mockClear } = getMockRes();
 const mockError = new Error('error');
-const mockUser = { user_id: 5 };
+const mockUser = { user_id: 5, role_id: 1 };
 const mockFormId = { form_id: 11 };
 const mockFormBody = {
   title: 'Form',
@@ -25,7 +25,7 @@ describe("'Custom Form Controller unit tests' ", () => {
       title: 'test',
     };
     jest.spyOn(CustomForm, 'queryForm').mockReturnValue(mockResponse);
-    const req = getMockReq({ params: mockFormId });
+    const req = getMockReq({ params: mockFormId, user: mockUser });
 
     await formController.getCustomForm(req, res, next);
     expect(CustomForm.queryForm).toHaveBeenCalledWith(mockFormId);
