@@ -1,25 +1,6 @@
 const Admin = require('../models/admin.model');
-const Chapter = require('../models/chapter.model');
-const logger = require('../logger');
 
 const adminController = {
-  async createAdmin(req, res, next) {
-    const { name, email, phone, password, chapter_id } = req.body;
-    try {
-      const admin = await Admin.create(
-        name,
-        email,
-        phone,
-        password,
-        chapter_id,
-        1
-      );
-      res.json(admin);
-    } catch (err) {
-      next(err);
-    }
-  },
-
   async listAll(req, res, next) {
     try {
       const admins = await Admin.listAll();
@@ -83,7 +64,7 @@ const adminController = {
 
   async assignChapter(req, res, next) {
     try {
-      const chapter_id = req.body.chapter_id;
+      const { chapter_id } = req.body;
       const { admin_id } = req.params;
       await Admin.assignChapter(admin_id, chapter_id);
       res.send({ success: true });

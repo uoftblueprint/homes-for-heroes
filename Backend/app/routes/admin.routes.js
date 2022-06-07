@@ -46,11 +46,4 @@ module.exports = app => {
     validationSchema.listChapterSupervisorsSchema,
     validationErrorHandler,
     adminController.listByChapter);
-
-  app.post(
-    '/admins/createAdmin',
-    isSuperAdmin,
-    validationSchema.createAdminSchema,
-    validationErrorHandler,
-    adminController.createAdmin);
 };

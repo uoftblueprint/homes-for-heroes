@@ -2,7 +2,8 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import AppsIcon from "@mui/icons-material/Apps";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import {Checkbox, InputAdornment, Radio, TextField, Typography} from "@mui/material";
+import {Slider, Checkbox, InputAdornment, Radio, TextField, Typography} from "@mui/material";
+import TextareaAutosize from "@mui/material/TextareaAutosize";
 import EventIcon from "@mui/icons-material/Event";
 import LinearScaleIcon from "@mui/icons-material/LinearScale";
 import NotesIcon from "@mui/icons-material/Notes";
@@ -30,9 +31,11 @@ const QuestionType = function (qType) {
             icon: NotesIcon,
             divider: true,
             options: null,
-            view: TextField,
+            view: TextareaAutosize,
             viewProps: {
                 disabled: true,
+                minRows: 3,
+                placeholder: 'Long Answer...',
                 label: "Long-answer text",
                 variant: "standard",
             }
@@ -67,6 +70,10 @@ const QuestionType = function (qType) {
             icon: LinearScaleIcon,
             divider: false,
             options: null,
+            view: Slider,
+            viewProps:{
+                disabled: true
+            }
         },
         {
             qType: 7,
@@ -101,7 +108,7 @@ const QuestionType = function (qType) {
             view: TextField,
             viewProps: {
                 variant: "standard",
-                label: "Day, Month, Year",
+                label: "YYYY-MM-DD",
                 InputProps: {
                     endAdornment: <InputAdornment position="end">
                         <EventIcon/>
@@ -118,7 +125,7 @@ const QuestionType = function (qType) {
             view: TextField,
             viewProps: {
                 variant: "standard",
-                label: "Time",
+                label: "YYYY-MM-DD HH:mm",
                 InputProps: {
                     endAdornment: <InputAdornment position="end">
                         <AccessTimeIcon/>

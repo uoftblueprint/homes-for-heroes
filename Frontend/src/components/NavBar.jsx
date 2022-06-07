@@ -50,19 +50,19 @@ const Header = (props) => {
   let rightMenuItems = [
     {
       menuTitle: 'Login',
-      pageUrl: '/login',
+      pageURL: '/login',
     },
   ];
 
   if (authLogin) {
-    if (roleId === ADMIN_ROLE_ID || roleId === SUPER_ADMIN_ROLE_ID) {
+    if (roleId === SUPER_ADMIN_ROLE_ID) {
       menuItems = [
         {
-          menuTitle: 'User CRM',
+          menuTitle: 'Veteran CRM',
           pageURL: '/usercrm',
         },
         {
-          menuTitle: 'User Case',
+          menuTitle: 'Case Notes',
           pageURL: '/usercase',
         },
         {
@@ -79,15 +79,40 @@ const Header = (props) => {
         },
       ];
     }
+      else if (roleId === ADMIN_ROLE_ID){
+        menuItems = [
+        {
+          menuTitle: 'Veteran CRM',
+          pageURL: '/usercrm',
+        },
+        {
+          menuTitle: 'Case Notes',
+          pageURL: '/usercase',
+        },
+        {
+          menuTitle: 'Forms',
+          pageURL: '/forms',
+        },
+      ];
+      }  
+      else{
+        menuItems = [ 
+        {
+          menuTitle: 'Home',
+          pageURL: '/'
+        }
+        ,
+      ];
+      }
 
     rightMenuItems = [
       {
         menuTitle: 'Profile',
-        pageUrl: 'profile',
+        pageURL: '/profile',
       },
       {
         menuTitle: 'Logout',
-        pageUrl: 'logout',
+        pageURL: '/logout',
       },
     ];
   }
@@ -161,10 +186,10 @@ const Header = (props) => {
 
               <div style={{ marginLeft: 'auto' }}>
                 {rightMenuItems.map((menuItem) => {
-                  const { menuTitle, pageUrl } = menuItem;
+                  const { menuTitle, pageURL } = menuItem;
                   return (
                     <Button
-                      onClick={() => handleButtonClick(pageUrl)}
+                      onClick={() => handleButtonClick(pageURL)}
                       sx={{
                         marginLeft: 'auto',
                         color: 'white',

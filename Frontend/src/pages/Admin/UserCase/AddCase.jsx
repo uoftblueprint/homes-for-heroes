@@ -10,21 +10,19 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import SendIcon from '@mui/icons-material/Send';
+import { useSelector } from 'react-redux';
+import { selectUserId } from '../../../redux/userSlice';
 
 export default function AddCase () {
   
   const [currUser, setCurrUser] = useState({});
   const { id } = useParams();
+  const adminId = useSelector(selectUserId);
   const [shouldBlockNavigation, setNavigation] = useState(true);
 
-  const [dt, setDate] = useState(null);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [time, setTime] = useState(dt);
 
   const [stat, setStat] = React.useState(0);
   const history = useHistory();
@@ -34,7 +32,7 @@ export default function AddCase () {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       user_id: id,
-      admin_id: 3,
+      admin_id: adminId,
       notes: body,
       title: title,
       category: stat,
@@ -58,17 +56,11 @@ export default function AddCase () {
     }
   });
 
-  const handleChangeTime = (newTime) => {
-    setTime(newTime);
-  };
-
   const handleChangeStatus = (event) => {
     setStat(event.target.value);
   };
 
   const handleSubmit = () => {
-    let dt = new Date().toLocaleDateString();
-    setDate(dt);
     fetch('/api/casenote', request)
       .then(response => response.json());
     setNavigation(false);
@@ -106,17 +98,6 @@ export default function AddCase () {
       </Grid>
       <Grid item xs={12}>
         <Typography sx={{ fontSize: 48, mb: '1px', float:"left", paddingLeft: "150px", paddingBottom: "20px"}}>Case Note for: {currUser.name}</Typography>
-      </Grid>
-      <Grid item xs={5}>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DesktopDatePicker
-            label="Time Picker"
-            inputFormat="MM/dd/yyyy"
-            value={time}
-            onChange={handleChangeTime}
-            renderInput={(params) => <TextField {...params} />}
-          />
-        </LocalizationProvider>
       </Grid>
       <Grid item xs={2}>
         <FormControl fullWidth>

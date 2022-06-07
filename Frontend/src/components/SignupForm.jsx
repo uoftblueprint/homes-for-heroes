@@ -17,7 +17,16 @@ import {
   MenuItem,
 } from '@mui/material';
 
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
+import MobileDatePicker from '@mui/lab/MobileDatePicker';
+
 import validator from 'validator';
+
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
 
 import { useParams, useHistory } from 'react-router-dom';
 
@@ -36,11 +45,12 @@ export default function SignupForm() {
   });
 
   const [veteranInfo, setVeteranInfo] = useState({
-    income: 0,
+    income: '0',
     demographic: '',
   });
 
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
 
   let { jwt } = useParams();
   let history = useHistory();
@@ -54,6 +64,9 @@ export default function SignupForm() {
   const [isLoading, setIsLoading] = useState(true);
   const [isVerified, setIsVerified] = useState(true);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   React.useEffect(() => {
     (async () => {
       setIsLoading(true);
@@ -66,14 +79,12 @@ export default function SignupForm() {
       } else {
         try {
           const data = await fetchPartners();
-          // const id = await fetchRoleID();
           setPartners(data['partners']);
-          // setRoleID(id['role_id']);
-          const role_id = await fetchRoleID();
-          setRoleID(role_id);
+          const role_id_data = await fetchRoleID();
+          setRoleID(role_id_data.role_id);
 
           setIsLoading(false);
-        } catch(err) {
+        } catch (err) {
           setErrorStr(err);
         }
       }
@@ -118,6 +129,11 @@ export default function SignupForm() {
     setPassword(value);
   };
 
+  const handleAdminPasswordConfirmChange = (event) => {
+    const { value } = event.target;
+    setPasswordConfirm(value);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     setErrorStr('');
@@ -157,10 +173,15 @@ export default function SignupForm() {
     }
 
     if (
-      password.replace(/[^!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, '').length <
-      1
+      password.replace(/[^!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/g, '').length < 1
     ) {
       pwErrorLst.push(' 1 symbol');
+    }
+
+    if (
+      password !== passwordConfirm
+    ) {
+      errorLst.push(' | Passwords do not match');
     }
 
     if (errorLst.length || pwErrorLst.length) {
@@ -195,8 +216,8 @@ export default function SignupForm() {
       ...(roleID === 0 && {
         income: veteranInfo.income,
         demographic: veteranInfo.demographic,
+        referral: formInfo.referral,
       }),
-      referral: formInfo.referral,
       curr_level: formInfo.curr,
       jwt,
     }),
@@ -330,48 +351,74 @@ export default function SignupForm() {
         }}
       />
 
-        <TextField
-          required
-          label="Password"
-          name="password"
-          type="password"
-          value={password}
-          onChange={handleAdminPasswordChange}
-          sx={{
-            mt: '25px',
-          }}
-        />
+      <TextField
+        required
+        label="Password"
+        name="password"
+        type="password"
+        value={password}
+        onChange={handleAdminPasswordChange}
+        sx={{
+          mt: '25px',
+        }}
+      />
 
-      <Box>
-        <TextField
-          required
-          label="Phone Number"
-          name="phone"
-          value={formInfo.phone}
-          onChange={handleFormChange}
-          sx={{
-            mt: '25px',
-            width: '60%',
-          }}
-        />
+      <TextField
+        required
+        label="Confirm Password"
+        name="confirm_password"
+        type="password"
+        value={passwordConfirm}
+        onChange={handleAdminPasswordConfirmChange}
+        sx={{
+          mt: '25px',
+        }}
+      />
 
-        <TextField
-          required
-          label="Date of Birth"
-          name="applicant_dob"
-          value={formInfo.applicant_dob}
-          onChange={handleFormChange}
-          sx={{
-            mt: '25px',
-            width: '40%',
-          }}
-        />
-      </Box>
+      <TextField
+        required
+        label="Phone Number"
+        name="phone"
+        value={formInfo.phone}
+        onChange={handleFormChange}
+        sx={{
+          mt: '25px',
+          mb: '25px',
+          width: '60%',
+        }}
+      />
+
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        {isMobile ?
+          <MobileDatePicker
+            label="Date of Birth"
+            inputFormat="yyyy-MM-dd"
+              value={formInfo.applicant_dob}
+              onChange={(v) => setFormInfo({
+                ...formInfo,
+                applicant_dob : JSON.stringify(v).slice(1, 11)
+              })}
+              renderInput={(params) => <TextField {...params} />}
+            />
+            :
+            <DesktopDatePicker
+              label="Date of Birth"
+              inputFormat="yyyy-MM-dd"
+              mask="____-__-__"
+              value={formInfo.applicant_dob}
+              onChange={(v) => setFormInfo({
+                ...formInfo,
+                applicant_dob: JSON.stringify(v).slice(1, 11)
+              })}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          }
+        </LocalizationProvider>
 
       <Box id="location">
         <TextField
           required
-          label="Street Name"
+          label="Street Address"
           name="street_name"
           value={formInfo.street_name}
           onChange={handleFormChange}
@@ -421,57 +468,58 @@ export default function SignupForm() {
           </Select>
         </FormControl>
       </Box>
-
       {roleID === 0 ? (
-        <Box
-          sx={{
-            width: '100%',
-            mt: '25px',
-          }}
-        >
-          <TextField
-            required
-            label="Income"
-            name="income"
-            value={veteranInfo.income}
-            onChange={handleVeteranFormChange}
+        <Box>
+          <Box
             sx={{
-              width: '50%',
+              width: '100%',
+              mt: '25px',
             }}
-          />
-          <TextField
-            required
-            label="Demographic"
-            name="demographic"
-            value={veteranInfo.demographic}
-            onChange={handleVeteranFormChange}
+          >
+            <TextField
+              required
+              label="Income"
+              name="income"
+              value={veteranInfo.income}
+              onChange={handleVeteranFormChange}
+              sx={{
+                width: '50%',
+              }}
+            />
+            <TextField
+              required
+              label="Demographic"
+              name="demographic"
+              value={veteranInfo.demographic}
+              onChange={handleVeteranFormChange}
+              sx={{
+                width: '50%',
+              }}
+            />
+          </Box>
+          <FormControl
             sx={{
-              width: '50%',
+              mt: '25px',
             }}
-          />
+          >
+            <>
+              <InputLabel>Incoming Referral</InputLabel>
+              <Select 
+                label="Incoming Referral"
+                name="referral"
+                value={partners[0] ? partners[0].org_name : null}
+                onChange={handleFormChange}
+              >
+                {!partners
+                  ? null
+                  : partners.map(({ org_name }) => (
+                      <MenuItem value={org_name}>{org_name}</MenuItem>
+                    ))}
+              </Select>
+            </>
+          </FormControl>
         </Box>
       ) : null}
-
-      <FormControl
-        sx={{
-          mt: '25px',
-        }}
-      >
-        <>
-          <InputLabel>Incoming Referral *</InputLabel>
-          <Select
-            required
-            label="Incoming Referral"
-            name="referral"
-            value={formInfo.referral}
-            onChange={handleFormChange}
-          >
-            {partners.map(({ org_name }) => (
-              <MenuItem value={org_name}>{org_name}</MenuItem>
-            ))}
-          </Select>
-        </>
-      </FormControl>
 
       <Button
         variant="outlined"
