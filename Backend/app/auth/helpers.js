@@ -27,7 +27,6 @@ const helpers = {
   async sendInviteLink(email, token) {
     const mailTransporter = await mailer();
     const url = `http${process.env.SSL ? 's' : ''}://${process.env.HOST}/signup/${token}`;
-    console.log(url)
     const info = await mailTransporter.sendMail({
       from: `"Homes for Heroes" <${process.env.SMPT_SENDER}>`, // sender address
       to: email, // list of receivers
