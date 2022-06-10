@@ -74,7 +74,7 @@ export default function VeteranCRM() {
     dialog: dialog,
     setDialog: setDialog,
     deDialogEndpoint: `deleteVeteran`,
-    demoName: 'Monsters',
+    demoName: 'Monster',
     csvEndpoint: "getVeteranCSV?",
     defaultSearchCategory: "name",
     updateUserEndpoint: "updateUserInfo",
