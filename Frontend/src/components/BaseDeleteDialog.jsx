@@ -24,8 +24,9 @@ export default function BaseDeleteDialog({ dialog, deDialogEndpoint, toggleDialo
 
   const theme = useTheme();
   const [isLoading, setLoading] = React.useState(false);
-  const { fetchWithError } = useFetch()
+  const { fetchWithError } = useFetch();
 
+  console.log(theme);
 
 
 const handleDelete = (user_id) => {
@@ -59,7 +60,7 @@ const handleDelete = (user_id) => {
         :
         <DialogContent>
         <DialogContentText>
-            Deleting these {demoName}s will remove all information related to these {demoName}s.
+            Deleting deez {demoName}s will remove all information related to these {demoName}s.
         </DialogContentText> 
         <List>
             {names

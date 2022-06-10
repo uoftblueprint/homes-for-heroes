@@ -107,7 +107,7 @@ export default function BaseCRM({
     if (Object.keys(cellChanges).length !== 0) {
       if (
         window.confirm(
-          "You have unapplied changes, would you like to continue?"
+          "unapplied changes, would you like to continue?"
         )
       )
         setPage(value);
