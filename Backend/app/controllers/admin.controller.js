@@ -1,23 +1,6 @@
 const Admin = require('../models/admin.model');
 
 const adminController = {
-  async createAdmin(req, res, next) {
-    const { name, email, phone, password, chapter_id } = req.body;
-    try {
-      const admin = await Admin.create(
-        name,
-        email,
-        phone,
-        password,
-        chapter_id,
-        1
-      );
-      res.json(admin);
-    } catch (err) {
-      next(err);
-    }
-  },
-
   async listAll(req, res, next) {
     try {
       const admins = await Admin.listAll();

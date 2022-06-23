@@ -323,7 +323,7 @@ export default function ProfilePage({ user_id }) {
                         <MobileDatePicker
                           required
                           value={formInfo[row[0]] ? formInfo[row[0]].split('-').join('/') : null}
-                          onChange={v => handleInputChange(row[0], v.toISOString().slice(0,10))}
+                          onChange={v => handleInputChange(row[0], JSON.stringify(v).slice(1,11))}
                           renderInput={(params) => <TextField
                             {...params} />} 
                         />
@@ -334,7 +334,7 @@ export default function ProfilePage({ user_id }) {
                           inputFormat='yyyy-MM-dd'
                           mask='____-__-__'
                           value={formInfo[row[0]] ? formInfo[row[0]].split('-').join('/') : null}
-                          onChange={(v) => handleInputChange(row[0], v.toISOString().slice(0,10))}
+                          onChange={(v) => handleInputChange(row[0], JSON.stringify(v).slice(1,11))}
                           renderInput={(params) => <TextField {...params} />}
                         />
                       }
